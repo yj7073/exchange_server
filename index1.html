@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yen-Split 퀀트 대시보드</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg-color: #f5f5f0; --card-bg: #ffffff; --text-main: #1a1a1a; --text-sub: #888888; --border-color: #e8e8e0; --btn-bg: #eeeee8; --btn-text: #888888; --btn-active-bg: #ffffff; --btn-active-text: #1a1a1a; }
+body.investor { --bg-color: #0f1115; --card-bg: #1a1d24; --text-main: #ffffff; --text-sub: #a0a5b1; --border-color: #2a2e37; --btn-bg: #1a1d24; --btn-text: #6b7280; --btn-active-bg: #2a2e37; --btn-active-text: #ffffff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg-color); color: var(--text-main); font-family: 'Pretendard', sans-serif; transition: background 0.3s ease, color 0.3s ease; display: flex; justify-content: center; min-height: 100vh; padding: 1rem; }
+.app-container { max-width: 480px; width: 100%; position: relative; overflow: hidden; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-top: 1rem; }
+.header h1 { font-size: 20px; font-weight: 800; }
+.header p { font-size: 11px; color: var(--text-sub); margin-top: 4px; font-weight: 600;}
+.live-dot { display: inline-block; width: 6px; height: 6px; background: #1D9E75; border-radius: 50%; margin-right: 4px; animation: blink 1.5s infinite; }
+@keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;} }
+
+.mode-toggle { display: flex; background: var(--btn-bg); border-radius: 12px; padding: 4px; border: 1px solid var(--border-color); }
+.mode-btn { flex: 1; padding: 8px 16px; border: none; background: transparent; color: var(--btn-text); font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Pretendard', sans-serif;}
+.mode-btn.active { background: var(--btn-active-bg); color: var(--btn-active-text); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+#list-view { transition: transform 0.3s ease, opacity 0.3s ease; }
+.currency-list { display: flex; flex-direction: column; gap: 12px; }
+.currency-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s; }
+.currency-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.card-left { display: flex; align-items: center; gap: 12px; }
+.flag-box { width: 44px; height: 44px; border-radius: 12px; background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 24px; }
+.cur-name { font-weight: 800; font-size: 16px; margin-bottom: 2px; }
+.cur-pair { font-size: 12px; color: var(--text-sub); }
+.card-right { text-align: right; }
+.cur-price { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; }
+.cur-grade { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; margin-top: 6px; }
+
+#detail-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); transform: translateX(100%); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; pointer-events: none; overflow-y: auto; padding-bottom: 2rem;}
+#detail-view.active { transform: translateX(0); opacity: 1; pointer-events: auto; }
+.back-btn { background: none; border: none; color: var(--text-main); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; font-family: 'Pretendard', sans-serif;}
+.detail-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; }
+.detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+
+.gauge-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin: 0 auto 1.5rem; }
+.gauge-svg { width: 280px; overflow: visible; z-index: 1; }
+.gauge-label { text-align: center; margin-top: -5px; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+.gauge-score { font-family: 'Space Mono', monospace; font-size: 52px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+.gauge-text { font-size: 15px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+
+.inv-board { background: var(--bg-color); border-radius: 12px; padding: 16px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+.inv-check-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--card-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); font-size: 13px; }
+.inv-check-item:last-child { margin-bottom: 0; }
+.inv-check-item.pass { border-left: 4px solid #1D9E75; }
+.inv-check-item.fail { border-left: 4px solid #E24B4A; }
+.inv-val-box { text-align: right; }
+.inv-target { font-size: 11px; color: var(--text-sub); margin-bottom: 2px; }
+.inv-curr { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px; }
+
+.collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+.toggle-icon { transition: transform 0.3s ease; font-size: 12px; color: var(--text-sub); }
+.collapsed .toggle-icon { transform: rotate(-90deg); }
+
+.slider-container, .macro-box, .sub-panel, .msg-box { background: var(--bg-color); border-radius: 12px; padding: 16px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+.slider-header, .macro-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 700; font-size: 14px; }
+input[type="range"] { width: 100%; accent-color: #1a73e8; }
+.macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.macro-item { background: var(--card-bg); padding: 10px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid var(--border-color); }
+
+.sub-row { margin-bottom: 18px; }
+.sub-row:last-child { margin-bottom: 0; }
+.sub-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+.progress-bg { width: 100%; height: 6px; background: var(--btn-bg); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+.progress-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.sub-stat-text { font-size: 11px; color: var(--text-sub); }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; text-align: center; }
+.stat-val { font-size: 18px; font-weight: 800; font-family: 'Space Mono', monospace; color: #1a73e8; margin-bottom: 4px; }
+.stat-label { font-size: 11px; font-weight: 700; color: var(--text-sub); }
+
+.action-section { margin-top: 1.25rem; text-align: center; padding-top: 1.25rem; border-top: 1px solid var(--border-color); }
+.cutoff-text { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.action-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s; font-family: 'Pretendard', sans-serif; }
+
+.c-A { color: #1D9E75; background: rgba(29, 158, 117, 0.15); }
+.c-B { color: #5DCAA5; background: rgba(93, 202, 165, 0.15); }
+.c-C { color: #888888; background: rgba(136, 136, 136, 0.15); }
+.c-D { color: #EF9F27; background: rgba(239, 159, 39, 0.15); }
+.c-E { color: #E24B4A; background: rgba(226, 75, 74, 0.15); }
+#loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); color:white; display:flex; justify-content:center; align-items:center; font-weight:700; font-size:18px; z-index: 1000; display:none; }
+</style>
+</head>
+<body class="traveler" id="bodyTheme">
+
+<div id="loading">퀀트 데이터 연동 중...</div>
+
+<div class="app-container">
+  
+  <div id="list-view">
+    <div class="header">
+      <div>
+        <h1>환율 온도계</h1>
+        <p><span class="live-dot"></span><span id="lastUpdate">상시관측 로딩중...</span></p>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-traveler" onclick="setMode('traveler')">✈️ 여행자</button>
+        <button class="mode-btn" id="btn-investor" onclick="setMode('investor')">📈 투자자</button>
+      </div>
+    </div>
+    <div class="currency-list" id="cardList"></div>
+  </div>
+
+  <div id="detail-view">
+    <div class="header" style="margin-bottom: 0.5rem; padding-top: 1rem;"><button class="back-btn" onclick="closeDetail()">← 뒤로가기</button></div>
+    <div class="detail-card">
+      <div class="detail-header">
+        <div class="card-left"><div class="flag-box" id="d-flag"></div><div><div class="cur-name" id="d-name"></div><div class="cur-pair" id="d-pair"></div></div></div>
+        <div class="card-right"><div class="cur-price" id="d-price"></div><div class="cur-pair">현재가</div></div>
+      </div>
+      
+      <div class="gauge-container" id="traveler-gauge">
+        <svg class="gauge-svg" viewBox="0 0 300 160">
+          <path d="M 30 150 A 120 120 0 0 1 78.4 57.6" fill="none" stroke="#1D9E75" stroke-width="22"/>
+          <path d="M 81 55.8 A 120 120 0 0 1 144.5 30.2" fill="none" stroke="#5DCAA5" stroke-width="22"/>
+          <path d="M 147.2 30 A 120 120 0 0 1 183.8 33.8" fill="none" stroke="#666666" stroke-width="22"/>
+          <path d="M 186.5 34.6 A 120 120 0 0 1 243.5 72" fill="none" stroke="#EF9F27" stroke-width="22"/>
+          <path d="M 245.8 74.6 A 120 120 0 0 1 270 150" fill="none" stroke="#E24B4A" stroke-width="22"/>
+          
+          <g id="needleG" style="transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
+             <line x1="150" y1="150" x2="150" y2="40" stroke="var(--text-main)" stroke-width="4" stroke-linecap="round"/>
+             <circle cx="150" cy="150" r="8" fill="var(--text-main)"/>
+          </g>
+        </svg>
+        <div class="gauge-label">
+           <div class="gauge-score" id="d-score">--</div>
+           <div class="gauge-text" id="d-gradeText">분석 중</div>
+        </div>
+      </div>
+
+      <div class="inv-board" id="investor-board" style="display:none;">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px;">⚡ 알고리즘 타점 체크리스트</div>
+        <div id="inv-checklist-container"></div>
+      </div>
+
+      <div id="dday-panel" class="slider-container">
+        <div class="slider-header"><span>✈️ 출국까지 남은 일수</span><span style="color:#1a73e8" id="dDayLabel">D-14</span></div>
+        <input type="range" id="dDaySlider" min="1" max="30" value="14" oninput="changeDDay()">
+      </div>
+      
+      <div class="msg-box">
+        <strong style="color:var(--text-main)">AI 코멘트</strong><br/>
+        <div id="d-aiMsg" style="color:var(--text-sub); margin-top: 6px; font-size: 13px; line-height: 1.5;">데이터 로딩 중...</div>
+        <div id="stats-container" class="stats-grid" style="display:none;"></div>
+      </div>
+
+      <div class="sub-panel" id="quant-sub-panel">
+          <div class="collapsible-header" onclick="togglePanel('sub-scores-container', this)">
+              <div style="font-size: 13px; font-weight: 800;">📊 퀀트 세부 지표 분석</div>
+              <div class="toggle-icon">▼</div>
+          </div>
+          <div id="sub-scores-container" style="margin-top: 15px;"></div>
+      </div>
+      
+      <div class="macro-box" id="macro-panel" style="display:none;">
+        <div class="collapsible-header macro-header" onclick="togglePanel('macro-content-wrapper', this)" style="margin-bottom:0;">
+            <span id="macro-header-text" style="font-weight:700;font-size:14px;">🌍 통화별 맞춤 거시경제 꼬리위험</span>
+            <div class="toggle-icon">▼</div>
+        </div>
+        <div id="macro-content-wrapper" style="margin-top: 10px;">
+            <div class="macro-grid" id="macro-grid"></div>
+            <!-- EUR 전용 안내문 렌더링 컨테이너 -->
+            <div id="macro-disclaimer" style="margin-top: 10px;"></div>
+        </div>
+      </div>
+
+      <div class="action-section" id="action-panel">
+        <div id="traveler-action">
+          <div class="cutoff-text" id="d-cutoffText" style="color:#1a73e8;">🎯 컷오프 목표: 로딩중</div>
+          <button class="action-btn" id="d-actionBtn">대기중...</button>
+        </div>
+        <div id="investor-action" style="display:none;">
+          <div class="cutoff-text" id="i-cutoffText" style="color:var(--text-main);">📈 퀀트 AI 트레이딩 시그널</div>
+          <button class="action-btn" id="inv-actionBtn">시그널 산출 중...</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const metaData = { USD: { flag: '🇺🇸', name: '달러 / 원', pair: 'USD/KRW' }, JPY: { flag: '🇯🇵', name: '엔 / 원', pair: 'JPY/KRW (100엔)' }, EUR: { flag: '🇪🇺', name: '유로 / 원', pair: 'EUR/KRW' }, AUD: { flag: '🇦🇺', name: '호주달러 / 원', pair: 'AUD/KRW' }, THB: { flag: '🇹🇭', name: '바트 / 원', pair: 'THB/KRW' }};
+const order = ['USD', 'JPY', 'EUR', 'AUD', 'THB'];
+const subMap = {"RSI": "상대강도 (RSI14)", "MOM5": "단기 모멘텀 (MOM5)", "MOM20": "중기 추세 (MOM20)", "SYNC": "다통화 동조성 (SYNC)", "VOL": "변동성 비율 (VOL)", "DXY": "달러 이격도 (DXY)"};
+
+let appMode = 'traveler', currentDDay = 14, globalData = {}, activeCurrency = null; 
+
+async function initialize() { updateTime(); setInterval(updateTime, 1000); await fetchAllData(); }
+async function fetchAllData() {
+    document.getElementById('loading').style.display = 'flex';
+    try {
+        const promises = order.map(k => fetch(`/api/score?currency=${k}&d_day=${currentDDay}`).then(r => r.json()));
+        const results = await Promise.all(promises);
+        results.forEach((data, i) => { globalData[order[i]] = data; });
+        renderMasterList(); if (activeCurrency) updateDetailView(activeCurrency);
+    } catch (e) { console.error(e); }
+    document.getElementById('loading').style.display = 'none';
+}
+
+function getGradeInfo(grade) {
+    if(grade === 'A') return { text: "싸다", guide: "환전하세요!" };
+    if(grade === 'B') return { text: "싼편", guide: "환전 고려" };
+    if(grade === 'C') return { text: "보통", guide: "급하면 OK" };
+    if(grade === 'D') return { text: "비싼편", guide: "기다려보세요" };
+    return { text: "비싸다", guide: "지금은 비추" };
+}
+
+function renderMasterList() {
+    document.getElementById('cardList').innerHTML = order.map(k => {
+        const d = globalData[k], meta = metaData[k]; if(!d) return '';
+        const info = getGradeInfo(d.grade);
+        return `<div class="currency-card" onclick="openDetail('${k}')"><div class="card-left"><div class="flag-box">${meta.flag}</div><div><div class="cur-name">${meta.name}</div><div class="cur-pair">${meta.pair}</div></div></div><div class="card-right"><div class="cur-price">${d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div><div class="cur-grade c-${d.grade}">${d.rsi}점 · ${info.text}</div></div></div>`;
+    }).join('');
+}
+
+function setMode(mode) {
+    appMode = mode; document.getElementById('bodyTheme').className = mode;
+    document.getElementById('btn-traveler').classList.toggle('active', mode === 'traveler');
+    document.getElementById('btn-investor').classList.toggle('active', mode === 'investor');
+    
+    document.getElementById('traveler-gauge').style.display = mode === 'traveler' ? 'flex' : 'none';
+    document.getElementById('quant-sub-panel').style.display = mode === 'traveler' ? 'block' : 'none'; 
+    
+    document.getElementById('dday-panel').style.display = mode === 'traveler' ? 'block' : 'none';
+    document.getElementById('investor-board').style.display = mode === 'investor' ? 'block' : 'none';
+    document.getElementById('macro-panel').style.display = mode === 'investor' ? 'block' : 'none';
+    document.getElementById('traveler-action').style.display = mode === 'traveler' ? 'block' : 'none';
+    document.getElementById('investor-action').style.display = mode === 'investor' ? 'block' : 'none';
+    
+    if(activeCurrency) updateDetailView(activeCurrency);
+}
+
+function togglePanel(contentId, headerElement) {
+    const content = document.getElementById(contentId);
+    if (content.style.display === 'none') {
+        content.style.display = ''; 
+        headerElement.classList.remove('collapsed');
+    } else {
+        content.style.display = 'none';
+        headerElement.classList.add('collapsed');
+    }
+}
+
+function openDetail(currencyCode) {
+    activeCurrency = currencyCode;
+    document.getElementById('list-view').style.transform = "translateX(-20%)"; document.getElementById('list-view').style.opacity = "0";
+    setTimeout(() => { document.getElementById('list-view').style.display = 'none'; }, 300);
+    const detailView = document.getElementById('detail-view'); detailView.style.display = 'block';
+    setTimeout(() => { detailView.classList.add('active'); }, 10);
+    updateDetailView(currencyCode);
+}
+
+function updateDetailView(currencyCode) {
+    const d = globalData[currencyCode], meta = metaData[currencyCode];
+    document.getElementById('d-flag').textContent = meta.flag; document.getElementById('d-name').textContent = meta.name;
+    document.getElementById('d-pair').textContent = meta.pair; document.getElementById('d-price').textContent = d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + (d.rsi / 100) * 180}, 150, 150)`);
+    const gScore = document.getElementById('d-score'); gScore.textContent = d.rsi; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
+    const info = getGradeInfo(d.grade);
+    document.getElementById('d-gradeText').textContent = `${d.grade}등급 (${info.text}·${info.guide})`;
+
+    if (d.is_investable && d.inv_conds) {
+        document.getElementById('inv-checklist-container').innerHTML = d.inv_conds.map(cond => {
+            const statusClass = cond.pass ? 'pass' : 'fail';
+            const statusColor = cond.pass ? '#1D9E75' : '#E24B4A';
+            return `<div class="inv-check-item ${statusClass}"><div style="font-weight:700;">${cond.name}</div><div class="inv-val-box"><div class="inv-target">목표: ${cond.target}</div><div class="inv-curr" style="color:${statusColor}">${cond.current}</div></div></div>`;
+        }).join('');
+    } else {
+        document.getElementById('inv-checklist-container').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-sub); font-size:12px;">🚫 해당 통화는 수수료 및 성향 문제로 퀀트 투자를 지원하지 않습니다.</div>`;
+    }
+
+    document.getElementById('d-aiMsg').innerHTML = d.ai_message;
+    
+    const statsContainer = document.getElementById('stats-container');
+    if (d.stat_details && Object.keys(d.stat_details).length > 0) {
+        let statsHtml = `<div class="stat-box"><div class="stat-val">${d.stat_details.win_rate}%</div><div class="stat-label">과거 승률</div></div>`;
+        statsHtml += `<div class="stat-box"><div class="stat-val">${d.stat_details.saving > 0 ? '+' : ''}${(d.stat_details.saving).toFixed(2)}%</div><div class="stat-label">평균 절감률</div></div>`;
+        statsContainer.innerHTML = statsHtml;
+        statsContainer.style.display = 'grid';
+    } else {
+        statsContainer.style.display = 'none';
+    }
+    
+    if (d.sub_details) {
+        document.getElementById('sub-scores-container').innerHTML = Object.entries(d.sub_details).map(([key, data]) => {
+            const val = data.score;
+            let color = "#888888"; 
+            let gradeBadge = "";
+            let statText = "";
+
+            if (data.grade) {
+                if (data.grade === 'A') color = "#1D9E75";
+                else if (data.grade === 'B') color = "#5DCAA5";
+                else if (data.grade === 'C') color = "#888888";
+                else if (data.grade === 'D') color = "#EF9F27";
+                else if (data.grade === 'E') color = "#E24B4A";
+                
+                gradeBadge = `<span style="display:inline-block; margin-left:6px; padding:2px 6px; border-radius:4px; background:${color}20; color:${color}; font-size:10px; font-weight:800;">${data.grade}</span>`;
+                
+                let advice = "";
+                if (data.saving > 0.5) advice = " · <span style='color:#1D9E75; font-weight:700;'>유리한 구간!</span>";
+                else if (data.saving > 0.1) advice = " · <span style='color:#5DCAA5;'>약간 유리</span>";
+                else if (data.saving > -0.1) advice = " · <span style='color:#888888;'>보통</span>";
+                else if (data.saving > -0.3) advice = " · <span style='color:#EF9F27;'>약간 불리</span>";
+                else advice = " · <span style='color:#E24B4A; font-weight:700;'>불리한 구간</span>";
+
+                statText = `<div class="sub-stat-text" style="margin-top:4px;">이 점수대에서 환전 시 승률 <strong>${data.win}%</strong> · 절감률 <strong>${data.saving > 0 ? '+' : ''}${data.saving.toFixed(2)}%</strong>${advice}</div>`;
+            } else {
+                color = val <= 40 ? "#1D9E75" : (val <= 60 ? "#888888" : "#E24B4A");
+            }
+
+            return `
+            <div class="sub-row">
+                <div class="sub-label">
+                    <div style="display:flex; align-items:center;">
+                        <span>${subMap[key] || key}</span>
+                        ${gradeBadge}
+                    </div>
+                    <span style="color:${color}; font-family:'Space Mono', monospace; font-size:14px; font-weight:800;">${val}점</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-fill" style="width:${val}%; background:${color}"></div>
+                </div>
+                ${statText}
+            </div>`;
+        }).join('');
+    }
+
+    document.getElementById('d-cutoffText').textContent = currentDDay <= 1 ? `🎯 D-1: 출국 임박 (무조건 환전)` : `🎯 D-${currentDDay} 목표 컷오프: ${d.threshold}점 이하`;
+    const tBtn = document.getElementById('d-actionBtn');
+    if (d.signal) { tBtn.textContent = "✅ 목표 컷오프 도달! (환전 권장)"; tBtn.style.background = "#1D9E75"; tBtn.style.color = "white"; }
+    else { tBtn.textContent = "⏳ 컷오프 대기 중..."; tBtn.style.background = "var(--btn-bg)"; tBtn.style.color = "var(--btn-text)"; }
+
+    const iBtn = document.getElementById('inv-actionBtn');
+    if (!d.is_investable) {
+        document.getElementById('i-cutoffText').textContent = "🚫 투자 부적합 통화";
+        iBtn.textContent = "수수료 및 성향 문제 (접근 금지)";
+        iBtn.style.background = "#2a2e37"; iBtn.style.color = "#a0a5b1"; iBtn.style.cursor = "not-allowed";
+    } else {
+        iBtn.style.cursor = "pointer";
+        if (d.inv_signal) {
+            document.getElementById('i-cutoffText').textContent = `🎯 매수 타점 포착! | ${d.inv_tpsl}`;
+            iBtn.textContent = `🔥 기계적 매수 진입 (${d.inv_strategy})`;
+            iBtn.style.background = "#E24B4A"; iBtn.style.color = "white";
+        } else {
+            document.getElementById('i-cutoffText').textContent = `⏳ 조건 미달 대기 중 | ${d.inv_tpsl}`;
+            iBtn.textContent = "알고리즘 조건 미달 (관망)";
+            iBtn.style.background = "var(--btn-bg)"; iBtn.style.color = "var(--btn-text)";
+        }
+    }
+
+    if(d.macro_items && d.macro_items.length > 0) {
+        const warnEmoji = d.macro_count === 0 ? '🟢' : d.macro_count <= 2 ? '🟡' : '🔴';
+        const totalMacros = d.macro_items.length;
+        document.getElementById('macro-header-text').innerHTML = `🌍 맞춤 경고 | ${warnEmoji} ${d.macro_count}/${totalMacros}개`;
+
+        document.getElementById('macro-grid').innerHTML = d.macro_items.map(ind => `
+            <div class="macro-item" style="border-left: 3px solid ${ind.w ? '#E24B4A' : '#1D9E75'}; display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>${ind.w ? '⚠️' : '✅'} ${ind.n}</span>
+                    <span style="color: ${ind.w ? '#E24B4A' : '#1D9E75'}; font-weight:700; font-family:'Space Mono', monospace;">
+                        ${ind.v}
+                    </span>
+                </div>
+                <div style="font-size: 10px; color: var(--text-sub); text-align: left; margin-left: 20px;">
+                    ${ind.c}
+                </div>
+            </div>
+        `).join('');
+
+        // 🌟 EUR 등 특별 안내문 렌더링
+        if (currencyCode === 'EUR') {
+            document.getElementById('macro-disclaimer').innerHTML = `<div style="font-size: 11px; color: var(--text-sub); text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">ℹ️ EUR은 대부분 거시지표의 영향이 약합니다.<br>KOSPI만 강력한 경고 지표입니다.</div>`;
+        } else {
+            document.getElementById('macro-disclaimer').innerHTML = "";
+        }
+    } else { 
+        document.getElementById('macro-header-text').innerHTML = `🌍 거시경제 꼬리위험`;
+        document.getElementById('macro-grid').innerHTML = ""; 
+        document.getElementById('macro-disclaimer').innerHTML = "";
+    }
+}
+
+function closeDetail() {
+    activeCurrency = null; document.getElementById('detail-view').classList.remove('active');
+    const listView = document.getElementById('list-view'); listView.style.display = 'block';
+    setTimeout(() => { document.getElementById('detail-view').style.display = 'none'; listView.style.opacity = "1"; listView.style.transform = "translateX(0)"; }, 300);
+}
+let ddayTimer; function changeDDay() { const val = document.getElementById('dDaySlider').value; currentDDay = val; document.getElementById('dDayLabel').textContent = "D-" + val; clearTimeout(ddayTimer); ddayTimer = setTimeout(fetchAllData, 500); }
+function updateTime() { const now = new Date(); const d = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')]; const t = [String(now.getHours()).padStart(2, '0'), String(now.getMinutes()).padStart(2, '0'), String(now.getSeconds()).padStart(2, '0')]; document.getElementById('lastUpdate').textContent = `상시 관측 · ${d.join('.')}. ${t.join(':')}`; }
+initialize();
+</script>
+</body>
+</html>
