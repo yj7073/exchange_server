@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import time
 import json
+import os
 
 app = FastAPI()
 
@@ -25,17 +26,21 @@ try:
         indicator_lookup = json.load(f)
     with open(f'{DATA_DIR}/markov_lookup.json', 'r', encoding='utf-8') as f:
         markov_lookup = json.load(f)
+    with open(f'{DATA_DIR}/thermo_config.json', 'r', encoding='utf-8') as f:
+        thermo_config = json.load(f)
     with open(f'{DATA_DIR}/dday_formulas.json', 'r', encoding='utf-8') as f:
         dday_formulas = json.load(f)
-    print("✅ 통계 데이터 JSON 로드 성공!")
+    with open(f'{DATA_DIR}/etf_config.json', 'r', encoding='utf-8') as f:
+        etf_config = json.load(f)
+    print("✅ 5개 통계 데이터 JSON 로드 성공!")
     HAS_STATS = True
 except FileNotFoundError:
-    print("⚠️ 통계 데이터 JSON을 찾을 수 없습니다.")
+    print("⚠️ 통계 데이터 JSON을 찾을 수 없습니다. (build_data.py를 먼저 실행하세요)")
     HAS_STATS = False
 
 def get_base_data():
     current_time = time.time()
-    if current_time - cache['time'] < 600 and cache['data']:
+    if current_time - cache['time'] < 60 and cache['data']:
         return cache['data'], cache['macro']
     
     tickers = {"USD": "KRW=X", "JPY": "JPYKRW=X", "EUR": "EURKRW=X", "AUD": "AUDKRW=X", "THB": "THBKRW=X"}
@@ -43,7 +48,6 @@ def get_base_data():
     for k, v in tickers.items():
         raw_data[k] = yf.Ticker(v).history(period="2y")['Close'].dropna()
     
-    # 🌟 통화별 최적화된 매크로 티커 세팅 (OIL 제외, HYG/TLT/NIKKEI/STOXX 추가)
     macros = {
         "KOSPI": "^KS11", "SP500": "^GSPC", "DXY": "DX-Y.NYB", 
         "VIX": "^VIX", "EEM": "EEM", "GOLD": "GC=F", 
@@ -151,7 +155,6 @@ def get_score(currency: str = "USD", d_day: int = 14):
         elif total <= 75: grade = "D"
         else: grade = "E"
 
-        # 🌟 통화별 완벽 맞춤 매크로 지표 스캔 (분석 결과 100% 반영)
         m_items = []; w_cnt = []; active_warnings = []
         
         k_chg = macro.get('KOSPI', {}).get('chg60', 0)
@@ -174,11 +177,9 @@ def get_score(currency: str = "USD", d_day: int = 14):
             c_str = f"위험: {'<' if is_less_than else '>'} {limit}{'%' if is_pct else ''}"
             m_items.append({"n": name, "c": c_str, "v": v_str, "w": bool(is_warn)})
 
-        # 공통 1순위
         add_macro("KOSPI 60일", k_chg, True, -10, True, "KOSPI 하락 (한국 증시 폭락)")
         add_macro("S&P500 60일", sp_chg, True, -10, True, "S&P500 하락 (미국 증시 폭락)")
 
-        # 통화별 분기
         if currency == "JPY":
             add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락")
             add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
@@ -201,7 +202,7 @@ def get_score(currency: str = "USD", d_day: int = 14):
             add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
 
         warn_total = sum(w_cnt)
-        capped_w_cnt = min(warn_total, 5) # 가이드라인 표시를 위한 캡핑
+        capped_w_cnt = min(warn_total, 5) 
 
         investor_guides = {
             0: {"fut": "+0.96%", "holder": "보유 유지", "buyer": "정상 매수 OK"},
@@ -258,5 +259,60 @@ def get_score(currency: str = "USD", d_day: int = 14):
         print(f"Error: {e}")
         return {"price": 0, "rsi": 50, "threshold": 50, "signal": False, "grade": "C", "is_investable": False, "inv_signal": False, "inv_strategy": "", "inv_tpsl": "", "inv_conds": [], "sub_details": {}, "macro_items": [], "macro_count": 0, "ai_message": "데이터 오류", "stat_details": {}}
 
+@app.get("/api/chart")
+def get_chart(currency: str = "USD", days: int = 90):
+    """일별 캔들차트 + 볼린저밴드 + RSI 데이터"""
+    try:
+        data, macro = get_base_data()
+        df = pd.DataFrame(data[currency])
+        df.columns = ['Close']
+        
+        delta = df['Close'].diff()
+        gain = delta.where(delta > 0, 0).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
+        loss = (-delta.where(delta < 0, 0)).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
+        df['RSI'] = 100 - (100 / (1 + (gain/loss)))
+
+        bb_period = 13 if currency == "JPY" else 12
+        bb_sigma = 2.0
+        
+        if currency == "EUR":
+            vol20 = float(df['Close'].pct_change().rolling(20).std().iloc[-1])
+            vol60 = float(df['Close'].pct_change().rolling(60).std().iloc[-1])
+            if vol20 < vol60:
+                bb_sigma = 1.5
+        
+        ma = df['Close'].rolling(bb_period).mean()
+        std = df['Close'].rolling(bb_period).std()
+        df['MA'] = ma
+        df['BB_Upper'] = ma + bb_sigma * std
+        df['BB_Lower'] = ma - bb_sigma * std
+        
+        df = df.tail(days)
+        df.dropna(inplace=True)
+        
+        chart_data = []
+        for date, row in df.iterrows():
+            chart_data.append({
+                "date": date.strftime("%Y-%m-%d"),
+                "close": round(float(row['Close']) * (100 if currency == "JPY" else 1), 2),
+                "ma": round(float(row['MA']) * (100 if currency == "JPY" else 1), 2),
+                "bb_upper": round(float(row['BB_Upper']) * (100 if currency == "JPY" else 1), 2),
+                "bb_lower": round(float(row['BB_Lower']) * (100 if currency == "JPY" else 1), 2),
+                "rsi": round(float(row['RSI']), 1) if not pd.isna(row['RSI']) else 50
+            })
+        
+        return {
+            "currency": currency,
+            "bb_period": bb_period,
+            "bb_sigma": bb_sigma,
+            "data": chart_data
+        }
+    except Exception as e:
+        print(f"Chart Error: {e}")
+        return {"currency": currency, "data": []}
+
 @app.get("/")
-def home(): return FileResponse("index.html")
+def home():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    html_path = os.path.join(base_dir, "index.html")
+    return FileResponse(html_path)

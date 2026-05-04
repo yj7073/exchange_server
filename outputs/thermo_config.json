@@ -1,0 +1,112 @@
+{
+  "weights": {
+    "JPY": {
+      "RSI": 0.5,
+      "MOM5": 0.25,
+      "SYNC": 0.15,
+      "MOM20": 0.1
+    },
+    "EUR": {
+      "RSI": 0.5,
+      "MOM5": 0.25,
+      "VOL": 0.1,
+      "SYNC": 0.1,
+      "DXY": 0.05
+    },
+    "THB": {
+      "RSI": 0.4,
+      "MOM5": 0.25,
+      "SYNC": 0.15,
+      "MOM20": 0.15,
+      "DXY": 0.05
+    },
+    "AUD": {
+      "RSI": 0.45,
+      "MOM5": 0.25,
+      "SYNC": 0.15,
+      "DXY": 0.1,
+      "MOM20": 0.05
+    },
+    "USD": {
+      "RSI": 0.45,
+      "MOM5": 0.25,
+      "SYNC": 0.15,
+      "MOM20": 0.1,
+      "VOL": 0.05
+    }
+  },
+  "grades": {
+    "A": {
+      "min": 0,
+      "max": 25,
+      "label": "싸다",
+      "msg": "환전하세요!"
+    },
+    "B": {
+      "min": 25,
+      "max": 45,
+      "label": "싼편",
+      "msg": "환전 고려"
+    },
+    "C": {
+      "min": 45,
+      "max": 55,
+      "label": "보통",
+      "msg": "급하면 OK"
+    },
+    "D": {
+      "min": 55,
+      "max": 75,
+      "label": "비싼편",
+      "msg": "기다려보세요"
+    },
+    "E": {
+      "min": 75,
+      "max": 100,
+      "label": "비싸다",
+      "msg": "지금은 비추"
+    }
+  },
+  "indicator_names": {
+    "RSI": "RSI (상대강도)",
+    "MOM5": "5일 모멘텀",
+    "MOM20": "20일 모멘텀",
+    "SYNC": "다통화 동조성",
+    "VOL": "변동성",
+    "DXY": "달러 방향",
+    "THERMO": "종합 온도계"
+  },
+  "investor_signals": {
+    "JPY": {
+      "rsi": 35,
+      "bb_period": 13,
+      "bb_sigma": 2.0,
+      "tp": 0.011,
+      "sl": 0.008
+    },
+    "EUR": {
+      "normal": {
+        "rsi": 38,
+        "bb_period": 12,
+        "bb_sigma": 2.0,
+        "tp": 0.018,
+        "sl": 0.008
+      },
+      "low_vol": {
+        "rsi": 42,
+        "bb_period": 12,
+        "bb_sigma": 1.5,
+        "tp": 0.008,
+        "sl": 0.006
+      },
+      "low_vol_condition": "VOL20 < VOL60"
+    }
+  },
+  "optimal_thresholds": {
+    "JPY": 35,
+    "EUR": 41,
+    "THB": 46,
+    "AUD": 36,
+    "USD": 50
+  }
+}
