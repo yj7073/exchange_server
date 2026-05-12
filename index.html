@@ -582,6 +582,14 @@ let priceChart = null;
 let currentChartDays = 90;
 
 async function initialize() { updateTime(); setInterval(updateTime, 1000); await fetchAllData(); }
+async function fetchSignalBanner() {
+    try {
+        const sigRes = await fetch('/api/signals');
+        const sigData = await sigRes.json();
+        renderSignalBanner(sigData.signals || []);
+    } catch(e) { console.log("Signal banner skipped"); }
+}
+
 async function fetchAllData() {
     document.getElementById('loading').style.display = 'flex';
     try {
@@ -590,11 +598,7 @@ async function fetchAllData() {
         results.forEach((data, i) => { globalData[order[i]] = data; });
         renderMasterList(); if (activeCurrency) updateDetailView(activeCurrency);
         
-        try {
-            const sigRes = await fetch('/api/signals');
-            const sigData = await sigRes.json();
-            renderSignalBanner(sigData.signals || []);
-        } catch(e) { console.log("Signal banner skipped"); }
+        await fetchSignalBanner();
     } catch (e) { console.error(e); }
     document.getElementById('loading').style.display = 'none';
 }
@@ -696,6 +700,9 @@ function setMode(mode) {
     if (banner) banner.style.display = (mode === 'investor') ? 'block' : 'none';
     
     if(activeCurrency) updateDetailView(activeCurrency);
+    
+    // 투자자 모드 진입 시 시그널 배너 갱신 (5개 통화 score API는 재호출하지 않음)
+    if (mode === 'investor') fetchSignalBanner();
 }
 
 function togglePanel(contentId, headerElement) {
