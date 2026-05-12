@@ -176,7 +176,7 @@ for name in ['JPY', 'EUR', 'THB', 'AUD', 'USD']:
             elif score <= 40: grade = "B"
             elif score <= 55: grade = "C"
             elif score <= 70: grade = "D"
-            else: grade = "E"
+            else: grade = "F"
             
             ind_lookup[str(score)] = {
                 "saving": avg,
@@ -237,7 +237,7 @@ for name in ['JPY', 'EUR', 'THB', 'AUD', 'USD']:
             b_pct = round(((future_scores > 25) & (future_scores <= 40)).sum() / len(future_scores) * 100, 1)
             c_pct = round(((future_scores > 40) & (future_scores <= 55)).sum() / len(future_scores) * 100, 1)
             d_pct = round(((future_scores > 55) & (future_scores <= 70)).sum() / len(future_scores) * 100, 1)
-            e_pct = round((future_scores > 70).sum() / len(future_scores) * 100, 1)
+            f_pct = round((future_scores > 70).sum() / len(future_scores) * 100, 1)
             
             cheaper = round((future_scores < score).sum() / len(future_scores) * 100, 1)
             expensive = round((future_scores > score).sum() / len(future_scores) * 100, 1)
@@ -246,7 +246,7 @@ for name in ['JPY', 'EUR', 'THB', 'AUD', 'USD']:
             down_prob = round((prices[idx + horizon] < prices[idx]).sum() / len(idx) * 100, 1)
             
             horizon_data[str(score)] = {
-                "A": a_pct, "B": b_pct, "C": c_pct, "D": d_pct, "E": e_pct,
+                "A": a_pct, "B": b_pct, "C": c_pct, "D": d_pct, "F": f_pct,
                 "cheaper": cheaper, "expensive": expensive,
                 "price_chg": price_chg, "down": down_prob,
                 "count": len(idx),
@@ -374,7 +374,7 @@ etf_config = {
         "AUD": {"unhedge": "KODEX 호주200", "hedge": "해당없음"},
     },
     "hedge_recommendation": {
-        "USD": {"default": "비헤지", "reason": "A~E 전 등급 비헤지 유리 (상관계수 0.972)"},
+        "USD": {"default": "비헤지", "reason": "A~F 전 등급 비헤지 유리 (상관계수 0.972)"},
         "JPY": {"default": "비헤지", "reason": "환헤지 ETF 구조적 손해 (-15%)"},
         "EUR": {"default": "환헤지", "reason": "유로 강세 추세, 환헤지가 유리"},
         "AUD": {"default": "비헤지", "reason": "비헤지 전 등급 유리"},
@@ -401,7 +401,7 @@ thermo_config = {
         "B": {"min": 26, "max": 40, "label": "싼편", "msg": "환전 고려"},
         "C": {"min": 41, "max": 55, "label": "보통", "msg": "급하면 OK"},
         "D": {"min": 56, "max": 70, "label": "비싼편", "msg": "기다려보세요"},
-        "E": {"min": 71, "max": 100, "label": "비싸다", "msg": "지금은 비추"},
+        "F": {"min": 71, "max": 100, "label": "비싸다", "msg": "지금은 비추"},
     },
     "indicator_names": indicator_names_kr,
     "optimal_thresholds": {

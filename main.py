@@ -68,11 +68,18 @@ def get_base_data():
     for k, v in tickers.items():
         ticker_obj = yf.Ticker(v)
         hist = ticker_obj.history(period="2y")
-        # 실시간 현재가 (장중 가격)
+        # 일봉 마지막 종가 (안전 기본값)
+        current_price = float(hist['Close'].iloc[-1]) if not hist.empty else 0
+        # 실시간 현재가: .info 대신 1일치 .history() 사용 (빠르고 안정적)
         try:
-            realtime = float(ticker_obj.info.get('regularMarketPrice', 0))
-        except:
-            realtime = 0
+            rt_hist = ticker_obj.history(period="1d")
+            if not rt_hist.empty:
+                realtime = float(rt_hist['Close'].iloc[-1])
+            else:
+                realtime = current_price
+        except Exception as e:
+            print(f"⚠️ {k} 실시간 가격 로드 실패 (안전장치 가동): {e}")
+            realtime = current_price
         raw_data[k] = {
             'Close': hist['Close'].dropna(),
             'High': hist['High'].dropna(),
@@ -151,7 +158,7 @@ def calc_thermo(df, currency):
     elif total <= 40: grade = "B"
     elif total <= 55: grade = "C"
     elif total <= 70: grade = "D"
-    else: grade = "E"
+    else: grade = "F"
     
     return total, grade, s
 
@@ -545,6 +552,43 @@ def get_chart(currency: str = "USD", days: int = 90):
     except Exception as e:
         print(f"Chart Error: {e}")
         return {"currency": currency, "data": []}
+
+@app.get("/api/score_history")
+def get_score_history(currency: str = "USD"):
+    """과거 시점(어제/1주/1달/1년)의 온도계 점수 비교"""
+    try:
+        data, macro = get_base_data()
+        df = calc_all_indicators(data, currency)
+        weights = THERMO_WEIGHTS[currency]
+        
+        # 과거 시점들 (영업일 기준)
+        offsets = {"yesterday": -2, "week": -6, "month": -21, "year": -252}
+        summary = {}
+        
+        for label, offset in offsets.items():
+            if len(df) < abs(offset):
+                summary[label] = None
+                continue
+            
+            # 해당 시점 기준 가중 합계
+            total = 0
+            for ind, weight in weights.items():
+                if ind == 'SYNC':
+                    # SYNC는 시계열 아님 → 중립값 50으로 처리 (보수적)
+                    val = 50
+                elif ind in df.columns:
+                    raw = df[ind].iloc[offset]
+                    val = float(raw) if not pd.isna(raw) else 50
+                else:
+                    val = 50
+                total += val * weight
+            
+            summary[label] = round(total, 1)
+        
+        return {"summary": summary}
+    except Exception as e:
+        print(f"History Error: {e}")
+        return {"summary": {}}
 
 @app.get("/")
 def home():

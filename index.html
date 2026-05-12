@@ -414,7 +414,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <div id="calc-content-wrapper" style="margin-top: 15px;">
             <div class="calc-input-row">
               <label>환전 금액:</label>
-              <input type="number" class="calc-input" id="calc-amount" value="5000000" oninput="updateCalc()">
+              <input type="text" inputmode="numeric" class="calc-input" id="calc-amount" value="5,000,000" oninput="formatMoneyInput(this); updateCalc()">
               <span style="font-size:12px; font-weight:700;">원</span>
             </div>
             <div class="calc-grid" id="calc-grid">
@@ -455,7 +455,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
                 <input type="number" id="tf-rate" placeholder="환율" step="0.01">
               </div>
               <div class="trade-form-row">
-                <input type="number" id="tf-amount" placeholder="금액(원)" value="1000000">
+                <input type="text" inputmode="numeric" id="tf-amount" placeholder="금액(원)" value="1,000,000" oninput="formatMoneyInput(this)">
                 <select id="tf-type" style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-color); color:var(--text-main); font-size:12px;">
                   <option value="buy">매수 (원→외화)</option>
                   <option value="sell">매도 (외화→원)</option>
@@ -631,7 +631,34 @@ function getGradeInfo(grade) {
     if(grade === 'B') return { text: "싼편", guide: "환전 고려" };
     if(grade === 'C') return { text: "보통", guide: "급하면 OK" };
     if(grade === 'D') return { text: "비싼편", guide: "기다려보세요" };
+    if(grade === 'F') return { text: "비싸다", guide: "지금은 비추" };
     return { text: "비싸다", guide: "지금은 비추" };
+}
+
+// 금액 입력 시 자동으로 콤마 찍어주기 (예: 5000000 → 5,000,000)
+function formatMoneyInput(input) {
+    // 커서 위치 보존을 위한 사전 작업
+    const oldValue = input.value;
+    const oldLength = oldValue.length;
+    const cursorPos = input.selectionStart;
+    
+    // 숫자만 추출 (콤마, 공백, 문자 모두 제거)
+    const numericValue = oldValue.replace(/[^0-9]/g, '');
+    
+    // 빈 값 처리
+    if (numericValue === '') {
+        input.value = '';
+        return;
+    }
+    
+    // 콤마 포맷 적용
+    const formatted = parseInt(numericValue, 10).toLocaleString('ko-KR');
+    input.value = formatted;
+    
+    // 커서 위치 복원 (콤마 추가/제거에 따른 자릿수 변화 보정)
+    const newLength = formatted.length;
+    const newCursorPos = Math.max(0, cursorPos + (newLength - oldLength));
+    input.setSelectionRange(newCursorPos, newCursorPos);
 }
 
 function renderMasterList() {
@@ -669,12 +696,6 @@ function setMode(mode) {
     if (banner) banner.style.display = (mode === 'investor') ? 'block' : 'none';
     
     if(activeCurrency) updateDetailView(activeCurrency);
-    
-    // 모드 변경 시 메시지 초기화 후 새 데이터 가져오기
-    const aiMsg = document.getElementById('d-aiMsg');
-    if (aiMsg) aiMsg.innerHTML = '데이터 로딩 중...';
-    
-    if (typeof fetchAllData === 'function') fetchAllData();
 }
 
 function togglePanel(contentId, headerElement) {
@@ -1002,11 +1023,11 @@ function renderChart(chartData) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'BB 상단', data: uppers, borderColor: 'rgba(226,75,74,0.3)', borderWidth: 1, borderDash: [4,4], pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.3)', borderWidth: 1, borderDash: [4,4], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
+                { label: 'BB 상단', data: uppers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: false, yAxisID: 'y' },
+                { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: 'WR 타점', data: targetWrs, borderColor: 'rgba(156, 39, 176, 0.4)', borderWidth: 1.5, borderDash: [2,2], pointRadius: 0, fill: false, yAxisID: 'y1' },
+                { label: 'WR 타점', data: targetWrs, borderColor: 'rgba(156, 39, 176, 0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
                 { label: 'WR', data: wrs, borderColor: 'rgba(156, 39, 176, 0.8)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1' }
             ]
         },
@@ -1025,7 +1046,7 @@ function renderChart(chartData) {
 function updateCalc() {
     if (!activeCurrency || !globalData[activeCurrency]) return;
     const d = globalData[activeCurrency];
-    const amount = parseInt(document.getElementById('calc-amount').value) || 5000000;
+    const amount = parseInt(document.getElementById('calc-amount').value.replace(/,/g, '')) || 5000000;
     const price = d.price;
     const fee = 0;  // 토스 수수료 0%
     
@@ -1071,7 +1092,7 @@ function toggleTradeForm() {
 
 function saveTrade() {
     const date = document.getElementById('tf-date').value, rate = parseFloat(document.getElementById('tf-rate').value);
-    const amount = parseInt(document.getElementById('tf-amount').value), type = document.getElementById('tf-type').value, memo = document.getElementById('tf-memo').value;
+    const amount = parseInt(document.getElementById('tf-amount').value.replace(/,/g, '')), type = document.getElementById('tf-type').value, memo = document.getElementById('tf-memo').value;
     if (!date || !rate || !amount) { alert('날짜, 환율, 금액을 입력해주세요'); return; }
     const trades = getTrades(); trades.unshift({ date, rate, amount, type, memo, currency: activeCurrency, id: Date.now() });
     saveTrades(trades); toggleTradeForm(); renderTrades();
