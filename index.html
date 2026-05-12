@@ -56,6 +56,75 @@ body { background: var(--bg-color); color: var(--text-main); font-family: 'Prete
 .inv-target { font-size: 11px; color: var(--text-sub); margin-bottom: 2px; }
 .inv-curr { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px; }
 
+/* 온도계 + 비교 점수 가로 배치 (CNN 스타일) */
+.gauge-with-history {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.gauge-with-history .gauge-container {
+    flex: 1;
+    min-width: 0;
+}
+.score-history-summary {
+    width: 110px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+.history-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 0;
+}
+.history-row + .history-row {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 8px;
+}
+.history-label {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+.history-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: 'Space Mono', monospace;
+}
+.history-value.grade-A { color: #1D9E75; }
+.history-value.grade-B { color: #5DCAA5; }
+.history-value.grade-C { color: #666666; }
+.history-value.grade-D { color: #EF9F27; }
+.history-value.grade-F { color: #E24B4A; }
+
+@media (max-width: 480px) {
+    .gauge-with-history { flex-direction: column; }
+    .score-history-summary {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .history-row { 
+        flex-direction: column; 
+        text-align: center; 
+        border: none !important; 
+        padding: 0 !important;
+        flex: 1;
+    }
+    .history-row + .history-row {
+        border-left: 1px dashed var(--border-color) !important;
+    }
+}
+
 .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
 .toggle-icon { transition: transform 0.3s ease; font-size: 12px; color: var(--text-sub); }
 .collapsed .toggle-icon { transform: rotate(-90deg); }
@@ -166,7 +235,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 .c-B { color: #5DCAA5; background: rgba(93, 202, 165, 0.15); }
 .c-C { color: #888888; background: rgba(136, 136, 136, 0.15); }
 .c-D { color: #EF9F27; background: rgba(239, 159, 39, 0.15); }
-.c-E { color: #E24B4A; background: rgba(226, 75, 74, 0.15); }
+.c-F { color: #E24B4A; background: rgba(226, 75, 74, 0.15); }
 .signal-banner { background: linear-gradient(135deg, #E24B4A, #c0392b); color: white; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; animation: bannerPulse 2s infinite; }
 .signal-banner.no-signal { background: var(--card-bg); color: var(--text-sub); border: 1px solid var(--border-color); animation: none; }
 @keyframes bannerPulse { 0%{box-shadow:0 0 0 0 rgba(226,75,74,0.4)} 70%{box-shadow:0 0 0 8px rgba(226,75,74,0)} 100%{box-shadow:0 0 0 0 rgba(226,75,74,0)} }
@@ -244,21 +313,43 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <div class="card-right"><div class="cur-price" id="d-price"></div><div class="cur-pair">현재가</div></div>
       </div>
       
-      <div class="gauge-container" id="traveler-gauge">
-        <svg class="gauge-svg" viewBox="0 0 300 160">
-          <path d="M 30 150 A 120 120 0 0 1 78.4 57.6" fill="none" stroke="#1D9E75" stroke-width="22"/>
-          <path d="M 81 55.8 A 120 120 0 0 1 144.5 30.2" fill="none" stroke="#5DCAA5" stroke-width="22"/>
-          <path d="M 147.2 30 A 120 120 0 0 1 183.8 33.8" fill="none" stroke="#666666" stroke-width="22"/>
-          <path d="M 186.5 34.6 A 120 120 0 0 1 243.5 72" fill="none" stroke="#EF9F27" stroke-width="22"/>
-          <path d="M 245.8 74.6 A 120 120 0 0 1 270 150" fill="none" stroke="#E24B4A" stroke-width="22"/>
-          <g id="needleG" style="transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
-             <line x1="150" y1="150" x2="150" y2="40" stroke="var(--text-main)" stroke-width="4" stroke-linecap="round"/>
-             <circle cx="150" cy="150" r="8" fill="var(--text-main)"/>
-          </g>
-        </svg>
-        <div class="gauge-label">
-           <div class="gauge-score" id="d-score">--</div>
-           <div class="gauge-text" id="d-gradeText">분석 중</div>
+      <div class="gauge-with-history" id="traveler-gauge-wrapper">
+        <div class="gauge-container" id="traveler-gauge">
+          <svg class="gauge-svg" viewBox="0 0 300 160">
+            <path d="M 30 150 A 120 120 0 0 1 78.4 57.6" fill="none" stroke="#1D9E75" stroke-width="22"/>
+            <path d="M 81 55.8 A 120 120 0 0 1 144.5 30.2" fill="none" stroke="#5DCAA5" stroke-width="22"/>
+            <path d="M 147.2 30 A 120 120 0 0 1 183.8 33.8" fill="none" stroke="#666666" stroke-width="22"/>
+            <path d="M 186.5 34.6 A 120 120 0 0 1 243.5 72" fill="none" stroke="#EF9F27" stroke-width="22"/>
+            <path d="M 245.8 74.6 A 120 120 0 0 1 270 150" fill="none" stroke="#E24B4A" stroke-width="22"/>
+            <g id="needleG" style="transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
+              <line x1="150" y1="150" x2="150" y2="40" stroke="var(--text-main)" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="150" cy="150" r="8" fill="var(--text-main)"/>
+            </g>
+          </svg>
+          <div class="gauge-label">
+            <div class="gauge-score" id="d-score">--</div>
+            <div class="gauge-text" id="d-gradeText">분석 중</div>
+          </div>
+        </div>
+        
+        <!-- 비교 점수 (CNN 스타일) -->
+        <div class="score-history-summary" id="score-history-summary">
+          <div class="history-row">
+            <div class="history-label">어제</div>
+            <div class="history-value" id="hist-yesterday">--</div>
+          </div>
+          <div class="history-row">
+            <div class="history-label">1주 전</div>
+            <div class="history-value" id="hist-week">--</div>
+          </div>
+          <div class="history-row">
+            <div class="history-label">1달 전</div>
+            <div class="history-value" id="hist-month">--</div>
+          </div>
+          <div class="history-row">
+            <div class="history-label">1년 전</div>
+            <div class="history-value" id="hist-year">--</div>
+          </div>
         </div>
       </div>
 
@@ -556,7 +647,7 @@ function setMode(mode) {
     document.getElementById('btn-traveler').classList.toggle('active', mode === 'traveler');
     document.getElementById('btn-investor').classList.toggle('active', mode === 'investor');
     
-    document.getElementById('traveler-gauge').style.display = mode === 'traveler' ? 'flex' : 'none';
+    document.getElementById('traveler-gauge-wrapper').style.display = mode === 'traveler' ? 'flex' : 'none';
     document.getElementById('quant-sub-panel').style.display = mode === 'traveler' ? 'block' : 'none'; 
     document.getElementById('dday-panel').style.display = mode === 'traveler' ? 'block' : 'none';
     
@@ -604,6 +695,7 @@ function openDetail(currencyCode) {
     const detailView = document.getElementById('detail-view'); detailView.style.display = 'block';
     setTimeout(() => { detailView.classList.add('active'); }, 10);
     updateDetailView(currencyCode);
+    loadScoreHistory(currencyCode);  // 비교 점수 + 과거 차트 데이터 로드
     
     // 모든 아코디언 패널 처음엔 접힌 상태로
     const collapsibleIds = ['sub-scores-container', 'chart-content-wrapper', 'calc-content-wrapper', 'macro-content-wrapper', 'tradelog-content-wrapper'];
@@ -721,7 +813,7 @@ function updateDetailView(currencyCode) {
                 else if (data.grade === 'B') color = "#5DCAA5";
                 else if (data.grade === 'C') color = "#888888";
                 else if (data.grade === 'D') color = "#EF9F27";
-                else if (data.grade === 'E') color = "#E24B4A";
+                else if (data.grade === 'F') color = "#E24B4A";
                 
                 gradeBadge = `<span style="display:inline-block; margin-left:6px; padding:2px 6px; border-radius:4px; background:${color}20; color:${color}; font-size:10px; font-weight:800;">${data.grade}</span>`;
                 
@@ -840,6 +932,42 @@ async function loadChart(days) {
         const chartData = await res.json();
         renderChart(chartData);
     } catch(e) { console.error("Chart error:", e); }
+}
+
+// 과거 온도계 점수 로드 (비교 점수만)
+async function loadScoreHistory(currency) {
+    try {
+        const res = await fetch(`/api/score_history?currency=${currency}`);
+        const data = await res.json();
+        
+        // 비교 점수 표시
+        const s = data.summary || {};
+        updateHistoryValue('hist-yesterday', s.yesterday);
+        updateHistoryValue('hist-week', s.week);
+        updateHistoryValue('hist-month', s.month);
+        updateHistoryValue('hist-year', s.year);
+    } catch(e) {
+        console.error("History error:", e);
+    }
+}
+
+function updateHistoryValue(elId, score) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (score === null || score === undefined) {
+        el.textContent = '--';
+        el.className = 'history-value';
+        return;
+    }
+    el.textContent = Math.round(score);
+    // 등급별 색상
+    let grade = 'C';
+    if (score <= 25) grade = 'A';
+    else if (score <= 40) grade = 'B';
+    else if (score <= 55) grade = 'C';
+    else if (score <= 70) grade = 'D';
+    else grade = 'F';
+    el.className = `history-value grade-${grade}`;
 }
 
 function renderChart(chartData) {
