@@ -38,6 +38,26 @@ except FileNotFoundError:
     print("⚠️ 통계 데이터 JSON을 찾을 수 없습니다. (build_data.py를 먼저 실행하세요)")
     HAS_STATS = False
 
+# ═══════════════════════════════════════
+# v7 온도계 가중치 + 투자자 전략 설정
+# ═══════════════════════════════════════
+
+THERMO_WEIGHTS = {
+    'JPY': {'WR10': 0.45, 'SYNC': 0.15, 'DISP10': 0.20, 'WR7': 0.20},
+    'EUR': {'WR10': 0.40, 'WR7': 0.60},
+    'THB': {'WR10': 0.45, 'MOM3': 0.45, 'WR14': 0.05, 'STOCH': 0.05},
+    'AUD': {'WR10': 1.00},
+    'USD': {'WR10': 0.60, 'WR7': 0.15, 'DISP20': 0.05, 'WR20': 0.20},
+}
+
+INVESTOR_STRATEGIES = {
+    'JPY': {'wr': -95, 'bb_p': 15, 'bb_s': 1.5, 'tp': 1.2, 'sl': 1.5, 'label': 'WR≤-95 + BB(15, 1.5σ)'},
+    'EUR': {'wr': -90, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-90 + BB(10, 1.5σ)'},
+    'THB': {'wr': -95, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.0, 'label': 'WR≤-95 + BB(10, 1.5σ)'},
+    'AUD': {'wr': -90, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-90 + BB(10, 1.5σ)'},
+    'USD': {'wr': -80, 'bb_p': 20, 'bb_s': 2.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-80 + BB(20, 2.5σ)'},
+}
+
 def get_base_data():
     current_time = time.time()
     if current_time - cache['time'] < 60 and cache['data']:
@@ -46,7 +66,19 @@ def get_base_data():
     tickers = {"USD": "KRW=X", "JPY": "JPYKRW=X", "EUR": "EURKRW=X", "AUD": "AUDKRW=X", "THB": "THBKRW=X"}
     raw_data = {}
     for k, v in tickers.items():
-        raw_data[k] = yf.Ticker(v).history(period="2y")['Close'].dropna()
+        ticker_obj = yf.Ticker(v)
+        hist = ticker_obj.history(period="2y")
+        # 실시간 현재가 (장중 가격)
+        try:
+            realtime = float(ticker_obj.info.get('regularMarketPrice', 0))
+        except:
+            realtime = 0
+        raw_data[k] = {
+            'Close': hist['Close'].dropna(),
+            'High': hist['High'].dropna(),
+            'Low': hist['Low'].dropna(),
+            'realtime': realtime,
+        }
     
     macros = {
         "KOSPI": "^KS11", "SP500": "^GSPC", "DXY": "DX-Y.NYB", 
@@ -67,80 +99,131 @@ def get_base_data():
     cache['time'] = current_time
     return raw_data, macro_res
 
+def calc_williams_r(high, low, close, period):
+    highest = high.rolling(period).max()
+    lowest = low.rolling(period).min()
+    return ((highest - close) / (highest - lowest)) * -100
+
+def calc_all_indicators(data, currency):
+    """v7 지표 전부 계산 — score API와 signals API 공용"""
+    close = data[currency]['Close']
+    high = data[currency]['High']
+    low = data[currency]['Low']
+    df = pd.DataFrame({'Close': close, 'High': high, 'Low': low})
+    
+    for p in [7, 10, 14, 20]:
+        wr = calc_williams_r(df['High'], df['Low'], df['Close'], p)
+        df[f'WR{p}'] = (wr + 100).clip(0, 100)
+    
+    df['MOM3'] = ((df['Close'].pct_change(3)*100 + 2) / 4 * 100).clip(0, 100)
+    
+    sync_pool = ["JPY", "EUR", "THB", "AUD"]
+    if currency in sync_pool: sync_pool.remove(currency)
+    other_moms = []
+    for c in sync_pool:
+        if c in data:
+            c_close = data[c]['Close']
+            if len(c_close) >= 6:
+                other_moms.append(float(((c_close.iloc[-1] / c_close.iloc[-6]) - 1) * 100))
+    df['SYNC'] = float(np.clip(((float(np.mean(other_moms)) + 2) / 4) * 100, 0, 100)) if other_moms else 50
+    
+    for p in [10, 20]:
+        ma = df['Close'].rolling(p).mean()
+        df[f'DISP{p}'] = ((df['Close'] / ma - 0.95) / 0.10 * 100).clip(0, 100)
+    
+    low14 = df['Low'].rolling(14).min()
+    high14 = df['High'].rolling(14).max()
+    df['STOCH'] = ((df['Close'] - low14) / (high14 - low14) * 100).clip(0, 100)
+    
+    return df
+
+def calc_thermo(df, currency):
+    """v7 온도계 점수 + 등급 계산"""
+    weights = THERMO_WEIGHTS[currency]
+    s = {}
+    total = 0
+    for ind, weight in weights.items():
+        val = float(df[ind].iloc[-1]) if ind in df.columns and not pd.isna(df[ind].iloc[-1]) else 50
+        s[ind] = val
+        total += val * weight
+    
+    if total <= 25: grade = "A"
+    elif total <= 40: grade = "B"
+    elif total <= 55: grade = "C"
+    elif total <= 70: grade = "D"
+    else: grade = "E"
+    
+    return total, grade, s
+
+def calc_inv_signal(df, currency, realtime_price=0):
+    """v7 투자자 시그널 계산 + 실시간 BB 재확인"""
+    strat = INVESTOR_STRATEGIES[currency]
+    curr_price = float(df['Close'].iloc[-1])  # 전일 종가
+    adj_price = curr_price * (100 if currency == "JPY" else 1)
+    curr_wr10 = float(calc_williams_r(df['High'], df['Low'], df['Close'], 10).iloc[-1])
+    
+    bb_ma = float(df['Close'].rolling(strat['bb_p']).mean().iloc[-1])
+    bb_std = float(df['Close'].rolling(strat['bb_p']).std().iloc[-1])
+    bb_lower = bb_ma - strat['bb_s'] * bb_std
+    bb_lower_display = bb_lower * (100 if currency == "JPY" else 1)
+    
+    pass_wr = bool(curr_wr10 <= strat['wr'])
+    pass_bb = bool(curr_price <= bb_lower)
+    inv_signal = pass_wr and pass_bb  # 전일 종가 기준 시그널
+    
+    # 실시간 BB 재확인
+    rt_price = realtime_price if realtime_price > 0 else curr_price
+    rt_adj = rt_price * (100 if currency == "JPY" else 1)
+    rt_below_bb = bool(rt_price <= bb_lower)
+    
+    if inv_signal and not rt_below_bb:
+        # 어제 시그널 떴지만 오늘 BB 위로 복귀 → 보류
+        rt_status = "⚠️ BB 위 복귀 — 매수 보류"
+        rt_valid = False
+    elif inv_signal and rt_below_bb:
+        # 어제 시그널 + 오늘도 BB 아래 → 유효!
+        rt_status = "✅ 실시간 확인 — 매수 유효!"
+        rt_valid = True
+    else:
+        rt_status = ""
+        rt_valid = False
+    
+    tp_price = round(rt_adj * (1 + strat['tp']/100), 2)
+    sl_price = round(rt_adj * (1 - strat['sl']/100), 2)
+    
+    inv_conds = [
+        {"name": "WR(10) 전일종가", "target": f"≤ {strat['wr']}", "current": f"{curr_wr10:.1f}", "pass": pass_wr},
+        {"name": f"BB 하단({strat['bb_p']}, {strat['bb_s']}σ)", "target": f"≤ {bb_lower_display:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb},
+    ]
+    
+    # 실시간 가격 조건 추가 (시그널 뜬 경우만)
+    if inv_signal:
+        inv_conds.append({
+            "name": "📡 실시간 BB 재확인",
+            "target": f"≤ {bb_lower_display:.2f}",
+            "current": f"{rt_adj:.2f}",
+            "pass": rt_below_bb,
+        })
+    
+    inv_tpsl = f"익절 {strat['tp']}% / 손절 {strat['sl']}% / 타임아웃 20일"
+    if inv_signal and rt_valid:
+        inv_tpsl += f" | 💰 익절가: {tp_price:.2f} | 🛑 손절가: {sl_price:.2f}"
+    
+    return inv_signal, strat['label'], inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid
+
 @app.get("/api/score")
-def get_score(currency: str = "USD", d_day: int = 14):
+def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
     try:
         data, macro = get_base_data()
-        df = pd.DataFrame(data[currency])
-        df.columns = ['Close']
-        
-        delta = df['Close'].diff()
-        gain = delta.where(delta > 0, 0).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
-        loss = (-delta.where(delta < 0, 0)).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
-        df['RSI'] = 100 - (100 / (1 + (gain/loss)))
+        df = calc_all_indicators(data, currency)
         
         curr_price = float(df['Close'].iloc[-1])
-        curr_rsi = float(df['RSI'].iloc[-1])
         adj_price = curr_price * (100 if currency == "JPY" else 1)
         
-        bb_13_2 = float(df['Close'].rolling(13).mean().iloc[-1] - (df['Close'].rolling(13).std().iloc[-1] * 2))
-        bb_12_2 = float(df['Close'].rolling(12).mean().iloc[-1] - (df['Close'].rolling(12).std().iloc[-1] * 2))
-        bb_12_15 = float(df['Close'].rolling(12).mean().iloc[-1] - (df['Close'].rolling(12).std().iloc[-1] * 1.5))
+        # 온도계
+        total, grade, s = calc_thermo(df, currency)
         
-        vol20_raw = float(df['Close'].pct_change().rolling(20).std().iloc[-1])
-        vol60_raw = float(df['Close'].pct_change().rolling(60).std().iloc[-1])
-        vol250_raw = float(df['Close'].pct_change().rolling(250).std().iloc[-1])
-
-        inv_signal = False; inv_strategy = ""; inv_tpsl = ""; inv_conds = []
-
-        if currency == "JPY":
-            pass_rsi = bool(curr_rsi <= 35)
-            pass_bb = bool(curr_price <= bb_13_2)
-            inv_signal = pass_rsi and pass_bb
-            inv_strategy = "RSI≤35 + BB(13, 2σ) 하향 돌파"
-            inv_tpsl = "익절 1.1% / 손절 0.8% / 타임아웃 30일"
-            inv_conds = [{"name": "상대강도 (RSI)", "target": "≤ 35.0", "current": f"{curr_rsi:.1f}", "pass": pass_rsi}, {"name": "볼린저 하단 (13, 2σ)", "target": f"≤ {bb_13_2 * 100:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb}]
-        elif currency == "EUR":
-            is_low_vol = bool(vol20_raw < vol60_raw)
-            if is_low_vol:
-                pass_rsi = bool(curr_rsi <= 42)
-                pass_bb = bool(curr_price <= bb_12_15)
-                inv_signal = pass_rsi and pass_bb
-                inv_strategy = "[저변동성] RSI≤42 + BB(12, 1.5σ)"
-                inv_tpsl = "익절 0.8% / 손절 0.6%"
-                inv_conds = [{"name": "시장 변동성", "target": "저변동성 유지", "current": "저변동성", "pass": True}, {"name": "상대강도 (RSI)", "target": "≤ 42.0", "current": f"{curr_rsi:.1f}", "pass": pass_rsi}, {"name": "볼린저 하단", "target": f"≤ {bb_12_15:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb}]
-            else:
-                pass_rsi = bool(curr_rsi <= 38)
-                pass_bb = bool(curr_price <= bb_12_2)
-                inv_signal = pass_rsi and pass_bb
-                inv_strategy = "[고변동성] RSI≤38 + BB(12, 2σ)"
-                inv_tpsl = "익절 1.8% / 손절 0.8%"
-                inv_conds = [{"name": "시장 변동성", "target": "고변동성 돌파", "current": "고변동성", "pass": True}, {"name": "상대강도 (RSI)", "target": "≤ 38.0", "current": f"{curr_rsi:.1f}", "pass": pass_rsi}, {"name": "볼린저 하단", "target": f"≤ {bb_12_2:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb}]
-
-        mom5_val = float(df['Close'].pct_change(5).iloc[-1]) * 100
-        mom5_score = float(np.clip(((mom5_val + 3) / 6) * 100, 0, 100))
-        mom20_val = float(df['Close'].pct_change(20).iloc[-1]) * 100
-        mom20_score = float(np.clip(((mom20_val + 12) / 24) * 100, 0, 100))
-
-        sync_pool = ["JPY", "EUR", "THB", "AUD"]
-        if currency in sync_pool: sync_pool.remove(currency)
-        other_moms = [float(((data[c].iloc[-1] / data[c].iloc[-6]) - 1) * 100) for c in sync_pool if c in data]
-        sync_score = float(np.clip(((float(np.mean(other_moms)) + 2) / 4) * 100, 0, 100)) if other_moms else 50
-        vol_ratio = vol20_raw / vol250_raw if vol250_raw != 0 else 1
-        vol_score = float(np.clip(100 - ((vol_ratio - 0.5) / 1.5) * 100, 0, 100))
-
-        dxy_val = macro.get('DXY', {}).get('val', 100)
-        dxy_ma20 = macro.get('DXY', {}).get('ma20', 100)
-        dxy_score = float(np.clip(((dxy_val - dxy_ma20) / dxy_ma20 * 100 * 20 + 50), 0, 100))
-
-        s = {"RSI": curr_rsi, "MOM5": mom5_score, "MOM20": mom20_score, "VOL": vol_score, "SYNC": sync_score, "DXY": dxy_score}
-
-        if currency == "JPY": total = (s["RSI"]*0.50) + (s["MOM5"]*0.25) + (s["SYNC"]*0.15) + (s["MOM20"]*0.10)
-        elif currency == "EUR": total = (s["RSI"]*0.50) + (s["MOM5"]*0.25) + (s["VOL"]*0.10) + (s["SYNC"]*0.10) + (s["DXY"]*0.05)
-        elif currency == "THB": total = (s["RSI"]*0.40) + (s["MOM5"]*0.25) + (s["MOM20"]*0.15) + (s["SYNC"]*0.15) + (s["DXY"]*0.05)
-        elif currency == "AUD": total = (s["RSI"]*0.45) + (s["MOM5"]*0.25) + (s["SYNC"]*0.15) + (s["DXY"]*0.10) + (s["MOM20"]*0.05)
-        else: total = (s["RSI"]*0.45) + (s["MOM5"]*0.25) + (s["SYNC"]*0.15) + (s["MOM20"]*0.10) + (s["VOL"]*0.05)
-
+        # D-Day 완화 (기존 구조 유지)
         threshold = 50
         if HAS_STATS:
             formula = dday_formulas.get(currency, {})
@@ -149,12 +232,14 @@ def get_score(currency: str = "USD", d_day: int = 14):
                     threshold = formula[str(d)]
                     break
 
-        if total <= 25: grade = "A"
-        elif total <= 45: grade = "B"
-        elif total <= 55: grade = "C"
-        elif total <= 75: grade = "D"
-        else: grade = "E"
+        # 투자자 시그널
+        rt_price = data[currency].get('realtime', 0)
+        inv_signal, inv_strategy, inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price)
 
+        # ═══════════════════════════════════════
+        # 거시경고 (기존 구조 그대로)
+        # ═══════════════════════════════════════
+        
         m_items = []; w_cnt = []; active_warnings = []
         
         k_chg = macro.get('KOSPI', {}).get('chg60', 0)
@@ -198,21 +283,20 @@ def get_score(currency: str = "USD", d_day: int = 14):
             add_macro("금(GOLD) 60일", gold_chg, True, 15, False, "GOLD 급등 (안전자산 수요)")
             add_macro("미국채(TLT) 60일", tlt_chg, True, 10, False, "TLT 급등 (안전선호)")
         elif currency == "USD":
-            add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락")
             add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
 
         warn_total = sum(w_cnt)
-        capped_w_cnt = min(warn_total, 5) 
+        capped_w_cnt = min(warn_total, 5)
 
-        investor_guides = {
-            0: {"fut": "+0.96%", "holder": "보유 유지", "buyer": "정상 매수 OK"},
-            1: {"fut": "+0.29%", "holder": "보유 유지", "buyer": "정상 매수 OK"},
-            2: {"fut": "+0.59%", "holder": "보유 유지", "buyer": "정상 매수 OK"},
-            3: {"fut": "-1.10%", "holder": "비헤지 유지(유리)", "buyer": "적극 매수 (싸짐!)"},
-            4: {"fut": "+0.90%", "holder": "보유 유지", "buyer": "정상 매수 OK"},
-            5: {"fut": "+2.15%", "holder": "부분 헤지 고려", "buyer": "소량 매수 시작"}
-        }
+        # 투자 가이드 — 통화별 분리 (v7)
+        if HAS_STATS:
+            currency_guides = etf_config.get('investor_guides', {}).get(currency, {})
+            max_key = str(max(int(k) for k in currency_guides.keys())) if currency_guides else "0"
+            gd = currency_guides.get(str(capped_w_cnt), currency_guides.get(max_key, {"fut": "N/A", "down": "N/A", "holder": "확인 필요", "buyer": "확인 필요"}))
+        else:
+            gd = {"fut": "N/A", "down": "N/A", "holder": "데이터 없음", "buyer": "데이터 없음"}
 
+        # 개별 지표 상세 (기존 구조 유지)
         sub_details_dict = {}
         for k, v in s.items():
             score_int = int(v)
@@ -222,6 +306,7 @@ def get_score(currency: str = "USD", d_day: int = 14):
                 if ind_data:
                     sub_details_dict[k].update({"grade": ind_data.get("grade", ""), "win": ind_data.get("win", 0), "saving": ind_data.get("saving", 0.0)})
 
+        # AI 메시지 — 모드별 분기
         stat_msg = ""
         stat_details = {}
         if HAS_STATS:
@@ -230,56 +315,205 @@ def get_score(currency: str = "USD", d_day: int = 14):
             if thermo_data:
                 stat_details['win_rate'] = thermo_data['win']
                 stat_details['saving'] = thermo_data['saving']
-                stat_msg = f"과거 통계상 이 구간 진입 시 승률은 <strong>{thermo_data['win']}%</strong> 였습니다."
             
-            markov_7d = markov_lookup.get(currency, {}).get('7', {}).get(str_total)
-            if markov_7d:
-                stat_msg += f"<br>7일 뒤 하락(유리)할 확률: <strong>{markov_7d['cheaper']}%</strong>"
-            
-            gd = investor_guides[capped_w_cnt]
-            stat_msg += f"<br><br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
-            stat_msg += f"🌍 <strong>시장 경보 Level {warn_total}</strong><br>"
-            if warn_total > 0:
-                stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>" + "<br>".join(active_warnings) + "</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
+            # ═══════════════════════════════════════
+            # 투자자 모드: 백테스트 통계만 표시
+            # ═══════════════════════════════════════
+            if mode == "investor":
+                # 통화별 백테스트 결과 (CAGR 포함)
+                investor_stats = {
+                    'USD': {'win': 86.4, 'cagr': 5.22, 'trades': 3, 'avg_hold': 4.0},
+                    'JPY': {'win': 81.8, 'cagr': 9.28, 'trades': 7, 'avg_hold': 4.3},
+                    'EUR': {'win': 81.6, 'cagr': 12.05, 'trades': 10, 'avg_hold': 4.0},
+                    'AUD': {'win': 85.1, 'cagr': 12.77, 'trades': 9, 'avg_hold': 3.5},
+                    'THB': {'win': 87.5, 'cagr': 10.35, 'trades': 7, 'avg_hold': 2.8},
+                }
+                
+                stats = investor_stats.get(currency, {'win': 0, 'cagr': 0, 'trades': 0, 'avg_hold': 0})
+                
+                stat_msg = f"<div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
+                stat_msg += f"🌍 <strong>시장 경보 Level {warn_total}</strong><br>"
+                if warn_total > 0:
+                    stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>" + "<br>".join(active_warnings) + "</span>"
+                    stat_msg += f"<hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
+                    stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>⚠️ <b>거시 경고 발동 — 시그널 발생해도 신중 진입</b></span>"
+                else:
+                    stat_msg += f"<span style='color:#1D9E75; font-size:12px;'>🟢 거시 환경 안정</span>"
+                stat_msg += f"</div>"
+                
+                stat_msg += f"<br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
+                stat_msg += f"<span style='font-size:13px; font-weight:700;'>📊 검증 결과 (20년 백테스트)</span><br>"
+                stat_msg += f"<div style='font-size:12px; margin-top:6px; line-height:1.8;'>"
+                stat_msg += f"• 승률: <strong>{stats['win']:.1f}%</strong><br>"
+                stat_msg += f"• CAGR: <strong style='color:#1D9E75'>+{stats['cagr']:.2f}%</strong> <span style='font-size:10px; color:var(--text-sub)'>(연평균 수익률, 100만원 기준)</span><br>"
+                stat_msg += f"• 연 평균 거래: <strong>{stats['trades']}회</strong><br>"
+                stat_msg += f"• 평균 보유: <strong>{stats['avg_hold']:.1f}일</strong>"
+                stat_msg += f"</div></div>"
+                
+            # ═══════════════════════════════════════
+            # 여행자 모드: 온도계 기반 가이드
+            # ═══════════════════════════════════════
             else:
-                stat_msg += f"<span style='color:#1D9E75; font-size:12px;'>🟢 모든 통화 맞춤형 거시지표가 안정적입니다.</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
-            
-            stat_msg += f"<span style='font-size:13px; font-weight:700;'>💡 통계 기반 행동 가이드 (60일 후 전망: {gd['fut']})</span><br>"
-            buyer_color = "#1D9E75" if capped_w_cnt == 3 else "var(--text-main)"
-            stat_msg += f"<span style='font-size:12px;'>• 보유자: {gd['holder']}<br>• <b>매수자: <span style='color:{buyer_color}'>{gd['buyer']}</span></b></span>"
-            stat_msg += "</div>"
+                if thermo_data:
+                    stat_msg = f"과거 통계상 이 구간 진입 시 승률은 <strong>{thermo_data['win']}%</strong> 였습니다."
+                
+                markov_7d = markov_lookup.get(currency, {}).get('7', {}).get(str_total)
+                if markov_7d:
+                    stat_msg += f"<br>7일 뒤 하락(유리)할 확률: <strong>{markov_7d.get('down', markov_7d.get('cheaper', 'N/A'))}%</strong>"
+                
+                stat_msg += f"<br><br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
+                stat_msg += f"🌍 <strong>시장 경보 Level {warn_total}</strong><br>"
+                if warn_total > 0:
+                    stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>" + "<br>".join(active_warnings) + "</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
+                else:
+                    stat_msg += f"<span style='color:#1D9E75; font-size:12px;'>🟢 모든 통화 맞춤형 거시지표가 안정적입니다.</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
+                
+                # 등급 + 60일 추세 조합 메시지 (여행자 모드 전용)
+                fut_str = gd.get('fut', '+0.0%')
+                try:
+                    fut_val = float(fut_str.replace('%', '').replace('+', ''))
+                except:
+                    fut_val = 0
+                
+                # 단기 등급 해석
+                if grade == 'A':
+                    short_term = "🟢 <b>지금 매수 적기!</b> (단기 매우 쌈)"
+                    short_color = "#1D9E75"
+                elif grade == 'B':
+                    short_term = "🟢 단기 양호한 가격"
+                    short_color = "#1D9E75"
+                elif grade == 'C':
+                    short_term = "⚪ 평범한 가격"
+                    short_color = "var(--text-main)"
+                elif grade == 'D':
+                    short_term = "🟡 단기 약간 비쌈"
+                    short_color = "#F6A800"
+                else:  # E
+                    short_term = "🔴 <b>단기 비쌈</b>"
+                    short_color = "#E24B4A"
+                
+                # 60일 추세 해석
+                if fut_val >= 3:
+                    trend_text = f"📈 <b>강한 상승 추세</b> (60일 후 +{fut_val:.1f}%)"
+                    trend_color = "#E24B4A"
+                elif fut_val >= 1:
+                    trend_text = f"📈 약상승 추세 (60일 후 +{fut_val:.1f}%)"
+                    trend_color = "#F6A800"
+                elif fut_val >= -1:
+                    trend_text = f"⚪ 횡보 추세 (60일 후 {fut_val:+.1f}%)"
+                    trend_color = "var(--text-main)"
+                else:
+                    trend_text = f"📉 하락 추세 (60일 후 {fut_val:+.1f}%)"
+                    trend_color = "#1D9E75"
+                
+                # 종합 판단
+                if grade in ['A', 'B']:
+                    if fut_val >= 1:
+                        verdict = "🎯 <b>지금 환전 강력 추천!</b> (단기 싸고 + 장기 상승)"
+                        verdict_color = "#1D9E75"
+                    elif fut_val >= -1:
+                        verdict = "✅ <b>지금 환전 OK</b>"
+                        verdict_color = "#1D9E75"
+                    else:
+                        verdict = "🤔 단기 좋지만 장기 하락 — 출국 임박시 환전"
+                        verdict_color = "var(--text-main)"
+                elif grade == 'C':
+                    if fut_val >= 2:
+                        verdict = "⚡ 평범하지만 <b>장기 상승</b> — 더 비싸지기 전 환전"
+                        verdict_color = "#F6A800"
+                    elif fut_val >= -1:
+                        verdict = "⚪ 평범 — 본인 일정에 맞춰 환전"
+                        verdict_color = "var(--text-main)"
+                    else:
+                        verdict = "⏳ 평범하지만 장기 하락 — 1~2주 대기 가능"
+                        verdict_color = "#1D9E75"
+                else:  # D, E
+                    if fut_val >= 2:
+                        verdict = f"⚠️ <b>단기 비싸지만 추세 상승 — 더 비싸질 확률 높음</b>"
+                        verdict_color = "#F6A800"
+                    elif fut_val >= 0:
+                        verdict = "⏳ 단기 비쌈 + 추세 미약 — <b>1~2주 대기 추천</b>"
+                        verdict_color = "#1D9E75"
+                    else:
+                        verdict = "✅ <b>대기 권장!</b> (단기 비싸고 + 장기 하락)"
+                        verdict_color = "#1D9E75"
+                
+                stat_msg += f"<span style='font-size:13px; font-weight:700;'>💡 종합 판단</span><br>"
+                stat_msg += f"<div style='padding:8px; background:rgba(0,0,0,0.03); border-radius:6px; margin:4px 0;'>"
+                stat_msg += f"<span style='font-size:12px;'>"
+                stat_msg += f"단기 ({grade}등급): <span style='color:{short_color}'>{short_term}</span><br>"
+                stat_msg += f"장기 (60일): <span style='color:{trend_color}'>{trend_text}</span>"
+                stat_msg += f"</span></div>"
+                stat_msg += f"<div style='padding:10px; background:{verdict_color}15; border-left:3px solid {verdict_color}; border-radius:6px; margin-top:6px;'>"
+                stat_msg += f"<span style='font-size:13px; color:{verdict_color}'>{verdict}</span>"
+                stat_msg += f"</div>"
+                
+                stat_msg += "</div>"
 
         return {
             "price": adj_price, "rsi": int(total), "threshold": int(threshold), "signal": bool(total <= threshold),
-            "grade": grade, "is_investable": bool(currency in ["JPY", "EUR"]), "inv_signal": bool(inv_signal),
+            "grade": grade, "is_investable": True, "inv_signal": bool(inv_signal),
             "inv_strategy": inv_strategy, "inv_tpsl": inv_tpsl, "inv_conds": inv_conds, "sub_details": sub_details_dict,
-            "macro_items": m_items, "macro_count": warn_total, "ai_message": stat_msg, "stat_details": stat_details
+            "macro_items": m_items, "macro_count": warn_total, "ai_message": stat_msg, "stat_details": stat_details,
+            "rt_status": rt_status, "rt_valid": rt_valid,
         }
     except Exception as e:
         print(f"Error: {e}")
         return {"price": 0, "rsi": 50, "threshold": 50, "signal": False, "grade": "C", "is_investable": False, "inv_signal": False, "inv_strategy": "", "inv_tpsl": "", "inv_conds": [], "sub_details": {}, "macro_items": [], "macro_count": 0, "ai_message": "데이터 오류", "stat_details": {}}
 
-@app.get("/api/chart")
-def get_chart(currency: str = "USD", days: int = 90):
-    """일별 캔들차트 + 볼린저밴드 + RSI 데이터"""
+@app.get("/api/signals")
+def get_all_signals():
+    """전 통화 시그널 한번에 체크 — 상단 배너용"""
     try:
         data, macro = get_base_data()
-        df = pd.DataFrame(data[currency])
-        df.columns = ['Close']
+        signals = []
         
-        delta = df['Close'].diff()
-        gain = delta.where(delta > 0, 0).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
-        loss = (-delta.where(delta < 0, 0)).ewm(alpha=1/14, min_periods=14, adjust=False).mean()
-        df['RSI'] = 100 - (100 / (1 + (gain/loss)))
+        for currency in ["USD", "JPY", "EUR", "AUD", "THB"]:
+            df = calc_all_indicators(data, currency)
+            curr_price = float(df['Close'].iloc[-1])
+            adj_price = curr_price * (100 if currency == "JPY" else 1)
+            
+            total, grade, s = calc_thermo(df, currency)
+            rt_price = data[currency].get('realtime', 0)
+            inv_signal, strategy, _, _, wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price)
+            
+            signals.append({
+                "currency": currency,
+                "price": adj_price,
+                "thermo": round(total, 1),
+                "grade": grade,
+                "wr10": round(wr10, 1),
+                "inv_signal": inv_signal,
+                "rt_valid": rt_valid,
+                "rt_status": rt_status,
+                "tp_price": tp_price,
+                "sl_price": sl_price,
+                "strategy": strategy,
+            })
+        
+        return {"signals": signals}
+    except Exception as e:
+        print(f"Signals Error: {e}")
+        return {"signals": []}
 
-        bb_period = 13 if currency == "JPY" else 12
-        bb_sigma = 2.0
+@app.get("/api/chart")
+def get_chart(currency: str = "USD", days: int = 90):
+    """일별 차트 + 볼린저밴드 + WR 데이터"""
+    try:
+        data, macro = get_base_data()
+        close = data[currency]['Close']
+        high = data[currency]['High']
+        low = data[currency]['Low']
         
-        if currency == "EUR":
-            vol20 = float(df['Close'].pct_change().rolling(20).std().iloc[-1])
-            vol60 = float(df['Close'].pct_change().rolling(60).std().iloc[-1])
-            if vol20 < vol60:
-                bb_sigma = 1.5
+        df = pd.DataFrame({'Close': close, 'High': high, 'Low': low})
+        
+        # WR10 (차트 하단 표시용)
+        df['WR10'] = calc_williams_r(df['High'], df['Low'], df['Close'], 10)
+        
+        # BB (투자자 전략에 맞는 BB)
+        strat = INVESTOR_STRATEGIES[currency]
+        bb_period = strat['bb_p']
+        bb_sigma = strat['bb_s']
         
         ma = df['Close'].rolling(bb_period).mean()
         std = df['Close'].rolling(bb_period).std()
@@ -290,15 +524,16 @@ def get_chart(currency: str = "USD", days: int = 90):
         df = df.tail(days)
         df.dropna(inplace=True)
         
+        mult = 100 if currency == "JPY" else 1
         chart_data = []
         for date, row in df.iterrows():
             chart_data.append({
                 "date": date.strftime("%Y-%m-%d"),
-                "close": round(float(row['Close']) * (100 if currency == "JPY" else 1), 2),
-                "ma": round(float(row['MA']) * (100 if currency == "JPY" else 1), 2),
-                "bb_upper": round(float(row['BB_Upper']) * (100 if currency == "JPY" else 1), 2),
-                "bb_lower": round(float(row['BB_Lower']) * (100 if currency == "JPY" else 1), 2),
-                "rsi": round(float(row['RSI']), 1) if not pd.isna(row['RSI']) else 50
+                "close": round(float(row['Close']) * mult, 2),
+                "ma": round(float(row['MA']) * mult, 2),
+                "bb_upper": round(float(row['BB_Upper']) * mult, 2),
+                "bb_lower": round(float(row['BB_Lower']) * mult, 2),
+                "rsi": round(float(row['WR10']), 1) if not pd.isna(row['WR10']) else -50
             })
         
         return {

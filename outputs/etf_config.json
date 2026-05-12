@@ -1,119 +1,386 @@
 {
   "warning_indicators": {
-    "VIX": {
-      "condition": ">",
-      "threshold": 25,
-      "name_kr": "공포지수"
+    "JPY": [
+      {
+        "id": "KOSPI",
+        "name": "KOSPI 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "KOSPI 하락"
+      },
+      {
+        "id": "SP500",
+        "name": "S&P500 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "S&P500 하락"
+      },
+      {
+        "id": "EEM",
+        "name": "EEM 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "신흥국 자금이탈"
+      },
+      {
+        "id": "DXY",
+        "name": "DXY 60일",
+        "condition": ">",
+        "threshold": 5,
+        "msg": "달러 강세"
+      },
+      {
+        "id": "HYG",
+        "name": "HYG 60일",
+        "condition": "<",
+        "threshold": -5,
+        "msg": "하이일드 하락"
+      },
+      {
+        "id": "NIKKEI",
+        "name": "닛케이 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "닛케이 하락"
+      }
+    ],
+    "EUR": [
+      {
+        "id": "KOSPI",
+        "name": "KOSPI 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "KOSPI 하락"
+      },
+      {
+        "id": "SP500",
+        "name": "S&P500 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "S&P500 하락"
+      },
+      {
+        "id": "STOXX",
+        "name": "STOXX50 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "유로STOXX 하락"
+      },
+      {
+        "id": "EEM",
+        "name": "EEM 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "신흥국 자금이탈"
+      }
+    ],
+    "THB": [
+      {
+        "id": "KOSPI",
+        "name": "KOSPI 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "KOSPI 하락"
+      },
+      {
+        "id": "SP500",
+        "name": "S&P500 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "S&P500 하락"
+      },
+      {
+        "id": "DXY",
+        "name": "DXY 60일",
+        "condition": ">",
+        "threshold": 3,
+        "msg": "달러 강세"
+      },
+      {
+        "id": "EEM",
+        "name": "EEM 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "신흥국 자금이탈"
+      }
+    ],
+    "AUD": [
+      {
+        "id": "KOSPI",
+        "name": "KOSPI 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "KOSPI 하락"
+      },
+      {
+        "id": "SP500",
+        "name": "S&P500 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "S&P500 하락"
+      },
+      {
+        "id": "VIX_LEVEL",
+        "name": "VIX",
+        "condition": ">",
+        "threshold": 25,
+        "msg": "VIX 급등"
+      },
+      {
+        "id": "HYG",
+        "name": "HYG 60일",
+        "condition": "<",
+        "threshold": -5,
+        "msg": "하이일드 하락"
+      },
+      {
+        "id": "EEM",
+        "name": "EEM 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "신흥국 자금이탈"
+      },
+      {
+        "id": "GOLD",
+        "name": "GOLD 60일",
+        "condition": ">",
+        "threshold": 15,
+        "msg": "금 급등"
+      },
+      {
+        "id": "TLT",
+        "name": "TLT 60일",
+        "condition": ">",
+        "threshold": 10,
+        "msg": "미국채 급등"
+      }
+    ],
+    "USD": [
+      {
+        "id": "KOSPI",
+        "name": "KOSPI 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "KOSPI 하락"
+      },
+      {
+        "id": "SP500",
+        "name": "S&P500 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "S&P500 하락"
+      },
+      {
+        "id": "EEM",
+        "name": "EEM 60일",
+        "condition": "<",
+        "threshold": -10,
+        "msg": "신흥국 자금이탈"
+      }
+    ]
+  },
+  "investor_guides": {
+    "JPY": {
+      "0": {
+        "fut": "+0.75%",
+        "down": "35.9%",
+        "holder": "보유 유지",
+        "buyer": "정상 매수 OK"
+      },
+      "1": {
+        "fut": "+1.50%",
+        "down": "31.3%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "2": {
+        "fut": "+1.39%",
+        "down": "27.8%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "3": {
+        "fut": "+4.13%",
+        "down": "31.7%",
+        "holder": "비헤지 유지",
+        "buyer": "환헤지 매수"
+      },
+      "4": {
+        "fut": "+3.42%",
+        "down": "51.9%",
+        "holder": "부분 헤지",
+        "buyer": "소량 매수"
+      },
+      "5": {
+        "fut": "+6.66%",
+        "down": "33.8%",
+        "holder": "부분 헤지",
+        "buyer": "소량 매수"
+      }
     },
-    "DXY_CHG60": {
-      "condition": ">",
-      "threshold": 3,
-      "name_kr": "달러강세(60일)"
+    "EUR": {
+      "0": {
+        "fut": "+2.21%",
+        "down": "37.4%",
+        "holder": "보유 유지",
+        "buyer": "정상 매수 OK"
+      },
+      "1": {
+        "fut": "+3.36%",
+        "down": "45.3%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "2": {
+        "fut": "+5.06%",
+        "down": "35.4%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "3": {
+        "fut": "-0.48%",
+        "down": "54.8%",
+        "holder": "환헤지 전환",
+        "buyer": "매수 보류"
+      },
+      "4": {
+        "fut": "+2.05%",
+        "down": "59.6%",
+        "holder": "환헤지 유지",
+        "buyer": "매수 보류"
+      }
     },
-    "SP500_CHG60": {
-      "condition": "<",
-      "threshold": -10,
-      "name_kr": "미국증시폭락"
+    "THB": {
+      "0": {
+        "fut": "+2.18%",
+        "down": "44.3%",
+        "holder": "보유 유지",
+        "buyer": "정상 매수 OK"
+      },
+      "1": {
+        "fut": "+4.08%",
+        "down": "41.1%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "2": {
+        "fut": "+8.34%",
+        "down": "29.2%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "3": {
+        "fut": "+4.75%",
+        "down": "43.6%",
+        "holder": "비헤지 유지",
+        "buyer": "환헤지 매수"
+      },
+      "4": {
+        "fut": "+1.67%",
+        "down": "42.6%",
+        "holder": "부분 헤지",
+        "buyer": "소량 매수"
+      }
     },
-    "KOSPI_CHG60": {
-      "condition": "<",
-      "threshold": -10,
-      "name_kr": "한국증시폭락"
+    "AUD": {
+      "0": {
+        "fut": "-0.60%",
+        "down": "45.4%",
+        "holder": "보유 유지",
+        "buyer": "보류 — 경고 시 매수"
+      },
+      "1": {
+        "fut": "+8.63%",
+        "down": "24.1%",
+        "holder": "비헤지 유지",
+        "buyer": "적극 매수!"
+      },
+      "2": {
+        "fut": "+7.54%",
+        "down": "20.7%",
+        "holder": "비헤지 유지",
+        "buyer": "적극 매수!"
+      },
+      "3": {
+        "fut": "+12.26%",
+        "down": "23.4%",
+        "holder": "비헤지 유지",
+        "buyer": "적극 매수!!"
+      },
+      "4": {
+        "fut": "+8.24%",
+        "down": "28.8%",
+        "holder": "비헤지 유지",
+        "buyer": "매수 OK"
+      },
+      "5": {
+        "fut": "+2.58%",
+        "down": "47.5%",
+        "holder": "부분 헤지",
+        "buyer": "소량 매수"
+      }
     },
-    "EEM_CHG60": {
-      "condition": "<",
-      "threshold": -10,
-      "name_kr": "신흥국자금이탈"
-    },
-    "OIL_CHG60": {
-      "condition": "<",
-      "threshold": -20,
-      "name_kr": "유가폭락"
-    },
-    "GOLD_CHG60": {
-      "condition": ">",
-      "threshold": 10,
-      "name_kr": "금급등"
+    "USD": {
+      "0": {
+        "fut": "+3.70%",
+        "down": "26.3%",
+        "holder": "보유 유지",
+        "buyer": "정상 매수 OK"
+      },
+      "1": {
+        "fut": "+4.56%",
+        "down": "24.8%",
+        "holder": "보유 유지",
+        "buyer": "매수 OK"
+      },
+      "2": {
+        "fut": "+7.56%",
+        "down": "8.6%",
+        "holder": "비헤지 유지",
+        "buyer": "매수 OK"
+      },
+      "3": {
+        "fut": "+4.51%",
+        "down": "39.4%",
+        "holder": "비헤지 유지",
+        "buyer": "환헤지 매수"
+      }
     }
   },
-  "warning_messages": {
-    "0": {
-      "level": "safe",
-      "emoji": "🟢",
-      "msg": "안정 — 정상 투자",
-      "holder": "보유 유지",
-      "buyer": "정상 매수"
+  "etf_mapping": {
+    "USD": {
+      "unhedge": "TIGER 미국S&P500",
+      "hedge": "TIGER 미국S&P500(H)"
     },
-    "1": {
-      "level": "watch",
-      "emoji": "🔵",
-      "msg": "관심 — 모니터링",
-      "holder": "보유 유지",
-      "buyer": "정상 매수"
+    "JPY": {
+      "unhedge": "TIGER 일본니케이225",
+      "hedge": "비추 (구조적 손해)"
     },
-    "2": {
-      "level": "caution",
-      "emoji": "🟡",
-      "msg": "주의 — 부분 헤지 고려",
-      "holder": "보유 유지",
-      "buyer": "정상 매수"
+    "EUR": {
+      "unhedge": "TIGER 유로스탁50",
+      "hedge": "TIGER 유로스탁50(H)"
     },
-    "3": {
-      "level": "alert",
-      "emoji": "🟠",
-      "msg": "경계 — 60일후 -1.1%, 하락확률 64%",
-      "holder": "비헤지 유리",
-      "buyer": "적극 매수"
-    },
-    "4": {
-      "level": "danger",
-      "emoji": "🔴",
-      "msg": "위험 — 변동성 극대",
-      "holder": "보유 유지",
-      "buyer": "정상 매수"
-    },
-    "5": {
-      "level": "extreme",
-      "emoji": "🔴🔴",
-      "msg": "극위험 — 위기 진행중",
-      "holder": "부분 헤지",
-      "buyer": "소량 매수"
+    "AUD": {
+      "unhedge": "KODEX 호주200",
+      "hedge": "해당없음"
     }
   },
-  "exit_signals": {
-    "warning_drop_from_4": "경고 ≥4개→<4개: 환헤지 축소 시작",
-    "warning_duration_30plus": "경고 30일+ 지속 후 해제: 달러 하락 전환"
-  },
-  "buy_signals": {
-    "dxy_down_3pct": {
-      "condition": "DXY_CHG60 < -3",
-      "msg": "달러 약세 추세 — 비헤지 ETF 유리"
-    }
-  },
-  "historical_stats": {
-    "0": {
-      "fut_60": 0.96,
-      "down_prob": 40.7
+  "hedge_recommendation": {
+    "USD": {
+      "default": "비헤지",
+      "reason": "A~E 전 등급 비헤지 유리 (상관계수 0.972)"
     },
-    "1": {
-      "fut_60": 0.29,
-      "down_prob": 49.1
+    "JPY": {
+      "default": "비헤지",
+      "reason": "환헤지 ETF 구조적 손해 (-15%)"
     },
-    "2": {
-      "fut_60": 0.59,
-      "down_prob": 58.7
+    "EUR": {
+      "default": "환헤지",
+      "reason": "유로 강세 추세, 환헤지가 유리"
     },
-    "3": {
-      "fut_60": -1.1,
-      "down_prob": 63.8
-    },
-    "4": {
-      "fut_60": 0.9,
-      "down_prob": 48.6
-    },
-    "5": {
-      "fut_60": 2.15,
-      "down_prob": 44.1
+    "AUD": {
+      "default": "비헤지",
+      "reason": "비헤지 전 등급 유리"
     }
   }
 }

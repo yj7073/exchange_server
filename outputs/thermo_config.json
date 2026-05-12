@@ -1,38 +1,29 @@
 {
   "weights": {
     "JPY": {
-      "RSI": 0.5,
-      "MOM5": 0.25,
+      "WR10": 0.45,
       "SYNC": 0.15,
-      "MOM20": 0.1
+      "DISP10": 0.2,
+      "WR7": 0.2
     },
     "EUR": {
-      "RSI": 0.5,
-      "MOM5": 0.25,
-      "VOL": 0.1,
-      "SYNC": 0.1,
-      "DXY": 0.05
+      "WR10": 0.4,
+      "WR7": 0.6
     },
     "THB": {
-      "RSI": 0.4,
-      "MOM5": 0.25,
-      "SYNC": 0.15,
-      "MOM20": 0.15,
-      "DXY": 0.05
+      "WR10": 0.45,
+      "MOM3": 0.45,
+      "WR14": 0.05,
+      "STOCH": 0.05
     },
     "AUD": {
-      "RSI": 0.45,
-      "MOM5": 0.25,
-      "SYNC": 0.15,
-      "DXY": 0.1,
-      "MOM20": 0.05
+      "WR10": 1.0
     },
     "USD": {
-      "RSI": 0.45,
-      "MOM5": 0.25,
-      "SYNC": 0.15,
-      "MOM20": 0.1,
-      "VOL": 0.05
+      "WR10": 0.6,
+      "WR7": 0.15,
+      "DISP20": 0.05,
+      "WR20": 0.2
     }
   },
   "grades": {
@@ -43,70 +34,51 @@
       "msg": "환전하세요!"
     },
     "B": {
-      "min": 25,
-      "max": 45,
+      "min": 26,
+      "max": 40,
       "label": "싼편",
       "msg": "환전 고려"
     },
     "C": {
-      "min": 45,
+      "min": 41,
       "max": 55,
       "label": "보통",
       "msg": "급하면 OK"
     },
     "D": {
-      "min": 55,
-      "max": 75,
+      "min": 56,
+      "max": 70,
       "label": "비싼편",
       "msg": "기다려보세요"
     },
     "E": {
-      "min": 75,
+      "min": 71,
       "max": 100,
       "label": "비싸다",
       "msg": "지금은 비추"
     }
   },
   "indicator_names": {
-    "RSI": "RSI (상대강도)",
+    "WR10": "WR (10일)",
+    "WR7": "WR (7일)",
+    "WR14": "WR (14일)",
+    "WR20": "WR (20일)",
+    "MOM3": "3일 모멘텀",
     "MOM5": "5일 모멘텀",
-    "MOM20": "20일 모멘텀",
     "SYNC": "다통화 동조성",
-    "VOL": "변동성",
-    "DXY": "달러 방향",
+    "DISP10": "10일 이격도",
+    "DISP20": "20일 이격도",
+    "STOCH": "스토캐스틱",
     "THERMO": "종합 온도계"
   },
-  "investor_signals": {
-    "JPY": {
-      "rsi": 35,
-      "bb_period": 13,
-      "bb_sigma": 2.0,
-      "tp": 0.011,
-      "sl": 0.008
-    },
-    "EUR": {
-      "normal": {
-        "rsi": 38,
-        "bb_period": 12,
-        "bb_sigma": 2.0,
-        "tp": 0.018,
-        "sl": 0.008
-      },
-      "low_vol": {
-        "rsi": 42,
-        "bb_period": 12,
-        "bb_sigma": 1.5,
-        "tp": 0.008,
-        "sl": 0.006
-      },
-      "low_vol_condition": "VOL20 < VOL60"
-    }
-  },
   "optimal_thresholds": {
-    "JPY": 35,
-    "EUR": 41,
-    "THB": 46,
-    "AUD": 36,
-    "USD": 50
-  }
+    "JPY": 18,
+    "EUR": 17,
+    "THB": 23,
+    "AUD": 14,
+    "USD": 24
+  },
+  "version": "v7",
+  "base_indicator": "Williams %R",
+  "description": "WR 기반 통화별 맞춤 온도계. RSI/VIX/KOSPI/DXY/VOL/ATR/CCI 제거, WR7/DISP10/MOM3/STOCH 추가."
 }
