@@ -397,11 +397,11 @@ print(f"{'█'*80}")
 thermo_config = {
     "weights": thermo_weights,
     "grades": {
-        "A": {"min": 0, "max": 25, "label": "싸다", "msg": "환전하세요!"},
-        "B": {"min": 26, "max": 40, "label": "싼편", "msg": "환전 고려"},
-        "C": {"min": 41, "max": 55, "label": "보통", "msg": "급하면 OK"},
-        "D": {"min": 56, "max": 70, "label": "비싼편", "msg": "기다려보세요"},
-        "F": {"min": 71, "max": 100, "label": "비싸다", "msg": "지금은 비추"},
+        "A": {"min": 0, "max": 25, "label": "매우 유리", "msg": "환전 적기!"},
+        "B": {"min": 26, "max": 40, "label": "유리", "msg": "환전 추천"},
+        "C": {"min": 41, "max": 55, "label": "보통", "msg": "급하면 환전"},
+        "D": {"min": 56, "max": 70, "label": "불리", "msg": "조금 더 대기"},
+        "F": {"min": 71, "max": 100, "label": "매우 불리", "msg": "환전 미루기"},
     },
     "indicator_names": indicator_names_kr,
     "optimal_thresholds": {

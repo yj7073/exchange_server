@@ -18,7 +18,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-cache = {'time': 0, 'data': {}, 'macro': {}}
+import threading
+
+# 백그라운드 워커가 채우는 데이터 저장소 (사용자 요청은 여기서만 읽음)
+_data_store = {
+    'data': {},      # 환율 5개
+    'macro': {},     # 매크로 10개
+    'last_update': 0,
+    'ready': False,  # 첫 데이터 로드 완료 여부
+}
+_lock = threading.Lock()
 DATA_DIR = './outputs'
 
 try:
@@ -58,34 +67,41 @@ INVESTOR_STRATEGIES = {
     'USD': {'wr': -80, 'bb_p': 20, 'bb_s': 2.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-80 + BB(20, 2.5σ)'},
 }
 
-def get_base_data():
-    current_time = time.time()
-    if current_time - cache['time'] < 60 and cache['data']:
-        return cache['data'], cache['macro']
-    
+def fetch_from_yfinance():
+    """
+    yfinance에서 실제 데이터를 가져오는 함수.
+    백그라운드 워커가 호출하며, 사용자 요청 경로에서는 호출되지 않음.
+    각 통화/매크로 호출이 실패해도 이전 데이터를 유지하여 안정성 보장.
+    """
     tickers = {"USD": "KRW=X", "JPY": "JPYKRW=X", "EUR": "EURKRW=X", "AUD": "AUDKRW=X", "THB": "THBKRW=X"}
     raw_data = {}
     for k, v in tickers.items():
-        ticker_obj = yf.Ticker(v)
-        hist = ticker_obj.history(period="2y")
-        # 일봉 마지막 종가 (안전 기본값)
-        current_price = float(hist['Close'].iloc[-1]) if not hist.empty else 0
-        # 실시간 현재가: .info 대신 1일치 .history() 사용 (빠르고 안정적)
         try:
-            rt_hist = ticker_obj.history(period="1d")
-            if not rt_hist.empty:
-                realtime = float(rt_hist['Close'].iloc[-1])
-            else:
+            ticker_obj = yf.Ticker(v)
+            hist = ticker_obj.history(period="2y")
+            # 일봉 마지막 종가 (안전 기본값)
+            current_price = float(hist['Close'].iloc[-1]) if not hist.empty else 0
+            # 실시간 현재가: 1일치 .history() 사용 (빠르고 안정적)
+            try:
+                rt_hist = ticker_obj.history(period="1d")
+                if not rt_hist.empty:
+                    realtime = float(rt_hist['Close'].iloc[-1])
+                else:
+                    realtime = current_price
+            except Exception as e:
+                print(f"⚠️ {k} 실시간 가격 로드 실패: {e}")
                 realtime = current_price
+            raw_data[k] = {
+                'Close': hist['Close'].dropna(),
+                'High': hist['High'].dropna(),
+                'Low': hist['Low'].dropna(),
+                'realtime': realtime,
+            }
         except Exception as e:
-            print(f"⚠️ {k} 실시간 가격 로드 실패 (안전장치 가동): {e}")
-            realtime = current_price
-        raw_data[k] = {
-            'Close': hist['Close'].dropna(),
-            'High': hist['High'].dropna(),
-            'Low': hist['Low'].dropna(),
-            'realtime': realtime,
-        }
+            # 한 통화 실패해도 이전 데이터 유지
+            print(f"⚠️ {k} yfinance 호출 실패: {e}")
+            if k in _data_store.get('data', {}):
+                raw_data[k] = _data_store['data'][k]
     
     macros = {
         "KOSPI": "^KS11", "SP500": "^GSPC", "DXY": "DX-Y.NYB", 
@@ -94,17 +110,61 @@ def get_base_data():
     }
     macro_res = {}
     for k, v in macros.items():
-        d = yf.Ticker(v).history(period="2y")['Close'].dropna()
-        if not d.empty:
-            val = float(d.iloc[-1])
-            p60 = float(d.iloc[-60]) if len(d) >= 60 else float(d.iloc[0])
-            ma20 = float(d.rolling(20).mean().iloc[-1]) if len(d) >= 20 else val
-            macro_res[k] = {'val': val, 'chg60': float((val-p60)/p60*100), 'ma20': ma20}
-
-    cache['data'] = raw_data
-    cache['macro'] = macro_res
-    cache['time'] = current_time
+        try:
+            d = yf.Ticker(v).history(period="2y")['Close'].dropna()
+            if not d.empty:
+                val = float(d.iloc[-1])
+                p60 = float(d.iloc[-60]) if len(d) >= 60 else float(d.iloc[0])
+                ma20 = float(d.rolling(20).mean().iloc[-1]) if len(d) >= 20 else val
+                macro_res[k] = {'val': val, 'chg60': float((val-p60)/p60*100), 'ma20': ma20}
+        except Exception as e:
+            print(f"⚠️ {k} 매크로 로드 실패: {e}")
+            if k in _data_store.get('macro', {}):
+                macro_res[k] = _data_store['macro'][k]
+    
     return raw_data, macro_res
+
+
+def background_updater():
+    """
+    1분마다 백그라운드에서 yfinance 데이터 갱신.
+    실패해도 이전 데이터를 유지하여 사용자에게 영향 없음.
+    """
+    while True:
+        time.sleep(60)  # 1분 대기
+        try:
+            new_data, new_macro = fetch_from_yfinance()
+            with _lock:
+                _data_store['data'] = new_data
+                _data_store['macro'] = new_macro
+                _data_store['last_update'] = time.time()
+            print(f"✅ 백그라운드 갱신 완료: {time.strftime('%H:%M:%S')}")
+        except Exception as e:
+            # 실패해도 이전 데이터 유지, 앱 계속 실행
+            print(f"⚠️ 백그라운드 갱신 실패 (이전 데이터 유지): {e}")
+
+
+def get_base_data():
+    """
+    사용자 요청용 — 메모리에서만 읽어 즉시 반환 (~5ms).
+    첫 호출 시에만 yfinance 호출 (앱 시작 후 첫 요청).
+    """
+    # 초기화 안 됐으면 강제 로드 (락 밖에서)
+    if not _data_store['ready']:
+        try:
+            data, macro = fetch_from_yfinance()
+            with _lock:
+                _data_store['data'] = data
+                _data_store['macro'] = macro
+                _data_store['ready'] = True
+                _data_store['last_update'] = time.time()
+        except Exception as e:
+            print(f"❌ 초기 데이터 로드 실패: {e}")
+            return {}, {}
+    
+    # 메모리 데이터 반환 (락으로 일관성 보장)
+    with _lock:
+        return _data_store['data'], _data_store['macro']
 
 def calc_williams_r(high, low, close, period):
     highest = high.rolling(period).max()
@@ -260,37 +320,38 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
         nikkei_chg = macro.get('NIKKEI', {}).get('chg60', 0)
         stoxx_chg = macro.get('STOXX50', {}).get('chg60', 0)
 
-        def add_macro(name, val, is_pct, limit, is_less_than, msg):
+        def add_macro(name, val, is_pct, limit, is_less_than, msg, help_key):
             is_warn = (val < limit) if is_less_than else (val > limit)
             if is_warn:
                 w_cnt.append(1)
-                active_warnings.append(f"🔴 {msg}")
+                # 형식: "🔴 메시지|||도움말키" — 프론트에서 ⓘ 아이콘으로 변환
+                active_warnings.append(f"🔴 {msg}|||{help_key}")
             v_str = f"{val:+.1f}%" if is_pct else f"{val:.1f}"
             c_str = f"위험: {'<' if is_less_than else '>'} {limit}{'%' if is_pct else ''}"
-            m_items.append({"n": name, "c": c_str, "v": v_str, "w": bool(is_warn)})
+            m_items.append({"n": name, "c": c_str, "v": v_str, "w": bool(is_warn), "h": help_key})
 
-        add_macro("KOSPI 60일", k_chg, True, -10, True, "KOSPI 하락 (한국 증시 폭락)")
-        add_macro("S&P500 60일", sp_chg, True, -10, True, "S&P500 하락 (미국 증시 폭락)")
+        add_macro("KOSPI 60일", k_chg, True, -10, True, "KOSPI 하락 (한국 증시 폭락)", "KOSPI")
+        add_macro("S&P500 60일", sp_chg, True, -10, True, "S&P500 하락 (미국 증시 폭락)", "SP500")
 
         if currency == "JPY":
-            add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락")
-            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
-            add_macro("달러(DXY) 60일", dxy_chg, True, 5, False, "DXY 강세 (달러 모멘텀)")
-            add_macro("닛케이 60일", nikkei_chg, True, -10, True, "닛케이 하락 (안전선호)")
+            add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락", "HYG")
+            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈", "EEM")
+            add_macro("달러(DXY) 60일", dxy_chg, True, 5, False, "DXY 강세 (달러 모멘텀)", "DXY")
+            add_macro("닛케이 60일", nikkei_chg, True, -10, True, "닛케이 하락 (안전선호)", "NIKKEI")
         elif currency == "EUR":
-            add_macro("STOXX50 60일", stoxx_chg, True, -10, True, "유로STOXX50 하락")
-            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
+            add_macro("STOXX50 60일", stoxx_chg, True, -10, True, "유로STOXX50 하락", "STOXX50")
+            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈", "EEM")
         elif currency == "THB":
-            add_macro("달러(DXY) 60일", dxy_chg, True, 3, False, "DXY 강세 (달러 모멘텀)")
-            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
+            add_macro("달러(DXY) 60일", dxy_chg, True, 3, False, "DXY 강세 (달러 모멘텀)", "DXY")
+            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈", "EEM")
         elif currency == "AUD":
-            add_macro("VIX", vix_val, False, 25, False, "VIX 급등 (글로벌 공포)")
-            add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락")
-            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
-            add_macro("금(GOLD) 60일", gold_chg, True, 15, False, "GOLD 급등 (안전자산 수요)")
-            add_macro("미국채(TLT) 60일", tlt_chg, True, 10, False, "TLT 급등 (안전선호)")
+            add_macro("VIX", vix_val, False, 25, False, "VIX 급등 (글로벌 공포)", "VIX")
+            add_macro("HYG 60일", hyg_chg, True, -5, True, "하이일드(HYG) 하락", "HYG")
+            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈", "EEM")
+            add_macro("금(GOLD) 60일", gold_chg, True, 15, False, "GOLD 급등 (안전자산 수요)", "GOLD")
+            add_macro("미국채(TLT) 60일", tlt_chg, True, 10, False, "TLT 급등 (안전선호)", "TLT")
         elif currency == "USD":
-            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈")
+            add_macro("EEM 60일", eem_chg, True, -10, True, "신흥국(EEM) 자금 이탈", "EEM")
 
         warn_total = sum(w_cnt)
         capped_w_cnt = min(warn_total, 5)
@@ -384,19 +445,19 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                 
                 # 단기 등급 해석
                 if grade == 'A':
-                    short_term = "🟢 <b>지금 매수 적기!</b> (단기 매우 쌈)"
+                    short_term = "🟢 <b>환전 적기!</b> (매우 유리)"
                     short_color = "#1D9E75"
                 elif grade == 'B':
-                    short_term = "🟢 단기 양호한 가격"
+                    short_term = "🟢 유리한 가격"
                     short_color = "#1D9E75"
                 elif grade == 'C':
-                    short_term = "⚪ 평범한 가격"
+                    short_term = "⚪ 보통 가격"
                     short_color = "var(--text-main)"
                 elif grade == 'D':
-                    short_term = "🟡 단기 약간 비쌈"
+                    short_term = "🟡 다소 불리"
                     short_color = "#F6A800"
-                else:  # E
-                    short_term = "🔴 <b>단기 비쌈</b>"
+                else:  # F
+                    short_term = "🔴 <b>매우 불리</b>"
                     short_color = "#E24B4A"
                 
                 # 60일 추세 해석
@@ -416,33 +477,33 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                 # 종합 판단
                 if grade in ['A', 'B']:
                     if fut_val >= 1:
-                        verdict = "🎯 <b>지금 환전 강력 추천!</b> (단기 싸고 + 장기 상승)"
+                        verdict = "🎯 <b>지금 환전 강력 추천!</b> (단기 유리 + 장기 상승)"
                         verdict_color = "#1D9E75"
                     elif fut_val >= -1:
-                        verdict = "✅ <b>지금 환전 OK</b>"
+                        verdict = "✅ <b>지금 환전 추천</b>"
                         verdict_color = "#1D9E75"
                     else:
-                        verdict = "🤔 단기 좋지만 장기 하락 — 출국 임박시 환전"
+                        verdict = "🤔 단기 유리하나 장기 하락 — 출국 임박시 환전"
                         verdict_color = "var(--text-main)"
                 elif grade == 'C':
                     if fut_val >= 2:
-                        verdict = "⚡ 평범하지만 <b>장기 상승</b> — 더 비싸지기 전 환전"
+                        verdict = "⚡ 보통이나 <b>장기 상승</b> — 더 불리해지기 전 환전"
                         verdict_color = "#F6A800"
                     elif fut_val >= -1:
-                        verdict = "⚪ 평범 — 본인 일정에 맞춰 환전"
+                        verdict = "⚪ 보통 — 본인 일정에 맞춰 환전"
                         verdict_color = "var(--text-main)"
                     else:
-                        verdict = "⏳ 평범하지만 장기 하락 — 1~2주 대기 가능"
+                        verdict = "⏳ 보통이나 장기 하락 — 1~2주 대기 가능"
                         verdict_color = "#1D9E75"
-                else:  # D, E
+                else:  # D, F
                     if fut_val >= 2:
-                        verdict = f"⚠️ <b>단기 비싸지만 추세 상승 — 더 비싸질 확률 높음</b>"
+                        verdict = f"⚠️ <b>단기 불리 + 추세 상승 — 더 불리해질 확률 높음</b>"
                         verdict_color = "#F6A800"
                     elif fut_val >= 0:
-                        verdict = "⏳ 단기 비쌈 + 추세 미약 — <b>1~2주 대기 추천</b>"
+                        verdict = "⏳ 단기 불리 + 추세 미약 — <b>1~2주 대기 추천</b>"
                         verdict_color = "#1D9E75"
                     else:
-                        verdict = "✅ <b>대기 권장!</b> (단기 비싸고 + 장기 하락)"
+                        verdict = "✅ <b>대기 권장!</b> (단기 불리 + 장기 하락)"
                         verdict_color = "#1D9E75"
                 
                 stat_msg += f"<span style='font-size:13px; font-weight:700;'>💡 종합 판단</span><br>"
@@ -595,3 +656,28 @@ def home():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(base_dir, "index.html")
     return FileResponse(html_path)
+
+
+@app.on_event("startup")
+def startup_event():
+    """
+    앱 시작 시:
+    1. yfinance에서 첫 데이터 즉시 로드 (블로킹)
+    2. 백그라운드 워커 스레드 시작 (1분 주기 갱신)
+    """
+    print("🚀 앱 시작 — yfinance 첫 호출 중... (최대 30초 소요)")
+    try:
+        data, macro = fetch_from_yfinance()
+        with _lock:
+            _data_store['data'] = data
+            _data_store['macro'] = macro
+            _data_store['ready'] = True
+            _data_store['last_update'] = time.time()
+        print(f"✅ 첫 데이터 로드 완료 ({len(data)}개 통화, {len(macro)}개 매크로)")
+    except Exception as e:
+        print(f"❌ 첫 로드 실패 (계속 진행 — 다음 사용자 요청 시 재시도): {e}")
+    
+    # 백그라운드 갱신 스레드 시작 (daemon=True: 앱 종료 시 자동 정리)
+    thread = threading.Thread(target=background_updater, daemon=True)
+    thread.start()
+    print("🔄 백그라운드 갱신 스레드 시작 (1분 주기)")
