@@ -368,7 +368,7 @@
   "hedge_recommendation": {
     "USD": {
       "default": "비헤지",
-      "reason": "A~E 전 등급 비헤지 유리 (상관계수 0.972)"
+      "reason": "A~F 전 등급 비헤지 유리 (상관계수 0.972)"
     },
     "JPY": {
       "default": "비헤지",
