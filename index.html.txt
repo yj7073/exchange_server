@@ -845,6 +845,14 @@ function setMode(mode) {
     if (banner) banner.style.display = (mode === 'investor') ? 'block' : 'none';
     
     if(activeCurrency) updateDetailView(activeCurrency);
+    
+    // 투자자 모드 진입 시 시그널 배너 갱신 (5개 통화 score API는 재호출하지 않음)
+    if (mode === 'investor') {
+        fetch('/api/signals')
+            .then(r => r.json())
+            .then(sigData => renderSignalBanner(sigData.signals || []))
+            .catch(e => console.log("Signal banner refresh skipped"));
+    }
 }
 
 function togglePanel(contentId, headerElement) {
