@@ -297,6 +297,54 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 #chart-tip .tip-label { color: rgba(255,255,255,0.78); font-weight: 600; }
 #chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; }
 
+
+/* ── 커스텀 차트 툴팁 ─────────────────────────────────────────── */
+#chart-tip {
+  position: absolute; pointer-events: none; opacity: 0;
+  transform: translate(-50%, -100%) translateY(-10px);
+  transition: opacity .12s ease, transform .12s ease;
+  background: rgba(20, 23, 30, 0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.4);
+  padding: 10px 12px;
+  min-width: 160px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'Pretendard', sans-serif;
+  color: #fff;
+  z-index: 5;
+}
+#chart-tip.show {
+  opacity: 1;
+  transform: translate(-50%, -100%) translateY(-14px);
+}
+#chart-tip::after {
+  content: ""; position: absolute; left: 50%; bottom: -5px;
+  width: 8px; height: 8px; transform: translateX(-50%) rotate(45deg);
+  background: rgba(20,23,30,0.96);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#chart-tip .tip-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  color: #a0a5b1;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding-bottom: 6px; margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#chart-tip .tip-row {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 8px;
+  padding: 3px 0;
+  font-size: 11px;
+}
+#chart-tip .tip-dot { width: 8px; height: 8px; border-radius: 2px; }
+#chart-tip .tip-label { color: rgba(255,255,255,0.78); font-weight: 600; }
+#chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; }
+
 .chart-legend { display: flex; gap: 12px; margin-top: 8px; justify-content: center; flex-wrap: wrap; }
 .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-sub); }
 .chart-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
@@ -335,7 +383,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 </head>
 <body class="traveler" id="bodyTheme">
 
-<div id="loading">퀀트 데이터 연동 중...</div>
+<div id="loading">로딩 중...</div>
 
 <div class="app-container">
   <div id="list-view">
@@ -450,7 +498,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1a73e8;"></div>종가</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#EF9F27;"></div>이동평균</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(226,75,74,0.3);"></div>BB 밴드</div>
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(156, 39, 176, 0.8);"></div>WR <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div>WR <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
             </div>
         </div>
       </div>
@@ -593,6 +641,69 @@ const indicatorHelp = {
         scale: '<p><strong>0~20점</strong>: 과매도 (싸다!)<br><strong>80~100점</strong>: 과매수 (비싸다!)</p>',
         tip: '💡 우리 시스템: WR과 함께 보조 지표로 활용'
     },
+    // ═══════════════════════════════════════
+    // 거시지표 (Macro Indicators)
+    // ═══════════════════════════════════════
+    'KOSPI': {
+        title: '🇰🇷 KOSPI (한국 주식시장)',
+        desc: '<p><strong>한국 회사들의 주가 평균이에요. 한국 경제 건강 상태를 보여줘요.</strong></p>',
+        scale: '<p><strong>큰 하락(-10% 이상)</strong>이면 위험 신호<br>→ 외국인이 한국에서 돈을 빼고 있다는 뜻</p>',
+        tip: '💡 환율 영향: KOSPI 폭락 → <strong>환전 비싸짐</strong> (원화 가치 하락)'
+    },
+    'SP500': {
+        title: '🇺🇸 S&P500 (미국 주식시장)',
+        desc: '<p><strong>미국 대표 회사 500개의 주가 평균이에요. 세계 경제의 바로미터예요.</strong></p>',
+        scale: '<p><strong>큰 하락(-10% 이상)</strong>이면 세계 경제 불안 신호</p>',
+        tip: '💡 환율 영향: 미국 증시 폭락 → 달러 가치 ↑ → <strong>USD 환전 비싸짐</strong>'
+    },
+    'DXY': {
+        title: '💵 DXY (달러의 힘 지수)',
+        desc: '<p><strong>달러가 유로/엔/파운드 같은 다른 통화들보다 얼마나 강한지 보는 지표예요.</strong></p>',
+        scale: '<p><strong>큰 상승(+5% 이상)</strong>이면 달러가 다른 통화들 다 이기고 있다는 뜻</p>',
+        tip: '💡 환율 영향: DXY 급등 → <strong>USD 환전 비싸짐</strong>, 다른 통화도 영향'
+    },
+    'VIX': {
+        title: '😱 VIX (시장 공포 지수)',
+        desc: '<p><strong>"공포 지수"라고 불려요. 시장 사람들이 얼마나 불안한지를 0~100으로 측정해요.</strong></p>',
+        scale: '<p><strong>20 이하</strong>: 평온<br><strong>25 이상</strong>: 불안<br><strong>40 이상</strong>: 패닉</p>',
+        tip: '💡 환율 영향: VIX 급등 → 사람들이 안전한 통화(달러/엔)로 몰림 → <strong>환율 출렁임 ↑</strong>'
+    },
+    'HYG': {
+        title: '📉 HYG (위험한 회사들의 빚 가격)',
+        desc: '<p><strong>신용도 낮은 회사들이 진 빚(채권)의 가격이에요. 사람들이 위험을 무서워하면 이 가격이 떨어져요.</strong></p>',
+        scale: '<p><strong>큰 하락(-5% 이상)</strong>이면 사람들이 위험한 곳에서 안전한 곳으로 돈을 옮기는 중</p>',
+        tip: '💡 환율 영향: HYG 하락 → 안전한 달러로 돈이 몰림 → <strong>USD 환전 비싸짐</strong>'
+    },
+    'EEM': {
+        title: '🌏 EEM (한국 같은 개발도상국 주식)',
+        desc: '<p><strong>한국·중국·인도 같은 개발도상국 주식 시장을 합친 지표예요.</strong></p>',
+        scale: '<p><strong>큰 하락(-10% 이상)</strong>이면 외국인이 이 나라들에서 돈을 빼고 있다는 뜻</p>',
+        tip: '💡 환율 영향: EEM 폭락 → 한국에서도 돈이 빠짐 → <strong>환전 비싸짐</strong>'
+    },
+    'NIKKEI': {
+        title: '🇯🇵 NIKKEI (일본 주식시장)',
+        desc: '<p><strong>일본 대표 회사 225개의 주가 평균이에요.</strong></p>',
+        scale: '<p><strong>큰 하락(-10% 이상)</strong>이면 글로벌 불안 신호<br>(일본은 안전한 나라로 여겨져서, 일본 주식까지 떨어지면 사람들이 진짜 불안하다는 뜻)</p>',
+        tip: '💡 환율 영향: 닛케이 폭락 → 사람들이 엔화로 몰림 → <strong>JPY 환전 비싸짐</strong>'
+    },
+    'STOXX50': {
+        title: '🇪🇺 STOXX50 (유럽 주식시장)',
+        desc: '<p><strong>유럽 대표 회사 50개의 주가 평균이에요.</strong></p>',
+        scale: '<p><strong>큰 하락(-10% 이상)</strong>이면 유럽 경제 불안 신호</p>',
+        tip: '💡 환율 영향: STOXX50 폭락 → 유로 가치 출렁임 → <strong>EUR 환전 시점 주의</strong>'
+    },
+    'GOLD': {
+        title: '🥇 GOLD (금값)',
+        desc: '<p><strong>금 가격이에요. 사람들은 불안할 때 금을 많이 사요. 그래서 금값이 오르면 = 세상이 불안하다는 뜻이에요.</strong></p>',
+        scale: '<p><strong>큰 상승(+15% 이상)</strong>이면 사람들이 위기를 느끼고 있다는 뜻</p>',
+        tip: '💡 환율 영향: 금값 급등 → 시장 위기 신호 → <strong>환율 변동성 ↑</strong>'
+    },
+    'TLT': {
+        title: '🇺🇸 TLT (미국 정부의 빚 가격)',
+        desc: '<p><strong>미국 정부가 사람들한테 빌린 돈(국채)의 가격이에요. 세상에서 가장 안전하다고 여겨져요.</strong></p>',
+        scale: '<p><strong>큰 상승(+10% 이상)</strong>이면 사람들이 안전한 곳으로 도망가는 중</p>',
+        tip: '💡 환율 영향: TLT 급등 → 달러/엔으로 돈이 몰림 → <strong>USD/JPY 환전 비싸짐</strong>'
+    },
 };
 
 // 도움말 모달 열기
@@ -676,12 +787,21 @@ function renderSignalBanner(signals) {
 }
 
 function getGradeInfo(grade) {
-    if(grade === 'A') return { text: "싸다", guide: "환전하세요!" };
-    if(grade === 'B') return { text: "싼편", guide: "환전 고려" };
-    if(grade === 'C') return { text: "보통", guide: "급하면 OK" };
-    if(grade === 'D') return { text: "비싼편", guide: "기다려보세요" };
-    if(grade === 'F') return { text: "비싸다", guide: "지금은 비추" };
-    return { text: "비싸다", guide: "지금은 비추" };
+    if(grade === 'A') return { text: "매우 유리", guide: "환전 적기!" };
+    if(grade === 'B') return { text: "유리", guide: "환전 추천" };
+    if(grade === 'C') return { text: "보통", guide: "급하면 환전" };
+    if(grade === 'D') return { text: "불리", guide: "조금 더 대기" };
+    if(grade === 'F') return { text: "매우 불리", guide: "환전 미루기" };
+    return { text: "매우 불리", guide: "환전 미루기" };
+}
+
+// 백엔드 메시지의 "|||도움말키" 마커를 ⓘ 아이콘으로 변환
+// 예: "🔴 KOSPI 하락|||KOSPI" → "🔴 KOSPI 하락 ⓘ" (ⓘ 누르면 KOSPI 설명 모달)
+function convertHelpMarkers(text) {
+    if (!text) return text;
+    return text.replace(/\|\|\|([A-Z0-9_]+)/g, (match, key) => {
+        return ` <span class="help-icon" onclick="event.stopPropagation();showHelp('${key}')" style="cursor:pointer;">i</span>`;
+    });
 }
 
 // 금액 입력 시 자동으로 콤마 찍어주기 (예: 5000000 → 5,000,000)
@@ -855,7 +975,7 @@ function updateDetailView(currencyCode) {
         document.getElementById('msg-box-traveler').style.display = 'none';
     } else {
         document.getElementById('msg-box-traveler').style.display = 'block';
-        document.getElementById('d-aiMsg').innerHTML = d.ai_message;
+        document.getElementById('d-aiMsg').innerHTML = convertHelpMarkers(d.ai_message);
     }
     
     const statsContainer = document.getElementById('stats-container');
@@ -1002,7 +1122,8 @@ async function loadChart(days, evt) {
     } else {
         // 자동 호출 시 days에 맞는 버튼 자동 활성화
         document.querySelectorAll('.chart-period-btn').forEach(b => {
-            if (b.textContent.trim() === (days === 30 ? '1M' : days === 90 ? '3M' : days === 180 ? '6M' : '')) {
+            const txt = b.textContent.trim();
+            if ((days === 30 && txt === '1M') || (days === 90 && txt === '3M') || (days === 180 && txt === '6M')) {
                 b.classList.add('active');
             }
         });
@@ -1086,8 +1207,8 @@ function renderChart(chartData) {
                 { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: 'WR 타점', data: targetWrs, borderColor: 'rgba(156, 39, 176, 0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
-                { label: 'WR', data: wrs, borderColor: 'rgba(156, 39, 176, 0.8)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1' }
+                { label: 'WR 타점', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
+                { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1' }
             ]
         },
         options: {
@@ -1104,7 +1225,7 @@ function renderChart(chartData) {
             scales: { 
                 x: { ticks: { color: textColor, font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: gridColor } }, 
                 y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor, font: { size: 9, family: "'Space Mono', monospace" } }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', min: -100, max: 0, ticks: { color: 'rgba(156, 39, 176, 0.8)', font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
+                y1: { type: 'linear', display: true, position: 'right', min: -100, max: 0, ticks: { color: 'rgba(29,158,117,0.95)', font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
             },
             interaction: { intersect: false, mode: 'index' }
         }
@@ -1125,7 +1246,7 @@ const TIP_COLOR = {
     '종가':     '#1a73e8',
     '이동평균': '#EF9F27',
     'BB':       'rgba(226,75,74,0.85)',
-    'WR':       'rgba(156, 39, 176, 0.95)',
+    'WR':       'rgba(29,158,117,0.95)',
 };
 
 function externalTooltip(ctx, chartData) {
