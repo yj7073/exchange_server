@@ -45,7 +45,7 @@ body { background: var(--bg-color); color: var(--text-main); font-family: 'Prete
 .gauge-svg { width: 280px; overflow: visible; z-index: 1; }
 .gauge-label { text-align: center; margin-top: -5px; z-index: 2; display: flex; flex-direction: column; align-items: center; }
 .gauge-score { font-family: 'Space Mono', monospace; font-size: 52px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
-.gauge-text { font-size: 15px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+.gauge-text { font-size: 17px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
 
 .inv-board { background: var(--bg-color); border-radius: 12px; padding: 16px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
 .inv-check-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--card-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); font-size: 13px; }
@@ -260,7 +260,8 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.4);
   padding: 10px 12px;
-  min-width: 160px;
+  min-width: 200px;
+  width: max-content;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   font-family: 'Pretendard', sans-serif;
@@ -295,55 +296,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 }
 #chart-tip .tip-dot { width: 8px; height: 8px; border-radius: 2px; }
 #chart-tip .tip-label { color: rgba(255,255,255,0.78); font-weight: 600; }
-#chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; }
-
-
-/* ── 커스텀 차트 툴팁 ─────────────────────────────────────────── */
-#chart-tip {
-  position: absolute; pointer-events: none; opacity: 0;
-  transform: translate(-50%, -100%) translateY(-10px);
-  transition: opacity .12s ease, transform .12s ease;
-  background: rgba(20, 23, 30, 0.96);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.4);
-  padding: 10px 12px;
-  min-width: 160px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  font-family: 'Pretendard', sans-serif;
-  color: #fff;
-  z-index: 5;
-}
-#chart-tip.show {
-  opacity: 1;
-  transform: translate(-50%, -100%) translateY(-14px);
-}
-#chart-tip::after {
-  content: ""; position: absolute; left: 50%; bottom: -5px;
-  width: 8px; height: 8px; transform: translateX(-50%) rotate(45deg);
-  background: rgba(20,23,30,0.96);
-  border-right: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-#chart-tip .tip-date {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px; font-weight: 700;
-  color: #a0a5b1;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  padding-bottom: 6px; margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-#chart-tip .tip-row {
-  display: grid; grid-template-columns: auto 1fr auto;
-  align-items: center; gap: 8px;
-  padding: 3px 0;
-  font-size: 11px;
-}
-#chart-tip .tip-dot { width: 8px; height: 8px; border-radius: 2px; }
-#chart-tip .tip-label { color: rgba(255,255,255,0.78); font-weight: 600; }
-#chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; }
+#chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; white-space: nowrap; }
 
 .chart-legend { display: flex; gap: 12px; margin-top: 8px; justify-content: center; flex-wrap: wrap; }
 .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-sub); }
@@ -412,11 +365,11 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
       <div class="gauge-with-history" id="traveler-gauge-wrapper">
         <div class="gauge-container" id="traveler-gauge">
           <svg class="gauge-svg" viewBox="0 0 300 160">
-            <path d="M 30 150 A 120 120 0 0 1 78.4 57.6" fill="none" stroke="#1D9E75" stroke-width="22"/>
-            <path d="M 81 55.8 A 120 120 0 0 1 144.5 30.2" fill="none" stroke="#5DCAA5" stroke-width="22"/>
-            <path d="M 147.2 30 A 120 120 0 0 1 183.8 33.8" fill="none" stroke="#666666" stroke-width="22"/>
-            <path d="M 186.5 34.6 A 120 120 0 0 1 243.5 72" fill="none" stroke="#EF9F27" stroke-width="22"/>
-            <path d="M 245.8 74.6 A 120 120 0 0 1 270 150" fill="none" stroke="#E24B4A" stroke-width="22"/>
+            <path d="M 30.0 150.0 A 120 120 0 0 1 62.52 67.85" fill="none" stroke="#1D9E75" stroke-width="22"/>
+            <path d="M 67.85 62.52 A 120 120 0 0 1 109.35 37.09" fill="none" stroke="#5DCAA5" stroke-width="22"/>
+            <path d="M 116.52 34.76 A 120 120 0 0 1 165.04 30.95" fill="none" stroke="#666666" stroke-width="22"/>
+            <path d="M 172.49 32.13 A 120 120 0 0 1 217.45 50.75" fill="none" stroke="#EF9F27" stroke-width="22"/>
+            <path d="M 223.55 55.18 A 120 120 0 0 1 270.0 150.0" fill="none" stroke="#E24B4A" stroke-width="22"/>
             <g id="needleG" style="transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
               <line x1="150" y1="150" x2="150" y2="40" stroke="var(--text-main)" stroke-width="4" stroke-linecap="round"/>
               <circle cx="150" cy="150" r="8" fill="var(--text-main)"/>
@@ -572,7 +525,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 
       <div class="action-section" id="action-panel">
         <div id="traveler-action">
-          <div class="cutoff-text" id="d-cutoffText" style="color:#1a73e8;">🎯 컷오프 목표: 로딩중</div>
+          <div class="cutoff-text" id="d-cutoffText" style="color:#1a73e8;">🎯 목표 점수: 로딩중</div>
           <button class="action-btn" id="d-actionBtn">대기중...</button>
         </div>
         <div id="investor-action" style="display:none;">
@@ -704,6 +657,21 @@ const indicatorHelp = {
         scale: '<p><strong>큰 상승(+10% 이상)</strong>이면 사람들이 안전한 곳으로 도망가는 중</p>',
         tip: '💡 환율 영향: TLT 급등 → 달러/엔으로 돈이 몰림 → <strong>USD/JPY 환전 비싸짐</strong>'
     },
+    // ═══════════════════════════════════════
+    // 백테스트 지표 (Backtest Metrics)
+    // ═══════════════════════════════════════
+    'WIN_RATE': {
+        title: '📊 승률 (Win Rate)',
+        desc: '<p><strong>과거 데이터로 매수 시그널이 발생했을 때, 익절(이익 실현)에 성공한 비율이에요.</strong></p>',
+        scale: '<p><strong>80% 이상</strong>: 매우 안정적인 전략<br><strong>70~80%</strong>: 신뢰할 만한 전략<br><strong>70% 미만</strong>: 변동성 큰 전략</p>',
+        tip: '💡 우리 시스템 백테스트: 전 통화 80%+ 안정적 전략으로 검증됨!'
+    },
+    'CAGR': {
+        title: '📈 CAGR (연환산 수익률)',
+        desc: '<p><strong>Compound Annual Growth Rate. 1년 동안 평균적으로 얼마나 수익이 났는지 보여주는 연 환산 수익률이에요.</strong></p>',
+        scale: '<p><strong>+5% 이상</strong>: 양호<br><strong>+10% 이상</strong>: 우수<br><strong>+15% 이상</strong>: 매우 우수</p>',
+        tip: '💡 적금 이자(연 3~4%)와 비교: CAGR 5%+ 이면 적금보다 나은 수익률!'
+    },
 };
 
 // 도움말 모달 열기
@@ -778,8 +746,20 @@ function renderSignalBanner(signals) {
     } else if (appMode === 'investor') {
         banner.className = 'signal-banner no-signal';
         banner.style.display = 'block';
-        const closest = signals.reduce((best, s) => (!best || s.wr10 < best.wr10) ? s : best, null);
-        banner.innerHTML = `<div class="signal-banner-title">📊 현재 매수 시그널 없음</div><div class="signal-banner-detail">가장 근접: ${closest ? closest.currency + ' WR ' + closest.wr10 : '-'}</div>`;
+        // 투자 가능 통화 중 WR이 가장 작은(가장 시그널에 가까운) 통화 찾기
+        // WR은 -100~0 범위, 더 음수일수록 시그널에 가까움
+        const validSignals = signals.filter(s => 
+            s && s.wr10 !== null && s.wr10 !== undefined && !isNaN(s.wr10)
+        );
+        let closestText = '-';
+        if (validSignals.length > 0) {
+            const closest = validSignals.reduce((best, s) => 
+                (s.wr10 < best.wr10) ? s : best, validSignals[0]);
+            if (closest && closest.currency) {
+                closestText = `${closest.currency} WR ${closest.wr10}`;
+            }
+        }
+        banner.innerHTML = `<div class="signal-banner-title">📊 현재 매수 시그널 없음</div><div class="signal-banner-detail">가장 근접: ${closestText}</div>`;
         banner.onclick = null;
     } else {
         banner.style.display = 'none';
@@ -791,8 +771,8 @@ function getGradeInfo(grade) {
     if(grade === 'B') return { text: "유리", guide: "환전 추천" };
     if(grade === 'C') return { text: "보통", guide: "급하면 환전" };
     if(grade === 'D') return { text: "불리", guide: "조금 더 대기" };
-    if(grade === 'F') return { text: "매우 불리", guide: "환전 미루기" };
-    return { text: "매우 불리", guide: "환전 미루기" };
+    if(grade === 'F') return { text: "매우 불리", guide: "환전 대기" };
+    return { text: "매우 불리", guide: "환전 대기" };
 }
 
 // 백엔드 메시지의 "|||도움말키" 마커를 ⓘ 아이콘으로 변환
@@ -923,6 +903,14 @@ function updateDetailView(currencyCode) {
     document.getElementById('d-pair').textContent = meta.pair; document.getElementById('d-price').textContent = d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
     document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + (d.rsi / 100) * 180}, 150, 150)`);
+    
+    // 침 색 = 등급색
+    const gradeColors = { 'A': '#1D9E75', 'B': '#5DCAA5', 'C': '#666666', 'D': '#EF9F27', 'F': '#E24B4A' };
+    const needleColor = gradeColors[d.grade] || '#666666';
+    const needleG = document.getElementById('needleG');
+    needleG.querySelector('line').setAttribute('stroke', needleColor);
+    needleG.querySelector('circle').setAttribute('fill', needleColor);
+    
     const gScore = document.getElementById('d-score'); gScore.textContent = d.grade; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
     const info = getGradeInfo(d.grade);
     document.getElementById('d-gradeText').textContent = `${info.text}·${info.guide} (${d.rsi})`;
@@ -962,7 +950,7 @@ function updateDetailView(currencyCode) {
         const stats = investorStats[currencyCode];
         if (stats) {
             document.getElementById('inv-backtest-line').innerHTML = 
-                `📊 승률 <strong>${stats.win}%</strong> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong>`;
+                `📊 승률 <strong>${stats.win}%</strong><span class="help-icon" onclick="showHelp('WIN_RATE')" style="cursor:pointer; margin-left:2px;">i</span> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong><span class="help-icon" onclick="showHelp('CAGR')" style="cursor:pointer; margin-left:2px;">i</span>`;
         }
     } else {
         document.getElementById('inv-status-badge').textContent = '';
@@ -1046,10 +1034,10 @@ function updateDetailView(currencyCode) {
         }).join('');
     }
 
-    document.getElementById('d-cutoffText').textContent = currentDDay <= 1 ? `🎯 D-1: 출국 임박 (무조건 환전)` : `🎯 D-${currentDDay} 목표 컷오프: ${d.threshold}점 이하`;
+    document.getElementById('d-cutoffText').textContent = currentDDay <= 1 ? `🎯 D-1: 출국 임박 (무조건 환전)` : `🎯 D-${currentDDay} 목표 점수: ${d.threshold}점 이하`;
     const tBtn = document.getElementById('d-actionBtn');
-    if (d.signal) { tBtn.textContent = "✅ 목표 컷오프 도달! (환전 권장)"; tBtn.style.background = "#1D9E75"; tBtn.style.color = "white"; }
-    else { tBtn.textContent = "⏳ 컷오프 대기 중..."; tBtn.style.background = "var(--btn-bg)"; tBtn.style.color = "var(--btn-text)"; }
+    if (d.signal) { tBtn.textContent = "✅ 목표 점수 도달! (환전 권장)"; tBtn.style.background = "#1D9E75"; tBtn.style.color = "white"; }
+    else { tBtn.textContent = "⏳ 목표 점수 대기 중..."; tBtn.style.background = "var(--btn-bg)"; tBtn.style.color = "var(--btn-text)"; }
 
     const iBtn = document.getElementById('inv-actionBtn');
     if (!d.is_investable) {
@@ -1110,7 +1098,7 @@ function closeDetail() {
     setTimeout(() => { document.getElementById('detail-view').style.display = 'none'; listView.style.opacity = "1"; listView.style.transform = "translateX(0)"; }, 300);
 }
 let ddayTimer; function changeDDay() { const val = document.getElementById('dDaySlider').value; currentDDay = val; document.getElementById('dDayLabel').textContent = "D-" + val; clearTimeout(ddayTimer); ddayTimer = setTimeout(fetchAllData, 500); }
-function updateTime() { const now = new Date(); const d = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')]; const t = [String(now.getHours()).padStart(2, '0'), String(now.getMinutes()).padStart(2, '0'), String(now.getSeconds()).padStart(2, '0')]; document.getElementById('lastUpdate').textContent = `상시 관측 · ${d.join('.')}. ${t.join(':')}`; }
+function updateTime() { const now = new Date(); const d = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')]; const t = [String(now.getHours()).padStart(2, '0'), String(now.getMinutes()).padStart(2, '0'), String(now.getSeconds()).padStart(2, '0')]; document.getElementById('lastUpdate').textContent = `실시간 · ${d.join('.')}. ${t.join(':')}`; }
 
 async function loadChart(days, evt) {
     if (!activeCurrency) return;
