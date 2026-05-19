@@ -249,6 +249,54 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 .chart-period-btn.active { background: var(--btn-active-bg); color: var(--btn-active-text); border-color: var(--text-main); }
 .chart-canvas-wrapper { width: 100%; height: 230px; position: relative; }
 .chart-canvas-wrapper canvas { width: 100% !important; height: 100% !important; }
+
+/* ── 커스텀 차트 툴팁 ─────────────────────────────────────────── */
+#chart-tip {
+  position: absolute; pointer-events: none; opacity: 0;
+  transform: translate(-50%, -100%) translateY(-10px);
+  transition: opacity .12s ease, transform .12s ease;
+  background: rgba(20, 23, 30, 0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.4);
+  padding: 10px 12px;
+  min-width: 160px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'Pretendard', sans-serif;
+  color: #fff;
+  z-index: 5;
+}
+#chart-tip.show {
+  opacity: 1;
+  transform: translate(-50%, -100%) translateY(-14px);
+}
+#chart-tip::after {
+  content: ""; position: absolute; left: 50%; bottom: -5px;
+  width: 8px; height: 8px; transform: translateX(-50%) rotate(45deg);
+  background: rgba(20,23,30,0.96);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#chart-tip .tip-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  color: #a0a5b1;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding-bottom: 6px; margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#chart-tip .tip-row {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 8px;
+  padding: 3px 0;
+  font-size: 11px;
+}
+#chart-tip .tip-dot { width: 8px; height: 8px; border-radius: 2px; }
+#chart-tip .tip-label { color: rgba(255,255,255,0.78); font-weight: 600; }
+#chart-tip .tip-val { font-family: 'Space Mono', monospace; font-weight: 700; }
+
 .chart-legend { display: flex; gap: 12px; margin-top: 8px; justify-content: center; flex-wrap: wrap; }
 .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-sub); }
 .chart-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
@@ -396,6 +444,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
             </div>
             <div class="chart-canvas-wrapper">
               <canvas id="priceChart"></canvas>
+              <div id="chart-tip"></div>
             </div>
             <div class="chart-legend">
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1a73e8;"></div>종가</div>
@@ -414,7 +463,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <div id="calc-content-wrapper" style="margin-top: 15px;">
             <div class="calc-input-row">
               <label>환전 금액:</label>
-              <input type="number" class="calc-input" id="calc-amount" value="5000000" oninput="updateCalc()">
+              <input type="text" inputmode="numeric" class="calc-input" id="calc-amount" value="5,000,000" oninput="formatMoneyInput(this); updateCalc()">
               <span style="font-size:12px; font-weight:700;">원</span>
             </div>
             <div class="calc-grid" id="calc-grid">
@@ -455,7 +504,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
                 <input type="number" id="tf-rate" placeholder="환율" step="0.01">
               </div>
               <div class="trade-form-row">
-                <input type="number" id="tf-amount" placeholder="금액(원)" value="1000000">
+                <input type="text" inputmode="numeric" id="tf-amount" placeholder="금액(원)" value="1,000,000" oninput="formatMoneyInput(this)">
                 <select id="tf-type" style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-color); color:var(--text-main); font-size:12px;">
                   <option value="buy">매수 (원→외화)</option>
                   <option value="sell">매도 (외화→원)</option>
@@ -510,37 +559,37 @@ const subMap = {"WR10": "WR (10일)", "WR7": "WR (7일)", "WR14": "WR (14일)", 
 const indicatorHelp = {
     'WR': {
         title: 'WR (Williams %R)',
-        desc: '<p>"최근 N일 중 지금 가격이 어디?"를 점수화한 지표예요.</p>',
+        desc: '<p><strong>최근 N일 중 지금 가격이 어디?</strong>를 점수화한 지표예요.</p>',
         scale: '<p><strong>-100점</strong>: 최저점 (가장 쌈) → 매수!<br><strong>0점</strong>: 최고점 (가장 비쌈) → 매도</p>',
         tip: '💡 우리 시스템: <strong>-95점 이하</strong>면 바닥권이라 매수 시그널!'
     },
     'BB': {
         title: 'BB (볼린저 밴드)',
-        desc: '<p>환율의 평균과 변동 범위를 보여주는 지표예요.</p>',
+        desc: '<p><strong>환율의 평균과 변동 범위를 보여주는 지표</strong>예요.</p>',
         scale: '<p><strong>중간선</strong>: 최근 평균 가격<br><strong>상단선</strong>: 평균 + 변동성 (비쌈)<br><strong>하단선</strong>: 평균 - 변동성 (쌈)</p>',
         tip: '💡 우리 시스템: 가격이 <strong>BB 하단 아래</strong>로 가면 평소보다 많이 싸진 거라 매수 시그널!'
     },
     'MOM3': {
         title: 'MOM3 (3일 모멘텀)',
-        desc: '<p>최근 3일간 환율이 얼마나 변했는지 보는 지표예요.</p>',
+        desc: '<p><strong>최근 3일간 환율이 얼마나 변했는지 보는 지표</strong>예요.</p>',
         scale: '<p><strong>-3% 이상 하락</strong>: 단기 급락 → 반등 가능성<br><strong>+3% 이상 상승</strong>: 급등 → 조정 가능성</p>',
         tip: '💡 단기 급락 후 반등 노리는 전략에 활용!'
     },
     'SYNC': {
         title: 'SYNC (다통화 동조성)',
-        desc: '<p>여러 통화가 동시에 약해지는지 측정해요.</p>',
+        desc: '<p><strong>여러 통화가 동시에 약해지는지 측정</strong>해요.</p>',
         scale: '<p>USD, EUR, AUD 등이 동시에 약세면<br>→ <strong>원화 강세 효과</strong> (안전한 환전 시점)</p>',
         tip: '💡 글로벌 통화 동시 약세 = 좋은 환전 기회!'
     },
     'DISP': {
         title: 'DISP (이격도)',
-        desc: '<p>평균 가격에서 얼마나 벗어났는지 보여줘요.</p>',
+        desc: '<p><strong>평균 가격에서 얼마나 벗어났는지 보여줘요.</strong></p>',
         scale: '<p><strong>-5%</strong>: 평균보다 5% 쌈<br><strong>+5%</strong>: 평균보다 5% 비쌈</p>',
         tip: '💡 너무 벗어나면 다시 평균으로 돌아가려는 경향 (평균 회귀)'
     },
     'STOCH': {
         title: 'STOCH (스토캐스틱)',
-        desc: '<p>WR과 비슷하지만 다른 계산법을 사용하는 지표예요.</p>',
+        desc: '<p><strong>WR과 비슷하지만 다른 계산법을 사용하는 지표</strong>예요.</p>',
         scale: '<p><strong>0~20점</strong>: 과매도 (싸다!)<br><strong>80~100점</strong>: 과매수 (비싸다!)</p>',
         tip: '💡 우리 시스템: WR과 함께 보조 지표로 활용'
     },
@@ -635,11 +684,37 @@ function getGradeInfo(grade) {
     return { text: "비싸다", guide: "지금은 비추" };
 }
 
+// 금액 입력 시 자동으로 콤마 찍어주기 (예: 5000000 → 5,000,000)
+function formatMoneyInput(input) {
+    // 커서 위치 보존을 위한 사전 작업
+    const oldValue = input.value;
+    const oldLength = oldValue.length;
+    const cursorPos = input.selectionStart;
+    
+    // 숫자만 추출 (콤마, 공백, 문자 모두 제거)
+    const numericValue = oldValue.replace(/[^0-9]/g, '');
+    
+    // 빈 값 처리
+    if (numericValue === '') {
+        input.value = '';
+        return;
+    }
+    
+    // 콤마 포맷 적용
+    const formatted = parseInt(numericValue, 10).toLocaleString('ko-KR');
+    input.value = formatted;
+    
+    // 커서 위치 복원 (콤마 추가/제거에 따른 자릿수 변화 보정)
+    const newLength = formatted.length;
+    const newCursorPos = Math.max(0, cursorPos + (newLength - oldLength));
+    input.setSelectionRange(newCursorPos, newCursorPos);
+}
+
 function renderMasterList() {
     document.getElementById('cardList').innerHTML = order.map(k => {
         const d = globalData[k], meta = metaData[k]; if(!d) return '';
         const info = getGradeInfo(d.grade);
-        return `<div class="currency-card" onclick="openDetail('${k}')"><div class="card-left"><div class="flag-box">${meta.flag}</div><div><div class="cur-name">${meta.name}</div><div class="cur-pair">${meta.pair}</div></div></div><div class="card-right"><div class="cur-price">${d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div><div class="cur-grade c-${d.grade}">${d.rsi}점 · ${info.text}</div></div></div>`;
+        return `<div class="currency-card" onclick="openDetail('${k}')"><div class="card-left"><div class="flag-box">${meta.flag}</div><div><div class="cur-name">${meta.name}</div><div class="cur-pair">${meta.pair}</div></div></div><div class="card-right"><div class="cur-price">${d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div><div class="cur-grade c-${d.grade}">${d.rsi} · ${info.text}</div></div></div>`;
     }).join('');
 }
 
@@ -670,12 +745,6 @@ function setMode(mode) {
     if (banner) banner.style.display = (mode === 'investor') ? 'block' : 'none';
     
     if(activeCurrency) updateDetailView(activeCurrency);
-    
-    // 모드 변경 시 메시지 초기화 후 새 데이터 가져오기
-    const aiMsg = document.getElementById('d-aiMsg');
-    if (aiMsg) aiMsg.innerHTML = '데이터 로딩 중...';
-    
-    if (typeof fetchAllData === 'function') fetchAllData();
 }
 
 function togglePanel(contentId, headerElement) {
@@ -734,9 +803,9 @@ function updateDetailView(currencyCode) {
     document.getElementById('d-pair').textContent = meta.pair; document.getElementById('d-price').textContent = d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
     document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + (d.rsi / 100) * 180}, 150, 150)`);
-    const gScore = document.getElementById('d-score'); gScore.textContent = d.rsi; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
+    const gScore = document.getElementById('d-score'); gScore.textContent = d.grade; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
     const info = getGradeInfo(d.grade);
-    document.getElementById('d-gradeText').textContent = `${d.grade}등급 (${info.text}·${info.guide})`;
+    document.getElementById('d-gradeText').textContent = `${info.text}·${info.guide} (${d.rsi})`;
 
     if (d.is_investable && d.inv_conds) {
         // 시그널 상태 배지 (대기중 / 시그널 발생)
@@ -773,7 +842,7 @@ function updateDetailView(currencyCode) {
         const stats = investorStats[currencyCode];
         if (stats) {
             document.getElementById('inv-backtest-line').innerHTML = 
-                `📊 20년 백테스트 · 승률 <strong>${stats.win}%</strong> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong>`;
+                `📊 검증 결과 · 승률 <strong>${stats.win}%</strong> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong>`;
         }
     } else {
         document.getElementById('inv-status-badge').textContent = '';
@@ -1012,7 +1081,16 @@ function renderChart(chartData) {
             ]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            responsive: true, maintainAspectRatio: false, 
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    enabled: false,
+                    external: (ctx) => externalTooltip(ctx, chartData),
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
             scales: { 
                 x: { ticks: { color: textColor, font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: gridColor } }, 
                 y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor, font: { size: 9, family: "'Space Mono', monospace" } }, grid: { color: gridColor } },
@@ -1023,10 +1101,80 @@ function renderChart(chartData) {
     });
 }
 
+// ── 커스텀 HTML 툴팁 ────────────────────────────────────────────
+function fmtNum(n, decimals = 2) {
+    if (n == null || isNaN(n)) return '—';
+    return Number(n).toLocaleString('ko-KR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    });
+}
+
+const TIP_ORDER = ['종가', '이동평균', 'BB', 'WR'];
+const TIP_COLOR = {
+    '종가':     '#1a73e8',
+    '이동평균': '#EF9F27',
+    'BB':       'rgba(226,75,74,0.85)',
+    'WR':       'rgba(156, 39, 176, 0.95)',
+};
+
+function externalTooltip(ctx, chartData) {
+    const tip = document.getElementById('chart-tip');
+    const t = ctx.tooltip;
+    if (!t || t.opacity === 0) { tip.classList.remove('show'); return; }
+
+    const i = t.dataPoints[0].dataIndex;
+    const d = chartData.data[i];
+
+    const rows = {
+        '종가':     fmtNum(d.close),
+        '이동평균': fmtNum(d.ma),
+        'BB':       fmtNum(d.bb_lower) + '  ~  ' + fmtNum(d.bb_upper),
+        'WR':       fmtNum(d.rsi, 1),
+    };
+
+    let html = `<div class="tip-date">${d.date}</div>`;
+    for (const key of TIP_ORDER) {
+        html += `<div class="tip-row">
+            <span class="tip-dot" style="background:${TIP_COLOR[key]}"></span>
+            <span class="tip-label">${key}</span>
+            <span class="tip-val">${rows[key]}</span>
+        </div>`;
+    }
+    tip.innerHTML = html;
+
+    const host   = tip.parentElement.getBoundingClientRect();
+    const canvas = ctx.chart.canvas.getBoundingClientRect();
+    tip.style.left = (canvas.left - host.left + t.caretX) + 'px';
+    tip.style.top  = (canvas.top  - host.top  + t.caretY) + 'px';
+    tip.classList.add('show');
+}
+
+// ── 세로 크로스헤어 점선 ─────────────────────────────────────────
+const crosshairPlugin = {
+    id: 'crosshair',
+    afterDatasetsDraw(chart) {
+        const tt = chart.tooltip;
+        if (!tt || !tt.opacity) return;
+        const { top, bottom } = chart.chartArea;
+        const c = chart.ctx;
+        c.save();
+        c.strokeStyle = 'rgba(255,255,255,0.18)';
+        c.setLineDash([3, 3]);
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(tt.caretX, top);
+        c.lineTo(tt.caretX, bottom);
+        c.stroke();
+        c.restore();
+    },
+};
+Chart.register(crosshairPlugin);
+
 function updateCalc() {
     if (!activeCurrency || !globalData[activeCurrency]) return;
     const d = globalData[activeCurrency];
-    const amount = parseInt(document.getElementById('calc-amount').value) || 5000000;
+    const amount = parseInt(document.getElementById('calc-amount').value.replace(/,/g, '')) || 5000000;
     const price = d.price;
     const fee = 0;  // 토스 수수료 0%
     
@@ -1072,7 +1220,7 @@ function toggleTradeForm() {
 
 function saveTrade() {
     const date = document.getElementById('tf-date').value, rate = parseFloat(document.getElementById('tf-rate').value);
-    const amount = parseInt(document.getElementById('tf-amount').value), type = document.getElementById('tf-type').value, memo = document.getElementById('tf-memo').value;
+    const amount = parseInt(document.getElementById('tf-amount').value.replace(/,/g, '')), type = document.getElementById('tf-type').value, memo = document.getElementById('tf-memo').value;
     if (!date || !rate || !amount) { alert('날짜, 환율, 금액을 입력해주세요'); return; }
     const trades = getTrades(); trades.unshift({ date, rate, amount, type, memo, currency: activeCurrency, id: Date.now() });
     saveTrades(trades); toggleTradeForm(); renderTrades();
