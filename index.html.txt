@@ -903,14 +903,6 @@ function updateDetailView(currencyCode) {
     document.getElementById('d-pair').textContent = meta.pair; document.getElementById('d-price').textContent = d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
     document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + (d.rsi / 100) * 180}, 150, 150)`);
-    
-    // 침 색 = 등급색
-    const gradeColors = { 'A': '#1D9E75', 'B': '#5DCAA5', 'C': '#666666', 'D': '#EF9F27', 'F': '#E24B4A' };
-    const needleColor = gradeColors[d.grade] || '#666666';
-    const needleG = document.getElementById('needleG');
-    needleG.querySelector('line').setAttribute('stroke', needleColor);
-    needleG.querySelector('circle').setAttribute('fill', needleColor);
-    
     const gScore = document.getElementById('d-score'); gScore.textContent = d.grade; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
     const info = getGradeInfo(d.grade);
     document.getElementById('d-gradeText').textContent = `${info.text}·${info.guide} (${d.rsi})`;
