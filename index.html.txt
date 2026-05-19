@@ -1233,6 +1233,7 @@ function renderTrades() {
     if (trades.length === 0) { list.innerHTML = '<div class="trade-empty">거래 기록이 없습니다<br><span style="font-size:11px;">상단 "+ 기록 추가" 버튼으로 추가해보세요</span></div>'; return; }
     const currentPrice = globalData[activeCurrency] ? globalData[activeCurrency].price : 0;
     list.innerHTML = trades.map(t => {
+
         let pnl = '', pnlColor = 'var(--text-sub)';
         if (t.type === 'buy' && currentPrice > 0) {
             const diff = ((currentPrice - t.rate) / t.rate * 100);
