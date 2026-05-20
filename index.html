@@ -417,14 +417,14 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
       </div>
       
       <div class="msg-box" id="msg-box-traveler">
-        <strong style="color:var(--text-main)">AI 코멘트</strong><br/>
+        <strong style="color:var(--text-main)">환전 가이드</strong><br/>
         <div id="d-aiMsg" style="color:var(--text-sub); margin-top: 6px; font-size: 13px; line-height: 1.5;">데이터 로딩 중...</div>
         <div id="stats-container" class="stats-grid" style="display:none;"></div>
       </div>
 
       <div class="sub-panel" id="quant-sub-panel">
           <div class="collapsible-header" onclick="togglePanel('sub-scores-container', this)">
-              <div style="font-size: 13px; font-weight: 800;">📊 퀀트 세부 지표 분석</div>
+              <div style="font-size: 13px; font-weight: 800;">📊 세부 지표 분석</div>
               <div class="toggle-icon">▼</div>
           </div>
           <div id="sub-scores-container" style="margin-top: 15px;"></div>
@@ -481,7 +481,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 
       <div class="macro-box" id="macro-panel" style="display:none;">
         <div class="collapsible-header macro-header" onclick="togglePanel('macro-content-wrapper', this)" style="margin-bottom:0;">
-            <span id="macro-header-text" style="font-weight:700;font-size:14px;">🌍 통화별 맞춤 거시경제 꼬리위험</span>
+            <span id="macro-header-text" style="font-weight:700;font-size:14px;">🌍 통화별 위험 신호</span>
             <div class="toggle-icon">▼</div>
         </div>
         <div id="macro-content-wrapper" style="margin-top: 10px;">
@@ -529,8 +529,8 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
           <button class="action-btn" id="d-actionBtn">대기중...</button>
         </div>
         <div id="investor-action" style="display:none;">
-          <div class="cutoff-text" id="i-cutoffText" style="color:var(--text-main);">📈 퀀트 AI 트레이딩 시그널</div>
-          <button class="action-btn" id="inv-actionBtn">시그널 산출 중...</button>
+          <div class="cutoff-text" id="i-cutoffText" style="color:var(--text-main);">📈 매매 시그널</div>
+          <button class="action-btn" id="inv-actionBtn">신호 분석 중...</button>
         </div>
       </div>
 
@@ -955,10 +955,10 @@ function updateDetailView(currencyCode) {
     } else {
         document.getElementById('inv-status-badge').textContent = '';
         document.getElementById('inv-backtest-line').innerHTML = '';
-        document.getElementById('inv-checklist-container').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-sub); font-size:12px;">🚫 해당 통화는 수수료 및 성향 문제로 퀀트 투자를 지원하지 않습니다.</div>`;
+        document.getElementById('inv-checklist-container').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-sub); font-size:12px;">🚫 이 통화는 수수료가 높아 매매를 추천하지 않아요.</div>`;
     }
 
-    // 모드별 메시지 박스 전환 - 투자자 모드는 AI 코멘트 박스 숨김
+    // 모드별 메시지 박스 전환 - 투자자 모드는 환전 가이드 박스 숨김
     if (appMode === 'investor') {
         document.getElementById('msg-box-traveler').style.display = 'none';
     } else {
@@ -1041,13 +1041,13 @@ function updateDetailView(currencyCode) {
 
     const iBtn = document.getElementById('inv-actionBtn');
     if (!d.is_investable) {
-        document.getElementById('i-cutoffText').textContent = "🚫 투자 부적합 통화";
-        iBtn.textContent = "수수료 및 성향 문제 (접근 금지)";
+        document.getElementById('i-cutoffText').textContent = "🚫 매매 비추천 통화";
+        iBtn.textContent = "수수료가 높아 추천하지 않아요";
         iBtn.style.background = "#2a2e37"; iBtn.style.color = "#a0a5b1"; iBtn.style.cursor = "not-allowed";
     } else {
         iBtn.style.cursor = "pointer";
         if (d.inv_signal && d.rt_valid) {
-            document.getElementById('i-cutoffText').innerHTML = `🎯 매수 타점 포착! | ${d.inv_tpsl}<br><span style="color:#1D9E75; font-size:12px;">${d.rt_status}</span>`;
+            document.getElementById('i-cutoffText').innerHTML = `🎯 매수 시점 발견! | ${d.inv_tpsl}<br><span style="color:#1D9E75; font-size:12px;">${d.rt_status}</span>`;
             iBtn.textContent = `🔥 실시간 확인 완료 — 매수 진입 (${d.inv_strategy})`;
             iBtn.style.background = "#E24B4A"; iBtn.style.color = "white";
         } else if (d.inv_signal && !d.rt_valid) {
@@ -1055,8 +1055,8 @@ function updateDetailView(currencyCode) {
             iBtn.textContent = `⚠️ BB 위 복귀 — 매수 보류 (재확인 필요)`;
             iBtn.style.background = "#EF9F27"; iBtn.style.color = "white";
         } else {
-            document.getElementById('i-cutoffText').textContent = `⏳ 조건 미달 대기 중 | ${d.inv_tpsl}`;
-            iBtn.textContent = "알고리즘 조건 미달 (관망)";
+            document.getElementById('i-cutoffText').textContent = `⏳ 신호 기다리는 중 | ${d.inv_tpsl}`;
+            iBtn.textContent = "조건 충족 대기 중 (관망)";
             iBtn.style.background = "var(--btn-bg)"; iBtn.style.color = "var(--btn-text)";
         }
     }
@@ -1069,7 +1069,7 @@ function updateDetailView(currencyCode) {
         document.getElementById('macro-grid').innerHTML = d.macro_items.map(ind => `
             <div class="macro-item" style="border-left: 3px solid ${ind.w ? '#E24B4A' : '#1D9E75'}; display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>${ind.w ? '⚠️' : '✅'} ${ind.n}</span>
+                    <span>${ind.w ? '⚠️' : '✅'} ${ind.n}${ind.h ? ` <span class="help-icon" onclick="event.stopPropagation();showHelp('${ind.h}')" style="cursor:pointer;">i</span>` : ''}</span>
                     <span style="color: ${ind.w ? '#E24B4A' : '#1D9E75'}; font-weight:700; font-family:'Space Mono', monospace;">
                         ${ind.v}
                     </span>
@@ -1086,7 +1086,7 @@ function updateDetailView(currencyCode) {
             document.getElementById('macro-disclaimer').innerHTML = "";
         }
     } else { 
-        document.getElementById('macro-header-text').innerHTML = `🌍 거시경제 꼬리위험`;
+        document.getElementById('macro-header-text').innerHTML = `🌍 위험 신호`;
         document.getElementById('macro-grid').innerHTML = ""; 
         document.getElementById('macro-disclaimer').innerHTML = "";
     }
@@ -1195,7 +1195,7 @@ function renderChart(chartData) {
                 { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: 'WR 타점', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
+                { label: 'WR 기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
                 { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1' }
             ]
         },
