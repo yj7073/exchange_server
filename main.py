@@ -54,9 +54,18 @@ except FileNotFoundError:
 THERMO_WEIGHTS = {
     'JPY': {'WR10': 0.45, 'SYNC': 0.15, 'DISP10': 0.20, 'WR7': 0.20},
     'EUR': {'WR10': 0.40, 'WR7': 0.60},
-    'THB': {'WR10': 0.45, 'MOM3': 0.45, 'WR14': 0.05, 'STOCH': 0.05},
+    'THB': {'DISP10': 0.60, 'WR10': 0.40},
     'AUD': {'WR10': 1.00},
-    'USD': {'WR10': 0.60, 'WR7': 0.15, 'DISP20': 0.05, 'WR20': 0.20},
+    'USD': {'WR7': 0.60, 'RSI14': 0.40},
+}
+
+# 통화별 ABCDF 등급 경계 (그리드서치 최적화) — A≤[0] B≤[1] C≤[2] D≤[3] F>[3]
+GRADE_CUTS = {
+    'EUR': (10, 28, 60, 90),
+    'JPY': (18, 30, 52, 76),
+    'THB': (28, 38, 56, 72),
+    'AUD': (14, 32, 62, 90),
+    'USD': (26, 38, 56, 76),
 }
 
 INVESTOR_STRATEGIES = {
@@ -202,6 +211,13 @@ def calc_all_indicators(data, currency):
     high14 = df['High'].rolling(14).max()
     df['STOCH'] = ((df['Close'] - low14) / (high14 - low14) * 100).clip(0, 100)
     
+    for p in [7, 14]:
+        delta = df['Close'].diff()
+        gain = delta.where(delta > 0, 0).rolling(p).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(p).mean()
+        rs = gain / (loss + 1e-10)
+        df[f'RSI{p}'] = (100 - (100 / (1 + rs))).clip(0, 100)
+    
     return df
 
 def calc_thermo(df, currency):
@@ -214,10 +230,11 @@ def calc_thermo(df, currency):
         s[ind] = val
         total += val * weight
     
-    if total <= 25: grade = "A"
-    elif total <= 40: grade = "B"
-    elif total <= 55: grade = "C"
-    elif total <= 70: grade = "D"
+    a, b, c, d = GRADE_CUTS[currency]
+    if total <= a: grade = "A"
+    elif total <= b: grade = "B"
+    elif total <= c: grade = "C"
+    elif total <= d: grade = "D"
     else: grade = "F"
     
     return total, grade, s
@@ -419,104 +436,75 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                 stat_msg += f"</div></div>"
                 
             # ═══════════════════════════════════════
-            # 여행자 모드: 온도계 기반 가이드
+            # 여행자 모드: 온도계 기반 가이드 (v8 — 추세예측 제거, 절감률 강조)
             # ═══════════════════════════════════════
             else:
-                if thermo_data:
-                    stat_msg = f"과거 통계상 이 구간 진입 시 승률은 <strong>{thermo_data['win']}%</strong> 였습니다."
-                
+                saving_val = thermo_data['saving'] if thermo_data else 0.0
+                win_val = thermo_data['win'] if thermo_data else None
                 markov_7d = markov_lookup.get(currency, {}).get('7', {}).get(str_total)
+                down_prob = None
                 if markov_7d:
-                    stat_msg += f"<br>7일 뒤 하락(유리)할 확률: <strong>{markov_7d.get('down', markov_7d.get('cheaper', 'N/A'))}%</strong>"
-                
-                stat_msg += f"<br><br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
-                stat_msg += f"🌍 <strong>시장 경보 Level {warn_total}</strong><br>"
-                if warn_total > 0:
-                    stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>" + "<br>".join(active_warnings) + "</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
-                else:
-                    stat_msg += f"<span style='color:#1D9E75; font-size:12px;'>🟢 모든 통화 맞춤형 거시지표가 안정적입니다.</span><hr style='margin:8px 0; border:none; border-top:1px dashed var(--border-color);'>"
-                
-                # 등급 + 60일 추세 조합 메시지 (여행자 모드 전용)
-                fut_str = gd.get('fut', '+0.0%')
-                try:
-                    fut_val = float(fut_str.replace('%', '').replace('+', ''))
-                except:
-                    fut_val = 0
-                
-                # 단기 등급 해석
-                if grade == 'A':
-                    short_term = "🟢 <b>환전 적기!</b> (매우 유리)"
-                    short_color = "#1D9E75"
-                elif grade == 'B':
-                    short_term = "🟢 유리한 가격"
-                    short_color = "#1D9E75"
-                elif grade == 'C':
-                    short_term = "⚪ 보통 가격"
-                    short_color = "var(--text-main)"
-                elif grade == 'D':
-                    short_term = "🟡 다소 불리"
-                    short_color = "#F6A800"
-                else:  # F
-                    short_term = "🔴 <b>매우 불리</b>"
-                    short_color = "#E24B4A"
-                
-                # 60일 추세 해석
-                if fut_val >= 3:
-                    trend_text = f"📈 <b>강한 상승 추세</b> (60일 후 +{fut_val:.1f}%)"
-                    trend_color = "#E24B4A"
-                elif fut_val >= 1:
-                    trend_text = f"📈 약상승 추세 (60일 후 +{fut_val:.1f}%)"
-                    trend_color = "#F6A800"
-                elif fut_val >= -1:
-                    trend_text = f"⚪ 횡보 추세 (60일 후 {fut_val:+.1f}%)"
-                    trend_color = "var(--text-main)"
-                else:
-                    trend_text = f"📉 하락 추세 (60일 후 {fut_val:+.1f}%)"
-                    trend_color = "#1D9E75"
-                
-                # 종합 판단
+                    down_prob = markov_7d.get('down', markov_7d.get('cheaper', None))
+
+                # 100만원 환전 시 금액 환산 (트래블카드 수수료 0 → 순수 타이밍 이득)
+                krw_amt = abs(int(1_000_000 * saving_val / 100))
+
+                # ── 등급별 결론 (절감률 강조형, '과거 평균' 완충 표현) ──
                 if grade in ['A', 'B']:
-                    if fut_val >= 1:
-                        verdict = "🎯 <b>지금 환전 강력 추천!</b> (단기 유리 + 장기 상승)"
-                        verdict_color = "#1D9E75"
-                    elif fut_val >= -1:
-                        verdict = "✅ <b>지금 환전 추천</b>"
-                        verdict_color = "#1D9E75"
+                    head_color = "#1D9E75"
+                    if grade == 'A':
+                        headline = "🟢 지금이 환전하기 아주 좋은 시점이에요"
                     else:
-                        verdict = "🤔 단기 유리하나 장기 하락 — 출국 임박시 환전"
-                        verdict_color = "var(--text-main)"
+                        headline = "🟢 지금 환전하기 좋은 편이에요"
+                    body = (f"과거 같은 등급에서 환전했을 때 "
+                            f"<strong>평균 {saving_val:+.2f}% 유리</strong>했어요 "
+                            f"<span style='color:var(--text-sub)'>(100만원당 약 {krw_amt:,}원)</span>")
+                    action = "💰 출국 전이라면 지금 환전을 추천해요"
                 elif grade == 'C':
-                    if fut_val >= 2:
-                        verdict = "⚡ 보통이나 <b>장기 상승</b> — 더 불리해지기 전 환전"
-                        verdict_color = "#F6A800"
-                    elif fut_val >= -1:
-                        verdict = "⚪ 보통 — 본인 일정에 맞춰 환전"
-                        verdict_color = "var(--text-main)"
-                    else:
-                        verdict = "⏳ 보통이나 장기 하락 — 1~2주 대기 가능"
-                        verdict_color = "#1D9E75"
+                    head_color = "var(--text-main)"
+                    headline = "⚪ 지금은 보통 수준이에요"
+                    body = (f"과거 같은 등급에서는 "
+                            f"<strong>평균 {saving_val:+.2f}%</strong>로 큰 유불리가 없었어요")
+                    action = "🗓️ 일정에 맞춰 환전하면 돼요"
                 else:  # D, F
-                    if fut_val >= 2:
-                        verdict = f"⚠️ <b>단기 불리 + 추세 상승 — 더 불리해질 확률 높음</b>"
-                        verdict_color = "#F6A800"
-                    elif fut_val >= 0:
-                        verdict = "⏳ 단기 불리 + 추세 미약 — <b>1~2주 대기 추천</b>"
-                        verdict_color = "#1D9E75"
+                    head_color = "#E24B4A"
+                    if grade == 'F':
+                        headline = "🔴 지금은 환전하기 불리해요"
                     else:
-                        verdict = "✅ <b>대기 권장!</b> (단기 불리 + 장기 하락)"
-                        verdict_color = "#1D9E75"
-                
-                stat_msg += f"<span style='font-size:13px; font-weight:700;'>💡 종합 판단</span><br>"
-                stat_msg += f"<div style='padding:8px; background:rgba(0,0,0,0.03); border-radius:6px; margin:4px 0;'>"
-                stat_msg += f"<span style='font-size:12px;'>"
-                stat_msg += f"단기 ({grade}등급): <span style='color:{short_color}'>{short_term}</span><br>"
-                stat_msg += f"장기 (60일): <span style='color:{trend_color}'>{trend_text}</span>"
-                stat_msg += f"</span></div>"
-                stat_msg += f"<div style='padding:10px; background:{verdict_color}15; border-left:3px solid {verdict_color}; border-radius:6px; margin-top:6px;'>"
-                stat_msg += f"<span style='font-size:13px; color:{verdict_color}'>{verdict}</span>"
+                        headline = "🟡 지금은 다소 불리해요"
+                    body = (f"과거 같은 등급에서 환전했을 때 "
+                            f"<strong>평균 {saving_val:+.2f}% 손해</strong>였어요 "
+                            f"<span style='color:var(--text-sub)'>(100만원당 약 {krw_amt:,}원)</span>")
+                    # 단기 하락확률이 높으면 대기 근거로 (평균회귀)
+                    if down_prob is not None and isinstance(down_prob, (int, float)) and down_prob >= 55:
+                        action = f"⏳ 7일 안에 더 싸질 가능성이 {down_prob}%로, 며칠 기다리는 걸 추천해요"
+                    else:
+                        action = "⏳ 출국이 급하지 않다면 며칠 기다려 보세요"
+
+                # ── 메시지 조립: 결론 → 근거 → 행동 ──
+                stat_msg = f"<div style='padding:12px; background:{head_color}12; border-left:3px solid {head_color}; border-radius:8px;'>"
+                stat_msg += f"<div style='font-size:15px; font-weight:800; color:{head_color}; margin-bottom:6px;'>{headline}</div>"
+                stat_msg += f"<div style='font-size:13px; color:var(--text-main); line-height:1.6;'>{body}</div>"
+                stat_msg += f"<div style='font-size:13px; color:{head_color}; font-weight:700; margin-top:8px;'>{action}</div>"
                 stat_msg += f"</div>"
-                
-                stat_msg += "</div>"
+
+                # ── 시장 경보: 위기(Level 1+)일 때만 표시 ──
+                if warn_total > 0:
+                    stat_msg += f"<div style='margin-top:10px; padding:12px; background:#E24B4A12; border-radius:8px; border:1px solid #E24B4A40;'>"
+                    stat_msg += f"⚠️ <strong style='color:#E24B4A'>시장 경보</strong> — 평소와 다른 위기 신호가 감지됐어요<br>"
+                    stat_msg += f"<span style='color:#E24B4A; font-size:12px;'>" + "<br>".join(active_warnings) + "</span><br>"
+                    stat_msg += f"<span style='color:var(--text-sub); font-size:11px;'>위기 구간에서는 평소 패턴이 깨질 수 있으니 신중하게 판단하세요.</span>"
+                    stat_msg += f"</div>"
+
+                # ── 자세한 통계 (접어둠): 등급/승률 ──
+                stat_msg += f"<div style='margin-top:10px; padding:10px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color); font-size:12px; color:var(--text-sub); line-height:1.7;'>"
+                stat_msg += f"<strong style='color:var(--text-main);'>📊 참고 통계</strong><br>"
+                stat_msg += f"· 현재 등급: <strong>{grade}</strong>"
+                if win_val is not None:
+                    stat_msg += f"<br>· 과거 같은 등급 환전 후 더 유리해진 비율: <strong>{win_val}%</strong>"
+                if down_prob is not None and isinstance(down_prob, (int, float)):
+                    stat_msg += f"<br>· 7일 안에 더 싸질 가능성: <strong>{down_prob}%</strong>"
+                stat_msg += f"</div>"
 
         return {
             "price": adj_price, "rsi": int(total), "threshold": int(threshold), "signal": bool(total <= threshold),

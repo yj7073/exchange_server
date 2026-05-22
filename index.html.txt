@@ -561,8 +561,7 @@ const indicatorHelp = {
     'WR': {
         title: 'WR (Williams %R)',
         desc: '<p><strong>최근 N일 중 지금 가격이 어디?를 점수화한 지표예요.</strong></p>',
-        scale: '<p><strong>-100점</strong>: 최저점 (가장 쌈) → 매수!<br><strong>0점</strong>: 최고점 (가장 비쌈) → 매도</p>',
-        tip: '💡 우리 시스템: <strong>-95점 이하</strong>면 바닥권이라 매수 시그널!'
+        scale: '<p><strong>0점</strong>: 최저점 (최근 N일 중 가장 쌈)<br><strong>100점</strong>: 최고점 (최근 N일 중 가장 비쌈)</p>'
     },
     'BB': {
         title: 'BB (볼린저 밴드)',
@@ -767,12 +766,12 @@ function renderSignalBanner(signals) {
 }
 
 function getGradeInfo(grade) {
-    if(grade === 'A') return { text: "매우 유리", guide: "환전 적기!" };
-    if(grade === 'B') return { text: "유리", guide: "환전 추천" };
-    if(grade === 'C') return { text: "보통", guide: "급하면 환전" };
-    if(grade === 'D') return { text: "불리", guide: "조금 더 대기" };
-    if(grade === 'F') return { text: "매우 불리", guide: "환전 대기" };
-    return { text: "매우 불리", guide: "환전 대기" };
+    if(grade === 'A') return { text: "매우 유리", guide: "지금 환전 추천" };
+    if(grade === 'B') return { text: "유리", guide: "환전하기 좋음" };
+    if(grade === 'C') return { text: "보통", guide: "일정에 맞춰" };
+    if(grade === 'D') return { text: "불리", guide: "여유 있으면 대기" };
+    if(grade === 'F') return { text: "매우 불리", guide: "며칠 기다리기" };
+    return { text: "보통", guide: "일정에 맞춰" };
 }
 
 // 백엔드 메시지의 "|||도움말키" 마커를 ⓘ 아이콘으로 변환
