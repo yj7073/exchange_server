@@ -909,7 +909,11 @@ function updateDetailView(currencyCode) {
     document.getElementById('d-flag').textContent = meta.flag; document.getElementById('d-name').textContent = meta.name;
     document.getElementById('d-pair').textContent = meta.pair; document.getElementById('d-price').textContent = d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
-    document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + (d.rsi / 100) * 180}, 150, 150)`);
+    // 바늘을 등급 기반으로 배치 (방법 A): 각 색 호의 실제 중앙 각도를 가리킴
+    // A:초록(22°) B:연두(57°) C:회색(86°) D:주황(112°) F:빨강(154°)
+    const gradeAngle = { 'A': 22, 'B': 57, 'C': 86, 'D': 112, 'F': 154 };
+    const needleAngle = gradeAngle[d.grade] !== undefined ? gradeAngle[d.grade] : 86;
+    document.getElementById('needleG').setAttribute('transform', `rotate(${-90 + needleAngle}, 150, 150)`);
     const gScore = document.getElementById('d-score'); gScore.textContent = d.grade; gScore.className = `gauge-score c-${d.grade}`; gScore.style.background = 'transparent'; 
     const info = getGradeInfo(d.grade);
     document.getElementById('d-gradeText').textContent = `${info.text}·${info.guide} (${d.rsi})`;
@@ -993,15 +997,6 @@ function updateDetailView(currencyCode) {
                 else if (data.grade === 'F') color = "#E24B4A";
                 
                 gradeBadge = `<span style="display:inline-block; margin-left:6px; padding:2px 6px; border-radius:4px; background:${color}20; color:${color}; font-size:10px; font-weight:800;">${data.grade}</span>`;
-                
-                let advice = "";
-                if (data.saving > 0.5) advice = " · <span style='color:#1D9E75; font-weight:700;'>유리한 구간!</span>";
-                else if (data.saving > 0.1) advice = " · <span style='color:#5DCAA5;'>약간 유리</span>";
-                else if (data.saving > -0.1) advice = " · <span style='color:#888888;'>보통</span>";
-                else if (data.saving > -0.3) advice = " · <span style='color:#EF9F27;'>약간 불리</span>";
-                else advice = " · <span style='color:#E24B4A; font-weight:700;'>불리한 구간</span>";
-
-                statText = `<div class="sub-stat-text" style="margin-top:4px;">이 점수대에서 환전 시 승률 <strong>${data.win}%</strong> · 절감률 <strong>${data.saving > 0 ? '+' : ''}${data.saving.toFixed(2)}%</strong>${advice}</div>`;
             } else {
                 color = val <= 40 ? "#1D9E75" : (val <= 60 ? "#888888" : "#E24B4A");
             }
