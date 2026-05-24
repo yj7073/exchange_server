@@ -445,21 +445,26 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                 if markov_7d:
                     down_prob = markov_7d.get('down', markov_7d.get('cheaper', None))
 
+                # 절감률 표현: '유리/손해' 단어 빼고 수치만 (등급 헤드라인과 충돌 방지)
+                sav_word = f"<strong>평균 {saving_val:+.2f}%</strong>"
+                # +면 평소보다 싸게, -면 비싸게 샀다는 의미 한 줄
+                sav_hint = "<span style='color:var(--text-sub); font-size:12px;'>(+는 평소보다 유리, −는 불리)</span>"
+
                 # ── 등급별 결론 (헤드라인 색만 등급별, 점수 기반 절감률) ──
                 if grade in ['A', 'B']:
                     head_color = "#1D9E75"
                     headline = "🟢 지금이 환전하기 아주 좋은 시점이에요" if grade == 'A' else "🟢 지금 환전하기 좋은 편이에요"
-                    body = f"이 점수에서 환전했을 때 과거 <strong>평균 {saving_val:+.2f}% 유리</strong>했어요"
+                    body = f"이 점수에서 환전했을 때 과거 {sav_word}"
                     action = "💰 출국 전이라면 지금 환전을 추천해요"
                 elif grade == 'C':
                     head_color = "#888888"
                     headline = "⚪ 지금은 보통 수준이에요"
-                    body = f"이 점수에서는 과거 <strong>평균 {saving_val:+.2f}%</strong>로 큰 유불리가 없었어요"
+                    body = f"이 점수에서는 과거 {sav_word}"
                     action = "🗓️ 일정에 맞춰 환전하면 돼요"
                 else:  # D, F
                     head_color = "#E24B4A" if grade == 'F' else "#EF9F27"
                     headline = "🔴 지금은 환전하기 불리해요" if grade == 'F' else "🟡 지금은 다소 불리해요"
-                    body = f"이 점수에서 환전했을 때 과거 <strong>평균 {saving_val:+.2f}% 손해</strong>였어요"
+                    body = f"이 점수에서 환전했을 때 과거 {sav_word}"
                     if down_prob is not None and isinstance(down_prob, (int, float)) and down_prob >= 55:
                         action = f"⏳ 7일 안에 더 싸질 가능성이 {down_prob}%로, 며칠 기다리는 걸 추천해요"
                     else:
@@ -563,7 +568,7 @@ def get_chart(currency: str = "USD", days: int = 90):
                 "ma": round(float(row['MA']) * mult, 2),
                 "bb_upper": round(float(row['BB_Upper']) * mult, 2),
                 "bb_lower": round(float(row['BB_Lower']) * mult, 2),
-                "rsi": round(float(row['WR10']), 1) if not pd.isna(row['WR10']) else -50
+                "rsi": round(float(row['WR10']), 1) if not pd.isna(row['WR10']) else None
             })
         
         return {

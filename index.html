@@ -60,6 +60,7 @@ body { background: var(--bg-color); color: var(--text-main); font-family: 'Prete
 .gauge-with-history {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     margin-bottom: 16px;
 }
@@ -381,25 +382,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
           </div>
         </div>
         
-        <!-- 비교 점수 (CNN 스타일) -->
-        <div class="score-history-summary" id="score-history-summary">
-          <div class="history-row">
-            <div class="history-label">어제</div>
-            <div class="history-value" id="hist-yesterday">--</div>
-          </div>
-          <div class="history-row">
-            <div class="history-label">1주 전</div>
-            <div class="history-value" id="hist-week">--</div>
-          </div>
-          <div class="history-row">
-            <div class="history-label">1달 전</div>
-            <div class="history-value" id="hist-month">--</div>
-          </div>
-          <div class="history-row">
-            <div class="history-label">1년 전</div>
-            <div class="history-value" id="hist-year">--</div>
-          </div>
-        </div>
+        <!-- 비교 점수 제거됨 (과거 점수 추세 기능 미사용) -->
       </div>
 
       <div class="inv-board" id="investor-board" style="display:none;">
@@ -560,8 +543,8 @@ const subMap = {"WR10": "WR (10일)", "WR7": "WR (7일)", "WR14": "WR (14일)", 
 const indicatorHelp = {
     'WR': {
         title: 'WR (Williams %R)',
-        desc: '<p><strong>최근 N일 중 지금 가격이 어디?를 점수화한 지표예요.</strong></p>',
-        scale: '<p><strong>0점</strong>: 최저점 (최근 N일 중 가장 쌈)<br><strong>100점</strong>: 최고점 (최근 N일 중 가장 비쌈)</p>'
+        desc: '<p><strong>최근 N일 중 지금 가격이 어디쯤인지 보는 지표예요.</strong> 바닥에 가까우면 평소보다 싼 상태예요.</p>',
+        scale: '<p>📊 <strong>온도계 점수</strong>는 0~100으로 변환해서 써요<br>→ <strong>0에 가까움</strong>: 최근 중 가장 쌈<br>→ <strong>100에 가까움</strong>: 최근 중 가장 비쌈<br><br>📈 <strong>투자자 차트의 WR선</strong>은 원래 값(−100~0)이에요<br>→ <strong>−100에 가까움</strong>: 가장 쌈 (매수 구간)<br>→ <strong>0에 가까움</strong>: 가장 비쌈</p>'
     },
     'BB': {
         title: 'BB (볼린저 밴드)',
@@ -872,7 +855,7 @@ function openDetail(currencyCode) {
     const detailView = document.getElementById('detail-view'); detailView.style.display = 'block';
     setTimeout(() => { detailView.classList.add('active'); }, 10);
     updateDetailView(currencyCode);
-    loadScoreHistory(currencyCode);  // 비교 점수 + 과거 차트 데이터 로드
+    // 과거 점수 추세 기능 미사용 (제거됨)
     
     // 모든 아코디언 패널 처음엔 접힌 상태로
     const collapsibleIds = ['sub-scores-container', 'chart-content-wrapper', 'calc-content-wrapper', 'macro-content-wrapper', 'tradelog-content-wrapper'];
@@ -1117,41 +1100,7 @@ async function loadChart(days, evt) {
     } catch(e) { console.error("Chart error:", e); }
 }
 
-// 과거 온도계 점수 로드 (비교 점수만)
-async function loadScoreHistory(currency) {
-    try {
-        const res = await fetch(`/api/score_history?currency=${currency}`);
-        const data = await res.json();
-        
-        // 비교 점수 표시
-        const s = data.summary || {};
-        updateHistoryValue('hist-yesterday', s.yesterday);
-        updateHistoryValue('hist-week', s.week);
-        updateHistoryValue('hist-month', s.month);
-        updateHistoryValue('hist-year', s.year);
-    } catch(e) {
-        console.error("History error:", e);
-    }
-}
-
-function updateHistoryValue(elId, score) {
-    const el = document.getElementById(elId);
-    if (!el) return;
-    if (score === null || score === undefined) {
-        el.textContent = '--';
-        el.className = 'history-value';
-        return;
-    }
-    el.textContent = Math.round(score);
-    // 등급별 색상
-    let grade = 'C';
-    if (score <= 25) grade = 'A';
-    else if (score <= 40) grade = 'B';
-    else if (score <= 55) grade = 'C';
-    else if (score <= 70) grade = 'D';
-    else grade = 'F';
-    el.className = `history-value grade-${grade}`;
-}
+// 과거 점수 추세 기능 제거됨 (loadScoreHistory, updateHistoryValue)
 
 function renderChart(chartData) {
     const ctx = document.getElementById('priceChart');
@@ -1170,11 +1119,12 @@ function renderChart(chartData) {
     const uppers = chartData.data.map(d => d.bb_upper);
     const lowers = chartData.data.map(d => d.bb_lower);
     
-    const wrs = chartData.data.map(d => d.rsi || -50);
+    const wrs = chartData.data.map(d => (d.rsi === null || d.rsi === undefined) ? null : d.rsi);
     const targetWrs = chartData.data.map(() => wrTarget);
 
-    const currentWr = wrs[wrs.length - 1] || 0;
-    document.getElementById('current-rsi-display').textContent = `(${currentWr.toFixed(1)} / 목표: ${wrTarget})`;
+    const lastWr = wrs[wrs.length - 1];
+    const currentWr = (lastWr === null || lastWr === undefined) ? null : lastWr;
+    document.getElementById('current-rsi-display').textContent = currentWr === null ? `(목표: ${wrTarget})` : `(${currentWr.toFixed(1)} / 목표: ${wrTarget})`;
 
     const isDark = appMode === 'investor';
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
@@ -1190,7 +1140,7 @@ function renderChart(chartData) {
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: 'WR 기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
-                { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1' }
+                { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
             ]
         },
         options: {
