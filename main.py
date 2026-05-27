@@ -362,7 +362,7 @@ def calc_inv_signal(df, currency, realtime_price=0, vix_val=0):
             "pass": rt_valid,
         })
 
-    inv_tpsl = f"익절 {strat['tp']}% / 손절 {strat['sl']}% / 타임아웃 {strat['to']}일 [{strat['grade']}]"
+    inv_tpsl = f"익절 {strat['tp']}% / 손절 {strat['sl']}% / 타임아웃 {strat['to']}일"
     if inv_signal and rt_valid:
         inv_tpsl += f" | 💰 익절가: {tp_price:.2f} | 🛑 손절가: {sl_price:.2f}"
 
@@ -513,10 +513,10 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                     stat_msg += f"</div></div>"
                 else:
                     stat_msg += f"<br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
-                    stat_msg += f"<span style='font-size:13px; font-weight:700;'>📊 검증 결과 (20년 백테스트 · OOS) {stats['grade']}</span><br>"
+                    stat_msg += f"<span style='font-size:13px; font-weight:700;'>📊 검증 결과 (20년 백테스트)</span><br>"
                     stat_msg += f"<div style='font-size:12px; margin-top:6px; line-height:1.8;'>"
                     stat_msg += f"• 승률: <strong>{stats['win']:.1f}%</strong><br>"
-                    stat_msg += f"• 연수익(CAGR): <strong style='color:#1D9E75'>+{stats['cagr']:.2f}%</strong> <span style='font-size:10px; color:var(--text-sub)'>(검증구간, 무위험수익률 상회)</span><br>"
+                    stat_msg += f"• 연수익(CAGR): <strong style='color:#1D9E75'>+{stats['cagr']:.2f}%</strong> <span style='font-size:10px; color:var(--text-sub)'>(무위험수익률 상회)</span><br>"
                     stat_msg += f"• 샤프지수: <strong>{stats['sharpe']:.2f}</strong> · 최대낙폭: <strong>{stats['mdd']:.2f}%</strong>"
                     stat_msg += f"</div></div>"
                 

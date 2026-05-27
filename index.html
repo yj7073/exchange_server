@@ -660,15 +660,15 @@ const indicatorHelp = {
     // ═══════════════════════════════════════
     'WIN_RATE': {
         title: '📊 승률 (Win Rate)',
-        desc: '<p><strong>과거 데이터로 매수 시그널이 발생했을 때, 익절(이익 실현)에 성공한 비율이에요.</strong></p>',
-        scale: '<p><strong>80% 이상</strong>: 매우 안정적인 전략<br><strong>70~80%</strong>: 신뢰할 만한 전략<br><strong>70% 미만</strong>: 변동성 큰 전략</p>',
-        tip: '💡 우리 시스템 백테스트: 전 통화 80%+ 안정적 전략으로 검증됨!'
+        desc: '<p><strong>과거 데이터로 매수 시그널이 발생했을 때, 익절(목표가 도달)에 성공한 비율이에요.</strong></p>',
+        scale: '<p><strong>승률이 전부는 아니에요.</strong> 익절 폭(TP)과 손절 폭(SL)이 다르면 승률만으로 좋은 전략인지 판단할 수 없어요.<br><br>예) 익절 +1.2% / 손절 −0.8%면, 승률 50%여도 평균적으로 이득. 그래서 <strong>CAGR(수익률)·샤프지수와 함께</strong> 봐야 해요.</p>',
+        tip: '💡 각 통화의 익절/손절 비율과 변동성에 따라 적정 승률이 달라요. 우리 전략은 통화별 OOS 검증을 통과한 값이에요.'
     },
     'CAGR': {
         title: '📈 CAGR (연환산 수익률)',
-        desc: '<p><strong>Compound Annual Growth Rate. 1년 동안 평균적으로 얼마나 수익이 났는지 보여주는 연 환산 수익률이에요.</strong></p>',
-        scale: '<p><strong>+5% 이상</strong>: 양호<br><strong>+10% 이상</strong>: 우수<br><strong>+15% 이상</strong>: 매우 우수</p>',
-        tip: '💡 적금 이자(연 3~4%)와 비교: CAGR 5%+ 이면 적금보다 나은 수익률!'
+        desc: '<p><strong>Compound Annual Growth Rate. 매년 평균적으로 얼마나 수익이 났는지 연 환산한 값이에요.</strong></p>',
+        scale: '<p><strong>+2.5%</strong>: 무위험수익률(KOFR) 수준<br><strong>+3% 이상</strong>: 무위험수익률 상회<br><strong>+5% 이상</strong>: 우수<br><br>※ 너무 높은 CAGR(연 10%+)은 백테스트 과적합이나 합산 착시일 가능성이 큽니다. 우리 전략은 OOS 검증으로 보수적으로 산출한 값이에요.</p>',
+        tip: '💡 환전 전략에서 연 3~4%는 "은행에 그냥 두는 것보다 나은" 의미 있는 수익이에요.'
     },
 };
 
@@ -961,18 +961,18 @@ function updateDetailView(currencyCode) {
             return `<div class="inv-check-item ${statusClass}"><div style="font-weight:700; display:flex; align-items:center;">${cond.name}${helpBtn}</div><div class="inv-val-box"><div class="inv-target">목표: ${cond.target}</div><div class="inv-curr" style="color:${statusColor}">${cond.current}</div></div></div>`;
         }).join('');
         
-        // 검증 결과 (OOS 기준, 합산/look-ahead 착시 배제한 보수적 값)
+        // 검증 결과 (20년 백테스트, 합산/look-ahead 착시 배제한 보수적 값)
         const investorStats = {
-            'USD': { win: 85.7, cagr: 3.79, grade: '★★★', ok: true },
-            'JPY': { win: 73.8, cagr: 3.05, grade: '★★',  ok: true },
-            'AUD': { win: 66.7, cagr: 3.97, grade: '★★',  ok: true },
-            'THB': { win: 58.5, cagr: 2.85, grade: '★',   ok: true },
+            'USD': { win: 85.7, cagr: 3.79, ok: true },
+            'JPY': { win: 73.8, cagr: 3.05, ok: true },
+            'AUD': { win: 66.7, cagr: 3.97, ok: true },
+            'THB': { win: 58.5, cagr: 2.85, ok: true },
             'EUR': { ok: false }
         };
         const stats = investorStats[currencyCode];
         if (stats && stats.ok) {
             document.getElementById('inv-backtest-line').innerHTML = 
-                `📊 승률 <strong>${stats.win}%</strong><span class="help-icon" onclick="showHelp('WIN_RATE')" style="cursor:pointer; margin-left:2px;">i</span> · 연수익(OOS) <strong style="color:#1D9E75">+${stats.cagr}%</strong><span class="help-icon" onclick="showHelp('CAGR')" style="cursor:pointer; margin-left:2px;">i</span> · <strong>${stats.grade}</strong>`;
+                `📊 승률 <strong>${stats.win}%</strong><span class="help-icon" onclick="showHelp('WIN_RATE')" style="cursor:pointer; margin-left:2px;">i</span> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong><span class="help-icon" onclick="showHelp('CAGR')" style="cursor:pointer; margin-left:2px;">i</span>`;
         } else if (stats && !stats.ok) {
             document.getElementById('inv-backtest-line').innerHTML = 
                 `<span style="color:#E2954B; font-size:12px;">⚠️ 검증 결과 평균회귀 부적합 — 투자 신호 미제공</span>`;
@@ -1146,8 +1146,12 @@ function renderChart(chartData) {
     if (priceChart) priceChart.destroy();
     
     // 신호 지표 임계값/라벨은 API가 직접 제공 (RSI/WR 통화별 대응)
-    let wrTarget = (chartData.ind_threshold !== undefined && chartData.ind_threshold !== null) ? chartData.ind_threshold : -90;
     const indLabel = chartData.ind_label || 'WR';
+    // RSI(0~100, 양수)인지 WR(-100~0, 음수)인지 판별 — 차트 y축 범위 결정
+    const isRSI = indLabel.startsWith('RSI');
+    const y1_min = isRSI ? 0    : -100;
+    const y1_max = isRSI ? 100  : 0;
+    let wrTarget = (chartData.ind_threshold !== undefined && chartData.ind_threshold !== null) ? chartData.ind_threshold : (isRSI ? 40 : -90);
 
     const labels = chartData.data.map(d => d.date.slice(5));
     const closes = chartData.data.map(d => d.close);
@@ -1180,7 +1184,7 @@ function renderChart(chartData) {
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
-                { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
+                { label: indLabel, data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
             ]
         },
         options: {
@@ -1197,7 +1201,7 @@ function renderChart(chartData) {
             scales: { 
                 x: { ticks: { color: textColor, font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: gridColor } }, 
                 y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor, font: { size: 9, family: "'Space Mono', monospace" } }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', min: -100, max: 0, ticks: { color: 'rgba(29,158,117,0.95)', font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
+                y1: { type: 'linear', display: true, position: 'right', min: y1_min, max: y1_max, ticks: { color: 'rgba(29,158,117,0.95)', font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
             },
             interaction: { intersect: false, mode: 'index' }
         }
@@ -1213,14 +1217,6 @@ function fmtNum(n, decimals = 2) {
     });
 }
 
-const TIP_ORDER = ['종가', '이동평균', 'BB', 'WR'];
-const TIP_COLOR = {
-    '종가':     '#1a73e8',
-    '이동평균': '#EF9F27',
-    'BB':       'rgba(226,75,74,0.85)',
-    'WR':       'rgba(29,158,117,0.95)',
-};
-
 function externalTooltip(ctx, chartData) {
     const tip = document.getElementById('chart-tip');
     const t = ctx.tooltip;
@@ -1229,17 +1225,27 @@ function externalTooltip(ctx, chartData) {
     const i = t.dataPoints[0].dataIndex;
     const d = chartData.data[i];
 
+    // 지표 라벨 (통화별 RSI(7) / WR(21) 등)
+    const indKey = chartData.ind_label || '지표';
+
+    const order = ['종가', '이동평균', 'BB', indKey];
+    const color = {
+        '종가':     '#1a73e8',
+        '이동평균': '#EF9F27',
+        'BB':       'rgba(226,75,74,0.85)',
+        [indKey]:   'rgba(29,158,117,0.95)',
+    };
     const rows = {
         '종가':     fmtNum(d.close),
         '이동평균': fmtNum(d.ma),
         'BB':       fmtNum(d.bb_lower) + '  ~  ' + fmtNum(d.bb_upper),
-        'WR':       fmtNum(d.rsi, 1),
+        [indKey]:   fmtNum(d.rsi, 1),
     };
 
     let html = `<div class="tip-date">${d.date}</div>`;
-    for (const key of TIP_ORDER) {
+    for (const key of order) {
         html += `<div class="tip-row">
-            <span class="tip-dot" style="background:${TIP_COLOR[key]}"></span>
+            <span class="tip-dot" style="background:${color[key]}"></span>
             <span class="tip-label">${key}</span>
             <span class="tip-val">${rows[key]}</span>
         </div>`;
