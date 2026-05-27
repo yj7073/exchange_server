@@ -5,10 +5,10 @@
       "weight": 0.45,
       "scores": {
         "0": {
-          "saving": 1.127,
+          "saving": 1.128,
           "win": 69.5,
-          "count": 2815,
-          "saving_5m": 56350,
+          "count": 2817,
+          "saving_5m": 56400,
           "grade": "A"
         },
         "1": {
@@ -19,10 +19,10 @@
           "grade": "A"
         },
         "2": {
-          "saving": 1.389,
-          "win": 66.8,
-          "count": 1051,
-          "saving_5m": 69450,
+          "saving": 1.39,
+          "win": 66.9,
+          "count": 1053,
+          "saving_5m": 69500,
           "grade": "A"
         },
         "3": {
@@ -33,17 +33,17 @@
           "grade": "A"
         },
         "4": {
-          "saving": 0.312,
-          "win": 56.7,
-          "count": 1128,
-          "saving_5m": 15600,
+          "saving": 0.315,
+          "win": 56.8,
+          "count": 1130,
+          "saving_5m": 15750,
           "grade": "A"
         },
         "5": {
-          "saving": 0.695,
+          "saving": 0.696,
           "win": 61.0,
-          "count": 1084,
-          "saving_5m": 34750,
+          "count": 1085,
+          "saving_5m": 34800,
           "grade": "A"
         },
         "6": {
@@ -75,10 +75,10 @@
           "grade": "A"
         },
         "10": {
-          "saving": 0.777,
-          "win": 58.3,
-          "count": 1362,
-          "saving_5m": 38850,
+          "saving": 0.779,
+          "win": 58.4,
+          "count": 1364,
+          "saving_5m": 38950,
           "grade": "A"
         },
         "11": {
@@ -90,8 +90,8 @@
         },
         "12": {
           "saving": 0.789,
-          "win": 60.4,
-          "count": 1333,
+          "win": 60.3,
+          "count": 1334,
           "saving_5m": 39450,
           "grade": "A"
         },
@@ -117,24 +117,24 @@
           "grade": "A"
         },
         "16": {
-          "saving": 0.473,
-          "win": 56.5,
-          "count": 1608,
-          "saving_5m": 23650,
+          "saving": 0.474,
+          "win": 56.6,
+          "count": 1610,
+          "saving_5m": 23700,
           "grade": "A"
         },
         "17": {
-          "saving": 0.347,
+          "saving": 0.349,
           "win": 55.1,
-          "count": 1760,
-          "saving_5m": 17350,
+          "count": 1762,
+          "saving_5m": 17450,
           "grade": "A"
         },
         "18": {
-          "saving": 0.575,
+          "saving": 0.577,
           "win": 54.2,
-          "count": 1599,
-          "saving_5m": 28750,
+          "count": 1601,
+          "saving_5m": 28850,
           "grade": "A"
         },
         "19": {
@@ -166,10 +166,10 @@
           "grade": "B"
         },
         "23": {
-          "saving": -0.009,
-          "win": 49.7,
-          "count": 1654,
-          "saving_5m": -450,
+          "saving": -0.007,
+          "win": 49.8,
+          "count": 1656,
+          "saving_5m": -350,
           "grade": "B"
         },
         "24": {
@@ -187,10 +187,10 @@
           "grade": "B"
         },
         "26": {
-          "saving": -0.11,
-          "win": 44.1,
-          "count": 1390,
-          "saving_5m": -5500,
+          "saving": -0.108,
+          "win": 44.2,
+          "count": 1392,
+          "saving_5m": -5400,
           "grade": "B"
         },
         "27": {
@@ -208,17 +208,17 @@
           "grade": "B"
         },
         "29": {
-          "saving": 0.085,
-          "win": 50.1,
-          "count": 1415,
-          "saving_5m": 4250,
+          "saving": 0.088,
+          "win": 50.2,
+          "count": 1417,
+          "saving_5m": 4400,
           "grade": "B"
         },
         "30": {
-          "saving": 0.044,
-          "win": 48.7,
-          "count": 1536,
-          "saving_5m": 2200,
+          "saving": 0.046,
+          "win": 48.8,
+          "count": 1538,
+          "saving_5m": 2300,
           "grade": "B"
         },
         "31": {
@@ -236,10 +236,10 @@
           "grade": "B"
         },
         "33": {
-          "saving": 0.179,
+          "saving": 0.182,
           "win": 46.8,
-          "count": 1535,
-          "saving_5m": 8950,
+          "count": 1537,
+          "saving_5m": 9100,
           "grade": "B"
         },
         "34": {
@@ -257,24 +257,24 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.038,
-          "win": 49.7,
-          "count": 1726,
-          "saving_5m": 1900,
+          "saving": 0.04,
+          "win": 49.8,
+          "count": 1728,
+          "saving_5m": 2000,
           "grade": "B"
         },
         "37": {
-          "saving": 0.164,
-          "win": 48.1,
-          "count": 1374,
-          "saving_5m": 8200,
+          "saving": 0.166,
+          "win": 48.2,
+          "count": 1376,
+          "saving_5m": 8300,
           "grade": "B"
         },
         "38": {
-          "saving": -0.319,
-          "win": 42.5,
-          "count": 1696,
-          "saving_5m": -15950,
+          "saving": -0.317,
+          "win": 42.6,
+          "count": 1698,
+          "saving_5m": -15850,
           "grade": "B"
         },
         "39": {
@@ -362,10 +362,10 @@
           "grade": "C"
         },
         "51": {
-          "saving": 0.157,
-          "win": 43.4,
-          "count": 1594,
-          "saving_5m": 7850,
+          "saving": 0.158,
+          "win": 43.5,
+          "count": 1596,
+          "saving_5m": 7900,
           "grade": "C"
         },
         "52": {
@@ -412,23 +412,23 @@
         },
         "58": {
           "saving": 0.275,
-          "win": 47.1,
-          "count": 1802,
+          "win": 47.2,
+          "count": 1804,
           "saving_5m": 13750,
           "grade": "C"
         },
         "59": {
-          "saving": -0.29,
+          "saving": -0.289,
           "win": 43.7,
-          "count": 1767,
-          "saving_5m": -14500,
+          "count": 1770,
+          "saving_5m": -14450,
           "grade": "C"
         },
         "60": {
-          "saving": 0.027,
+          "saving": 0.028,
           "win": 41.9,
-          "count": 1658,
-          "saving_5m": 1350,
+          "count": 1660,
+          "saving_5m": 1400,
           "grade": "C"
         },
         "61": {
@@ -467,10 +467,10 @@
           "grade": "D"
         },
         "66": {
-          "saving": -0.638,
-          "win": 36.0,
-          "count": 1534,
-          "saving_5m": -31900,
+          "saving": -0.636,
+          "win": 36.1,
+          "count": 1536,
+          "saving_5m": -31800,
           "grade": "D"
         },
         "67": {
@@ -489,16 +489,16 @@
         },
         "69": {
           "saving": 0.454,
-          "win": 51.7,
-          "count": 1845,
+          "win": 51.8,
+          "count": 1849,
           "saving_5m": 22700,
           "grade": "D"
         },
         "70": {
-          "saving": -0.471,
-          "win": 40.4,
-          "count": 1726,
-          "saving_5m": -23550,
+          "saving": -0.469,
+          "win": 40.5,
+          "count": 1730,
+          "saving_5m": -23450,
           "grade": "D"
         },
         "71": {
@@ -511,21 +511,21 @@
         "72": {
           "saving": 0.341,
           "win": 46.0,
-          "count": 1729,
+          "count": 1731,
           "saving_5m": 17050,
           "grade": "D"
         },
         "73": {
-          "saving": -0.022,
-          "win": 45.3,
-          "count": 1759,
-          "saving_5m": -1100,
+          "saving": -0.021,
+          "win": 45.4,
+          "count": 1761,
+          "saving_5m": -1050,
           "grade": "D"
         },
         "74": {
           "saving": -0.328,
           "win": 45.7,
-          "count": 1929,
+          "count": 1931,
           "saving_5m": -16400,
           "grade": "D"
         },
@@ -579,10 +579,10 @@
           "grade": "F"
         },
         "82": {
-          "saving": -0.045,
+          "saving": -0.046,
           "win": 40.3,
-          "count": 1718,
-          "saving_5m": -2250,
+          "count": 1720,
+          "saving_5m": -2300,
           "grade": "F"
         },
         "83": {
@@ -608,8 +608,8 @@
         },
         "86": {
           "saving": -0.265,
-          "win": 42.2,
-          "count": 1759,
+          "win": 42.1,
+          "count": 1761,
           "saving_5m": -13250,
           "grade": "F"
         },
@@ -621,10 +621,10 @@
           "grade": "F"
         },
         "88": {
-          "saving": -0.771,
-          "win": 35.0,
-          "count": 1487,
-          "saving_5m": -38550,
+          "saving": -0.77,
+          "win": 34.9,
+          "count": 1489,
+          "saving_5m": -38500,
           "grade": "F"
         },
         "89": {
@@ -644,7 +644,7 @@
         "91": {
           "saving": -0.801,
           "win": 30.2,
-          "count": 1303,
+          "count": 1302,
           "saving_5m": -40050,
           "grade": "F"
         },
@@ -767,10 +767,10 @@
           "grade": "A"
         },
         "8": {
-          "saving": 0.492,
-          "win": 55.4,
-          "count": 632,
-          "saving_5m": 24600,
+          "saving": 0.497,
+          "win": 55.5,
+          "count": 634,
+          "saving_5m": 24850,
           "grade": "A"
         },
         "9": {
@@ -823,10 +823,10 @@
           "grade": "A"
         },
         "16": {
-          "saving": -0.455,
-          "win": 41.2,
-          "count": 834,
-          "saving_5m": -22750,
+          "saving": -0.449,
+          "win": 41.4,
+          "count": 836,
+          "saving_5m": -22450,
           "grade": "A"
         },
         "17": {
@@ -858,10 +858,10 @@
           "grade": "A"
         },
         "21": {
-          "saving": -0.422,
-          "win": 41.0,
-          "count": 731,
-          "saving_5m": -21100,
+          "saving": -0.415,
+          "win": 41.2,
+          "count": 733,
+          "saving_5m": -20750,
           "grade": "B"
         },
         "22": {
@@ -879,10 +879,10 @@
           "grade": "B"
         },
         "24": {
-          "saving": 0.065,
-          "win": 47.8,
-          "count": 1700,
-          "saving_5m": 3250,
+          "saving": 0.067,
+          "win": 47.9,
+          "count": 1702,
+          "saving_5m": 3350,
           "grade": "B"
         },
         "25": {
@@ -928,10 +928,10 @@
           "grade": "B"
         },
         "31": {
-          "saving": -0.091,
+          "saving": -0.089,
           "win": 48.8,
-          "count": 1974,
-          "saving_5m": -4550,
+          "count": 1976,
+          "saving_5m": -4450,
           "grade": "B"
         },
         "32": {
@@ -991,17 +991,17 @@
           "grade": "B"
         },
         "40": {
-          "saving": -0.056,
+          "saving": -0.055,
           "win": 48.2,
-          "count": 2390,
-          "saving_5m": -2800,
+          "count": 2396,
+          "saving_5m": -2750,
           "grade": "B"
         },
         "41": {
-          "saving": 0.006,
+          "saving": 0.008,
           "win": 45.7,
-          "count": 2488,
-          "saving_5m": 300,
+          "count": 2490,
+          "saving_5m": 400,
           "grade": "C"
         },
         "42": {
@@ -1012,24 +1012,24 @@
           "grade": "C"
         },
         "43": {
-          "saving": 0.128,
+          "saving": 0.129,
           "win": 49.0,
-          "count": 2800,
-          "saving_5m": 6400,
+          "count": 2802,
+          "saving_5m": 6450,
           "grade": "C"
         },
         "44": {
-          "saving": -0.277,
-          "win": 44.5,
-          "count": 2617,
-          "saving_5m": -13850,
+          "saving": -0.273,
+          "win": 44.6,
+          "count": 2621,
+          "saving_5m": -13650,
           "grade": "C"
         },
         "45": {
-          "saving": -0.432,
-          "win": 40.9,
-          "count": 2291,
-          "saving_5m": -21600,
+          "saving": -0.431,
+          "win": 41.0,
+          "count": 2292,
+          "saving_5m": -21550,
           "grade": "C"
         },
         "46": {
@@ -1040,10 +1040,10 @@
           "grade": "C"
         },
         "47": {
-          "saving": 0.096,
-          "win": 50.8,
-          "count": 2738,
-          "saving_5m": 4800,
+          "saving": 0.098,
+          "win": 50.9,
+          "count": 2742,
+          "saving_5m": 4900,
           "grade": "C"
         },
         "48": {
@@ -1061,10 +1061,10 @@
           "grade": "C"
         },
         "50": {
-          "saving": -0.234,
-          "win": 44.6,
-          "count": 2215,
-          "saving_5m": -11700,
+          "saving": -0.231,
+          "win": 44.7,
+          "count": 2219,
+          "saving_5m": -11550,
           "grade": "C"
         },
         "51": {
@@ -1077,15 +1077,15 @@
         "52": {
           "saving": -0.02,
           "win": 48.7,
-          "count": 3177,
+          "count": 3179,
           "saving_5m": -1000,
           "grade": "C"
         },
         "53": {
-          "saving": -0.468,
-          "win": 40.4,
-          "count": 2319,
-          "saving_5m": -23400,
+          "saving": -0.465,
+          "win": 40.5,
+          "count": 2323,
+          "saving_5m": -23250,
           "grade": "C"
         },
         "54": {
@@ -1096,16 +1096,16 @@
           "grade": "C"
         },
         "55": {
-          "saving": -0.2,
+          "saving": -0.199,
           "win": 44.4,
-          "count": 2422,
-          "saving_5m": -10000,
+          "count": 2425,
+          "saving_5m": -9950,
           "grade": "C"
         },
         "56": {
           "saving": 0.222,
           "win": 50.6,
-          "count": 2710,
+          "count": 2712,
           "saving_5m": 11100,
           "grade": "C"
         },
@@ -1166,10 +1166,10 @@
           "grade": "D"
         },
         "65": {
-          "saving": -0.283,
-          "win": 41.2,
-          "count": 2556,
-          "saving_5m": -14150,
+          "saving": -0.282,
+          "win": 41.1,
+          "count": 2557,
+          "saving_5m": -14100,
           "grade": "D"
         },
         "66": {
@@ -1194,10 +1194,10 @@
           "grade": "D"
         },
         "69": {
-          "saving": -0.331,
+          "saving": -0.332,
           "win": 43.9,
-          "count": 2047,
-          "saving_5m": -16550,
+          "count": 2046,
+          "saving_5m": -16600,
           "grade": "D"
         },
         "70": {
@@ -1208,10 +1208,10 @@
           "grade": "D"
         },
         "71": {
-          "saving": -0.177,
-          "win": 45.7,
-          "count": 1999,
-          "saving_5m": -8850,
+          "saving": -0.174,
+          "win": 45.8,
+          "count": 2003,
+          "saving_5m": -8700,
           "grade": "D"
         },
         "72": {
@@ -1229,17 +1229,17 @@
           "grade": "D"
         },
         "74": {
-          "saving": -0.033,
-          "win": 44.3,
-          "count": 1870,
-          "saving_5m": -1650,
+          "saving": -0.031,
+          "win": 44.5,
+          "count": 1874,
+          "saving_5m": -1550,
           "grade": "D"
         },
         "75": {
-          "saving": 0.45,
+          "saving": 0.449,
           "win": 50.4,
-          "count": 873,
-          "saving_5m": 22500,
+          "count": 875,
+          "saving_5m": 22450,
           "grade": "D"
         },
         "76": {
@@ -1334,10 +1334,10 @@
           "grade": "F"
         },
         "89": {
-          "saving": -0.145,
-          "win": 42.3,
-          "count": 504,
-          "saving_5m": -7250,
+          "saving": -0.148,
+          "win": 41.9,
+          "count": 508,
+          "saving_5m": -7400,
           "grade": "F"
         },
         "90": {
@@ -1406,7 +1406,7 @@
         "99": {
           "saving": 0.411,
           "win": 44.2,
-          "count": 6725,
+          "count": 6729,
           "saving_5m": 20550,
           "grade": "F"
         }
@@ -1662,10 +1662,10 @@
           "grade": "B"
         },
         "35": {
-          "saving": 0.214,
+          "saving": 0.215,
           "win": 50.7,
-          "count": 1952,
-          "saving_5m": 10700,
+          "count": 1953,
+          "saving_5m": 10750,
           "grade": "B"
         },
         "36": {
@@ -1676,10 +1676,10 @@
           "grade": "B"
         },
         "37": {
-          "saving": 0.333,
-          "win": 53.2,
-          "count": 2382,
-          "saving_5m": 16650,
+          "saving": 0.335,
+          "win": 53.3,
+          "count": 2386,
+          "saving_5m": 16750,
           "grade": "B"
         },
         "38": {
@@ -1690,10 +1690,10 @@
           "grade": "B"
         },
         "39": {
-          "saving": 0.727,
+          "saving": 0.728,
           "win": 60.9,
-          "count": 3063,
-          "saving_5m": 36350,
+          "count": 3065,
+          "saving_5m": 36400,
           "grade": "B"
         },
         "40": {
@@ -1711,16 +1711,16 @@
           "grade": "C"
         },
         "42": {
-          "saving": 0.148,
-          "win": 49.4,
-          "count": 4848,
-          "saving_5m": 7400,
+          "saving": 0.149,
+          "win": 49.5,
+          "count": 4850,
+          "saving_5m": 7450,
           "grade": "C"
         },
         "43": {
           "saving": 0.57,
           "win": 52.1,
-          "count": 5722,
+          "count": 5724,
           "saving_5m": 28500,
           "grade": "C"
         },
@@ -1733,43 +1733,43 @@
         },
         "45": {
           "saving": -0.017,
-          "win": 47.3,
-          "count": 5443,
+          "win": 47.4,
+          "count": 5445,
           "saving_5m": -850,
           "grade": "C"
         },
         "46": {
-          "saving": -0.022,
+          "saving": -0.021,
           "win": 47.1,
-          "count": 5672,
-          "saving_5m": -1100,
+          "count": 5677,
+          "saving_5m": -1050,
           "grade": "C"
         },
         "47": {
-          "saving": -0.003,
+          "saving": -0.002,
           "win": 47.2,
-          "count": 6476,
-          "saving_5m": -150,
+          "count": 6480,
+          "saving_5m": -100,
           "grade": "C"
         },
         "48": {
-          "saving": -0.077,
+          "saving": -0.076,
           "win": 44.4,
-          "count": 6777,
-          "saving_5m": -3850,
+          "count": 6779,
+          "saving_5m": -3800,
           "grade": "C"
         },
         "49": {
-          "saving": -0.107,
+          "saving": -0.106,
           "win": 44.3,
-          "count": 6967,
-          "saving_5m": -5350,
+          "count": 6971,
+          "saving_5m": -5300,
           "grade": "C"
         },
         "50": {
           "saving": -0.199,
-          "win": 43.3,
-          "count": 5675,
+          "win": 43.4,
+          "count": 5677,
           "saving_5m": -9950,
           "grade": "C"
         },
@@ -1781,65 +1781,65 @@
           "grade": "C"
         },
         "52": {
-          "saving": -0.224,
+          "saving": -0.223,
           "win": 40.6,
-          "count": 5832,
-          "saving_5m": -11200,
+          "count": 5836,
+          "saving_5m": -11150,
           "grade": "C"
         },
         "53": {
           "saving": -0.052,
           "win": 45.5,
-          "count": 5967,
+          "count": 5972,
           "saving_5m": -2600,
           "grade": "C"
         },
         "54": {
-          "saving": -0.461,
+          "saving": -0.46,
           "win": 36.3,
-          "count": 5345,
-          "saving_5m": -23050,
+          "count": 5347,
+          "saving_5m": -23000,
           "grade": "C"
         },
         "55": {
-          "saving": -0.176,
-          "win": 41.9,
-          "count": 4558,
-          "saving_5m": -8800,
+          "saving": -0.175,
+          "win": 42.0,
+          "count": 4562,
+          "saving_5m": -8750,
           "grade": "C"
         },
         "56": {
           "saving": -0.099,
           "win": 41.8,
-          "count": 4347,
+          "count": 4349,
           "saving_5m": -4950,
           "grade": "C"
         },
         "57": {
           "saving": -0.327,
           "win": 39.3,
-          "count": 3602,
+          "count": 3606,
           "saving_5m": -16350,
           "grade": "C"
         },
         "58": {
           "saving": -0.089,
           "win": 42.6,
-          "count": 3872,
+          "count": 3873,
           "saving_5m": -4450,
           "grade": "C"
         },
         "59": {
           "saving": -0.356,
           "win": 40.9,
-          "count": 3077,
+          "count": 3079,
           "saving_5m": -17800,
           "grade": "C"
         },
         "60": {
           "saving": -0.312,
           "win": 41.5,
-          "count": 2591,
+          "count": 2595,
           "saving_5m": -15600,
           "grade": "C"
         },
@@ -1851,17 +1851,17 @@
           "grade": "D"
         },
         "62": {
-          "saving": -0.351,
+          "saving": -0.35,
           "win": 45.1,
-          "count": 2434,
-          "saving_5m": -17550,
+          "count": 2436,
+          "saving_5m": -17500,
           "grade": "D"
         },
         "63": {
-          "saving": 0.391,
+          "saving": 0.39,
           "win": 45.7,
-          "count": 1496,
-          "saving_5m": 19550,
+          "count": 1498,
+          "saving_5m": 19500,
           "grade": "D"
         },
         "64": {
@@ -2116,10 +2116,10 @@
       "weight": 0.2,
       "scores": {
         "0": {
-          "saving": 1.137,
-          "win": 70.0,
-          "count": 2877,
-          "saving_5m": 56850,
+          "saving": 1.138,
+          "win": 70.1,
+          "count": 2879,
+          "saving_5m": 56900,
           "grade": "A"
         },
         "1": {
@@ -2144,10 +2144,10 @@
           "grade": "A"
         },
         "4": {
-          "saving": 1.326,
-          "win": 63.9,
-          "count": 1466,
-          "saving_5m": 66300,
+          "saving": 1.329,
+          "win": 64.0,
+          "count": 1470,
+          "saving_5m": 66450,
           "grade": "A"
         },
         "5": {
@@ -2179,17 +2179,17 @@
           "grade": "A"
         },
         "9": {
-          "saving": 0.344,
+          "saving": 0.347,
           "win": 62.2,
-          "count": 1475,
-          "saving_5m": 17200,
+          "count": 1477,
+          "saving_5m": 17350,
           "grade": "A"
         },
         "10": {
-          "saving": 0.709,
+          "saving": 0.71,
           "win": 60.3,
-          "count": 1425,
-          "saving_5m": 35450,
+          "count": 1426,
+          "saving_5m": 35500,
           "grade": "A"
         },
         "11": {
@@ -2201,8 +2201,8 @@
         },
         "12": {
           "saving": 0.325,
-          "win": 59.5,
-          "count": 1271,
+          "win": 59.4,
+          "count": 1272,
           "saving_5m": 16250,
           "grade": "A"
         },
@@ -2214,10 +2214,10 @@
           "grade": "A"
         },
         "14": {
-          "saving": -0.046,
-          "win": 45.2,
-          "count": 1176,
-          "saving_5m": -2300,
+          "saving": -0.043,
+          "win": 45.3,
+          "count": 1178,
+          "saving_5m": -2150,
           "grade": "A"
         },
         "15": {
@@ -2235,10 +2235,10 @@
           "grade": "A"
         },
         "17": {
-          "saving": 0.405,
-          "win": 52.7,
-          "count": 1887,
-          "saving_5m": 20250,
+          "saving": 0.407,
+          "win": 52.8,
+          "count": 1889,
+          "saving_5m": 20350,
           "grade": "A"
         },
         "18": {
@@ -2270,10 +2270,10 @@
           "grade": "B"
         },
         "22": {
-          "saving": -0.529,
-          "win": 37.0,
-          "count": 1499,
-          "saving_5m": -26450,
+          "saving": -0.526,
+          "win": 37.1,
+          "count": 1501,
+          "saving_5m": -26300,
           "grade": "B"
         },
         "23": {
@@ -2305,10 +2305,10 @@
           "grade": "B"
         },
         "27": {
-          "saving": 0.133,
-          "win": 48.6,
-          "count": 1746,
-          "saving_5m": 6650,
+          "saving": 0.137,
+          "win": 48.7,
+          "count": 1750,
+          "saving_5m": 6850,
           "grade": "B"
         },
         "28": {
@@ -2333,10 +2333,10 @@
           "grade": "B"
         },
         "31": {
-          "saving": -0.033,
-          "win": 52.3,
-          "count": 1477,
-          "saving_5m": -1650,
+          "saving": -0.03,
+          "win": 52.4,
+          "count": 1479,
+          "saving_5m": -1500,
           "grade": "B"
         },
         "32": {
@@ -2368,30 +2368,30 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.08,
-          "win": 47.1,
-          "count": 1653,
-          "saving_5m": 4000,
+          "saving": 0.082,
+          "win": 47.2,
+          "count": 1655,
+          "saving_5m": 4100,
           "grade": "B"
         },
         "37": {
-          "saving": -0.333,
-          "win": 47.1,
-          "count": 1693,
-          "saving_5m": -16650,
+          "saving": -0.33,
+          "win": 47.2,
+          "count": 1695,
+          "saving_5m": -16500,
           "grade": "B"
         },
         "38": {
-          "saving": 0.756,
-          "win": 54.0,
-          "count": 1649,
-          "saving_5m": 37800,
+          "saving": 0.755,
+          "win": 54.1,
+          "count": 1653,
+          "saving_5m": 37750,
           "grade": "B"
         },
         "39": {
           "saving": -0.07,
           "win": 47.0,
-          "count": 1767,
+          "count": 1770,
           "saving_5m": -3500,
           "grade": "B"
         },
@@ -2417,10 +2417,10 @@
           "grade": "C"
         },
         "43": {
-          "saving": -0.088,
-          "win": 46.2,
-          "count": 1979,
-          "saving_5m": -4400,
+          "saving": -0.087,
+          "win": 46.3,
+          "count": 1981,
+          "saving_5m": -4350,
           "grade": "C"
         },
         "44": {
@@ -2466,17 +2466,17 @@
           "grade": "C"
         },
         "50": {
-          "saving": -0.083,
-          "win": 41.9,
-          "count": 1509,
-          "saving_5m": -4150,
+          "saving": -0.08,
+          "win": 42.0,
+          "count": 1511,
+          "saving_5m": -4000,
           "grade": "C"
         },
         "51": {
-          "saving": -0.228,
-          "win": 41.5,
-          "count": 1780,
-          "saving_5m": -11400,
+          "saving": -0.227,
+          "win": 41.6,
+          "count": 1782,
+          "saving_5m": -11350,
           "grade": "C"
         },
         "52": {
@@ -2494,10 +2494,10 @@
           "grade": "C"
         },
         "54": {
-          "saving": -0.133,
-          "win": 46.5,
-          "count": 1820,
-          "saving_5m": -6650,
+          "saving": -0.131,
+          "win": 46.6,
+          "count": 1822,
+          "saving_5m": -6550,
           "grade": "C"
         },
         "55": {
@@ -2529,10 +2529,10 @@
           "grade": "C"
         },
         "59": {
-          "saving": -0.598,
-          "win": 37.0,
-          "count": 1951,
-          "saving_5m": -29900,
+          "saving": -0.597,
+          "win": 37.1,
+          "count": 1953,
+          "saving_5m": -29850,
           "grade": "C"
         },
         "60": {
@@ -2565,8 +2565,8 @@
         },
         "64": {
           "saving": 0.021,
-          "win": 42.0,
-          "count": 2207,
+          "win": 42.1,
+          "count": 2209,
           "saving_5m": 1050,
           "grade": "D"
         },
@@ -2578,10 +2578,10 @@
           "grade": "D"
         },
         "66": {
-          "saving": -0.353,
+          "saving": -0.352,
           "win": 40.6,
-          "count": 1987,
-          "saving_5m": -17650,
+          "count": 1989,
+          "saving_5m": -17600,
           "grade": "D"
         },
         "67": {
@@ -2600,8 +2600,8 @@
         },
         "69": {
           "saving": 0.384,
-          "win": 48.8,
-          "count": 2018,
+          "win": 48.9,
+          "count": 2022,
           "saving_5m": 19200,
           "grade": "D"
         },
@@ -2620,10 +2620,10 @@
           "grade": "D"
         },
         "72": {
-          "saving": -0.289,
+          "saving": -0.288,
           "win": 42.6,
-          "count": 1853,
-          "saving_5m": -14450,
+          "count": 1855,
+          "saving_5m": -14400,
           "grade": "D"
         },
         "73": {
@@ -2636,7 +2636,7 @@
         "74": {
           "saving": -0.2,
           "win": 46.8,
-          "count": 1712,
+          "count": 1714,
           "saving_5m": -10000,
           "grade": "D"
         },
@@ -2649,8 +2649,8 @@
         },
         "76": {
           "saving": -0.555,
-          "win": 38.3,
-          "count": 1460,
+          "win": 38.2,
+          "count": 1462,
           "saving_5m": -27750,
           "grade": "D"
         },
@@ -2671,7 +2671,7 @@
         "79": {
           "saving": -0.27,
           "win": 41.7,
-          "count": 1890,
+          "count": 1892,
           "saving_5m": -13500,
           "grade": "D"
         },
@@ -2719,8 +2719,8 @@
         },
         "86": {
           "saving": -0.386,
-          "win": 36.2,
-          "count": 1466,
+          "win": 36.1,
+          "count": 1467,
           "saving_5m": -19300,
           "grade": "F"
         },
@@ -2795,10 +2795,10 @@
           "grade": "F"
         },
         "97": {
-          "saving": 0.266,
-          "win": 39.8,
-          "count": 854,
-          "saving_5m": 13300,
+          "saving": 0.268,
+          "win": 40.0,
+          "count": 856,
+          "saving_5m": 13400,
           "grade": "F"
         },
         "98": {
@@ -2892,17 +2892,17 @@
           "grade": "A"
         },
         "11": {
-          "saving": 1.941,
+          "saving": 1.94,
           "win": 68.7,
           "count": 806,
-          "saving_5m": 97050,
+          "saving_5m": 97000,
           "grade": "A"
         },
         "12": {
-          "saving": 0.958,
-          "win": 61.7,
-          "count": 660,
-          "saving_5m": 47900,
+          "saving": 0.964,
+          "win": 61.9,
+          "count": 664,
+          "saving_5m": 48200,
           "grade": "A"
         },
         "13": {
@@ -2913,10 +2913,10 @@
           "grade": "A"
         },
         "14": {
-          "saving": 0.701,
-          "win": 62.8,
-          "count": 924,
-          "saving_5m": 35050,
+          "saving": 0.705,
+          "win": 62.9,
+          "count": 926,
+          "saving_5m": 35250,
           "grade": "A"
         },
         "15": {
@@ -2941,10 +2941,10 @@
           "grade": "A"
         },
         "18": {
-          "saving": 0.147,
+          "saving": 0.149,
           "win": 52.3,
-          "count": 1518,
-          "saving_5m": 7350,
+          "count": 1519,
+          "saving_5m": 7450,
           "grade": "A"
         },
         "19": {
@@ -2952,28 +2952,28 @@
           "win": 60.9,
           "count": 1178,
           "saving_5m": 46600,
-          "grade": "B"
+          "grade": "A"
         },
         "20": {
           "saving": 0.005,
           "win": 47.4,
           "count": 1364,
           "saving_5m": 250,
-          "grade": "B"
+          "grade": "A"
         },
         "21": {
           "saving": 0.283,
           "win": 55.4,
           "count": 2139,
           "saving_5m": 14150,
-          "grade": "B"
+          "grade": "A"
         },
         "22": {
-          "saving": 0.08,
-          "win": 51.3,
-          "count": 1566,
-          "saving_5m": 4000,
-          "grade": "B"
+          "saving": 0.085,
+          "win": 51.5,
+          "count": 1570,
+          "saving_5m": 4250,
+          "grade": "A"
         },
         "23": {
           "saving": 0.648,
@@ -3006,29 +3006,29 @@
         "27": {
           "saving": -0.07,
           "win": 52.1,
-          "count": 2043,
+          "count": 2044,
           "saving_5m": -3500,
           "grade": "B"
         },
         "28": {
-          "saving": 0.175,
+          "saving": 0.176,
           "win": 51.1,
-          "count": 2367,
-          "saving_5m": 8750,
+          "count": 2369,
+          "saving_5m": 8800,
           "grade": "B"
         },
         "29": {
-          "saving": 0.368,
+          "saving": 0.369,
           "win": 55.9,
-          "count": 2380,
-          "saving_5m": 18400,
+          "count": 2382,
+          "saving_5m": 18450,
           "grade": "B"
         },
         "30": {
-          "saving": 0.275,
+          "saving": 0.276,
           "win": 50.7,
-          "count": 2228,
-          "saving_5m": 13750,
+          "count": 2230,
+          "saving_5m": 13800,
           "grade": "B"
         },
         "31": {
@@ -3036,55 +3036,55 @@
           "win": 58.9,
           "count": 1767,
           "saving_5m": 23600,
-          "grade": "C"
+          "grade": "B"
         },
         "32": {
           "saving": 0.65,
           "win": 56.1,
           "count": 1891,
           "saving_5m": 32500,
-          "grade": "C"
+          "grade": "B"
         },
         "33": {
           "saving": 0.524,
           "win": 51.8,
           "count": 1674,
           "saving_5m": 26200,
-          "grade": "C"
+          "grade": "B"
         },
         "34": {
           "saving": -0.135,
           "win": 46.6,
           "count": 2294,
           "saving_5m": -6750,
-          "grade": "C"
+          "grade": "B"
         },
         "35": {
           "saving": 0.1,
           "win": 42.1,
           "count": 1736,
           "saving_5m": 5000,
-          "grade": "C"
+          "grade": "B"
         },
         "36": {
-          "saving": 0.104,
-          "win": 51.3,
-          "count": 1939,
-          "saving_5m": 5200,
-          "grade": "C"
+          "saving": 0.105,
+          "win": 51.4,
+          "count": 1941,
+          "saving_5m": 5250,
+          "grade": "B"
         },
         "37": {
-          "saving": 0.064,
+          "saving": 0.066,
           "win": 51.6,
-          "count": 2345,
-          "saving_5m": 3200,
+          "count": 2347,
+          "saving_5m": 3300,
           "grade": "C"
         },
         "38": {
-          "saving": 0.173,
+          "saving": 0.175,
           "win": 48.9,
-          "count": 2437,
-          "saving_5m": 8650,
+          "count": 2439,
+          "saving_5m": 8750,
           "grade": "C"
         },
         "39": {
@@ -3095,17 +3095,17 @@
           "grade": "C"
         },
         "40": {
-          "saving": 0.235,
+          "saving": 0.237,
           "win": 50.6,
-          "count": 2423,
-          "saving_5m": 11750,
+          "count": 2427,
+          "saving_5m": 11850,
           "grade": "C"
         },
         "41": {
-          "saving": 0.004,
-          "win": 45.6,
-          "count": 2098,
-          "saving_5m": 200,
+          "saving": 0.006,
+          "win": 45.7,
+          "count": 2100,
+          "saving_5m": 300,
           "grade": "C"
         },
         "42": {
@@ -3123,10 +3123,10 @@
           "grade": "C"
         },
         "44": {
-          "saving": -0.045,
-          "win": 47.6,
-          "count": 2564,
-          "saving_5m": -2250,
+          "saving": -0.043,
+          "win": 47.7,
+          "count": 2566,
+          "saving_5m": -2150,
           "grade": "C"
         },
         "45": {
@@ -3181,15 +3181,15 @@
         "52": {
           "saving": 0.205,
           "win": 43.6,
-          "count": 1864,
+          "count": 1866,
           "saving_5m": 10250,
           "grade": "C"
         },
         "53": {
-          "saving": -0.184,
-          "win": 44.8,
-          "count": 2514,
-          "saving_5m": -9200,
+          "saving": -0.183,
+          "win": 44.9,
+          "count": 2519,
+          "saving_5m": -9150,
           "grade": "D"
         },
         "54": {
@@ -3207,10 +3207,10 @@
           "grade": "D"
         },
         "56": {
-          "saving": -0.51,
+          "saving": -0.509,
           "win": 35.5,
-          "count": 2236,
-          "saving_5m": -25500,
+          "count": 2238,
+          "saving_5m": -25450,
           "grade": "D"
         },
         "57": {
@@ -3242,10 +3242,10 @@
           "grade": "D"
         },
         "61": {
-          "saving": -0.699,
-          "win": 35.8,
-          "count": 2458,
-          "saving_5m": -34950,
+          "saving": -0.698,
+          "win": 35.9,
+          "count": 2460,
+          "saving_5m": -34900,
           "grade": "D"
         },
         "62": {
@@ -3256,10 +3256,10 @@
           "grade": "D"
         },
         "63": {
-          "saving": -0.422,
-          "win": 40.2,
-          "count": 2044,
-          "saving_5m": -21100,
+          "saving": -0.42,
+          "win": 40.3,
+          "count": 2048,
+          "saving_5m": -21000,
           "grade": "D"
         },
         "64": {
@@ -3270,10 +3270,10 @@
           "grade": "D"
         },
         "65": {
-          "saving": 0.074,
-          "win": 48.1,
-          "count": 1783,
-          "saving_5m": 3700,
+          "saving": 0.075,
+          "win": 48.2,
+          "count": 1785,
+          "saving_5m": 3750,
           "grade": "D"
         },
         "66": {
@@ -3286,7 +3286,7 @@
         "67": {
           "saving": 0.022,
           "win": 43.7,
-          "count": 2089,
+          "count": 2091,
           "saving_5m": 1100,
           "grade": "D"
         },
@@ -3328,22 +3328,22 @@
         "73": {
           "saving": -0.287,
           "win": 37.3,
-          "count": 2137,
+          "count": 2141,
           "saving_5m": -14350,
           "grade": "D"
         },
         "74": {
-          "saving": -0.094,
-          "win": 42.9,
-          "count": 1728,
-          "saving_5m": -4700,
+          "saving": -0.093,
+          "win": 43.0,
+          "count": 1730,
+          "saving_5m": -4650,
           "grade": "D"
         },
         "75": {
-          "saving": -0.665,
+          "saving": -0.664,
           "win": 32.8,
-          "count": 2208,
-          "saving_5m": -33250,
+          "count": 2210,
+          "saving_5m": -33200,
           "grade": "D"
         },
         "76": {
@@ -3354,10 +3354,10 @@
           "grade": "D"
         },
         "77": {
-          "saving": -1.08,
+          "saving": -1.079,
           "win": 26.1,
-          "count": 1015,
-          "saving_5m": -54000,
+          "count": 1017,
+          "saving_5m": -53950,
           "grade": "F"
         },
         "78": {
@@ -3377,7 +3377,7 @@
         "80": {
           "saving": -0.805,
           "win": 32.0,
-          "count": 1454,
+          "count": 1453,
           "saving_5m": -40250,
           "grade": "F"
         },
@@ -3389,10 +3389,10 @@
           "grade": "F"
         },
         "82": {
-          "saving": -0.4,
+          "saving": -0.399,
           "win": 39.2,
-          "count": 1310,
-          "saving_5m": -20000,
+          "count": 1312,
+          "saving_5m": -19950,
           "grade": "F"
         },
         "83": {
@@ -3537,10 +3537,10 @@
           "grade": "A"
         },
         "2": {
-          "saving": 1.224,
-          "win": 61.6,
-          "count": 477,
-          "saving_5m": 61200,
+          "saving": 1.233,
+          "win": 61.8,
+          "count": 479,
+          "saving_5m": 61650,
           "grade": "A"
         },
         "3": {
@@ -3656,10 +3656,10 @@
           "grade": "A"
         },
         "19": {
-          "saving": 0.202,
-          "win": 49.2,
-          "count": 1289,
-          "saving_5m": 10100,
+          "saving": 0.205,
+          "win": 49.3,
+          "count": 1291,
+          "saving_5m": 10250,
           "grade": "A"
         },
         "20": {
@@ -3670,10 +3670,10 @@
           "grade": "A"
         },
         "21": {
-          "saving": 0.268,
-          "win": 47.0,
-          "count": 1778,
-          "saving_5m": 13400,
+          "saving": 0.271,
+          "win": 47.1,
+          "count": 1780,
+          "saving_5m": 13550,
           "grade": "B"
         },
         "22": {
@@ -3705,10 +3705,10 @@
           "grade": "B"
         },
         "26": {
-          "saving": 0.15,
-          "win": 51.0,
-          "count": 1259,
-          "saving_5m": 7500,
+          "saving": 0.153,
+          "win": 51.1,
+          "count": 1261,
+          "saving_5m": 7650,
           "grade": "B"
         },
         "27": {
@@ -3719,10 +3719,10 @@
           "grade": "B"
         },
         "28": {
-          "saving": -0.13,
-          "win": 39.2,
-          "count": 1132,
-          "saving_5m": -6500,
+          "saving": -0.128,
+          "win": 39.3,
+          "count": 1134,
+          "saving_5m": -6400,
           "grade": "B"
         },
         "29": {
@@ -3740,17 +3740,17 @@
           "grade": "B"
         },
         "31": {
-          "saving": 0.123,
-          "win": 51.1,
-          "count": 1285,
-          "saving_5m": 6150,
+          "saving": 0.125,
+          "win": 51.2,
+          "count": 1287,
+          "saving_5m": 6250,
           "grade": "B"
         },
         "32": {
-          "saving": -0.14,
-          "win": 44.9,
-          "count": 1198,
-          "saving_5m": -7000,
+          "saving": -0.137,
+          "win": 45.0,
+          "count": 1200,
+          "saving_5m": -6850,
           "grade": "B"
         },
         "33": {
@@ -3763,7 +3763,7 @@
         "34": {
           "saving": 0.125,
           "win": 47.4,
-          "count": 1593,
+          "count": 1594,
           "saving_5m": 6250,
           "grade": "B"
         },
@@ -3775,31 +3775,31 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.604,
+          "saving": 0.605,
           "win": 54.7,
-          "count": 1416,
-          "saving_5m": 30200,
+          "count": 1418,
+          "saving_5m": 30250,
           "grade": "B"
         },
         "37": {
-          "saving": 0.095,
-          "win": 48.7,
-          "count": 1448,
-          "saving_5m": 4750,
+          "saving": 0.099,
+          "win": 48.8,
+          "count": 1452,
+          "saving_5m": 4950,
           "grade": "B"
         },
         "38": {
-          "saving": 0.287,
-          "win": 52.1,
-          "count": 1615,
-          "saving_5m": 14350,
+          "saving": 0.289,
+          "win": 52.2,
+          "count": 1619,
+          "saving_5m": 14450,
           "grade": "B"
         },
         "39": {
-          "saving": -0.358,
-          "win": 39.4,
-          "count": 1286,
-          "saving_5m": -17900,
+          "saving": -0.355,
+          "win": 39.5,
+          "count": 1288,
+          "saving_5m": -17750,
           "grade": "B"
         },
         "40": {
@@ -3845,10 +3845,10 @@
           "grade": "C"
         },
         "46": {
-          "saving": 0.118,
+          "saving": 0.119,
           "win": 45.9,
-          "count": 1548,
-          "saving_5m": 5900,
+          "count": 1550,
+          "saving_5m": 5950,
           "grade": "C"
         },
         "47": {
@@ -3894,10 +3894,10 @@
           "grade": "C"
         },
         "53": {
-          "saving": 0.224,
+          "saving": 0.225,
           "win": 54.2,
-          "count": 1519,
-          "saving_5m": 11200,
+          "count": 1520,
+          "saving_5m": 11250,
           "grade": "C"
         },
         "54": {
@@ -3915,10 +3915,10 @@
           "grade": "C"
         },
         "56": {
-          "saving": -0.152,
+          "saving": -0.15,
           "win": 46.8,
-          "count": 1262,
-          "saving_5m": -7600,
+          "count": 1264,
+          "saving_5m": -7500,
           "grade": "C"
         },
         "57": {
@@ -3929,10 +3929,10 @@
           "grade": "C"
         },
         "58": {
-          "saving": -0.316,
-          "win": 46.5,
-          "count": 1988,
-          "saving_5m": -15800,
+          "saving": -0.315,
+          "win": 46.6,
+          "count": 1990,
+          "saving_5m": -15750,
           "grade": "C"
         },
         "59": {
@@ -3950,10 +3950,10 @@
           "grade": "C"
         },
         "61": {
-          "saving": 0.034,
-          "win": 52.1,
-          "count": 1377,
-          "saving_5m": 1700,
+          "saving": 0.036,
+          "win": 52.3,
+          "count": 1381,
+          "saving_5m": 1800,
           "grade": "D"
         },
         "62": {
@@ -3971,17 +3971,17 @@
           "grade": "D"
         },
         "64": {
-          "saving": 0.139,
-          "win": 52.5,
-          "count": 1503,
-          "saving_5m": 6950,
+          "saving": 0.14,
+          "win": 52.6,
+          "count": 1505,
+          "saving_5m": 7000,
           "grade": "D"
         },
         "65": {
-          "saving": 0.086,
-          "win": 47.8,
-          "count": 2113,
-          "saving_5m": 4300,
+          "saving": 0.088,
+          "win": 47.9,
+          "count": 2117,
+          "saving_5m": 4400,
           "grade": "D"
         },
         "66": {
@@ -3999,10 +3999,10 @@
           "grade": "D"
         },
         "68": {
-          "saving": -0.101,
+          "saving": -0.1,
           "win": 49.8,
-          "count": 1935,
-          "saving_5m": -5050,
+          "count": 1940,
+          "saving_5m": -5000,
           "grade": "D"
         },
         "69": {
@@ -4034,17 +4034,17 @@
           "grade": "D"
         },
         "73": {
-          "saving": 0.017,
-          "win": 55.2,
-          "count": 1632,
-          "saving_5m": 850,
+          "saving": 0.02,
+          "win": 55.3,
+          "count": 1636,
+          "saving_5m": 1000,
           "grade": "D"
         },
         "74": {
-          "saving": -0.05,
-          "win": 52.4,
-          "count": 2024,
-          "saving_5m": -2500,
+          "saving": -0.049,
+          "win": 52.5,
+          "count": 2026,
+          "saving_5m": -2450,
           "grade": "D"
         },
         "75": {
@@ -4078,7 +4078,7 @@
         "79": {
           "saving": 0.15,
           "win": 50.8,
-          "count": 2297,
+          "count": 2299,
           "saving_5m": 7500,
           "grade": "D"
         },
@@ -4113,7 +4113,7 @@
         "84": {
           "saving": 0.077,
           "win": 54.6,
-          "count": 2487,
+          "count": 2489,
           "saving_5m": 3850,
           "grade": "F"
         },
@@ -4125,10 +4125,10 @@
           "grade": "F"
         },
         "86": {
-          "saving": -0.036,
+          "saving": -0.035,
           "win": 49.2,
-          "count": 2348,
-          "saving_5m": -1800,
+          "count": 2350,
+          "saving_5m": -1750,
           "grade": "F"
         },
         "87": {
@@ -4147,8 +4147,8 @@
         },
         "89": {
           "saving": -0.293,
-          "win": 42.0,
-          "count": 1396,
+          "win": 42.1,
+          "count": 1395,
           "saving_5m": -14650,
           "grade": "F"
         },
@@ -4217,8 +4217,8 @@
         },
         "99": {
           "saving": -0.122,
-          "win": 43.7,
-          "count": 2246,
+          "win": 43.6,
+          "count": 2248,
           "saving_5m": -6100,
           "grade": "F"
         }
@@ -4243,10 +4243,10 @@
           "grade": "A"
         },
         "2": {
-          "saving": 1.198,
-          "win": 65.8,
-          "count": 787,
-          "saving_5m": 59900,
+          "saving": 1.203,
+          "win": 65.9,
+          "count": 789,
+          "saving_5m": 60150,
           "grade": "A"
         },
         "3": {
@@ -4313,16 +4313,16 @@
           "grade": "A"
         },
         "12": {
-          "saving": 0.271,
-          "win": 60.9,
-          "count": 1475,
-          "saving_5m": 13550,
+          "saving": 0.273,
+          "win": 61.0,
+          "count": 1477,
+          "saving_5m": 13650,
           "grade": "A"
         },
         "13": {
           "saving": 0.672,
-          "win": 61.2,
-          "count": 1304,
+          "win": 61.3,
+          "count": 1306,
           "saving_5m": 33600,
           "grade": "A"
         },
@@ -4376,17 +4376,17 @@
           "grade": "A"
         },
         "21": {
-          "saving": 0.254,
+          "saving": 0.256,
           "win": 51.9,
-          "count": 1321,
-          "saving_5m": 12700,
+          "count": 1323,
+          "saving_5m": 12800,
           "grade": "B"
         },
         "22": {
-          "saving": 0.345,
-          "win": 52.4,
-          "count": 1065,
-          "saving_5m": 17250,
+          "saving": 0.35,
+          "win": 52.5,
+          "count": 1067,
+          "saving_5m": 17500,
           "grade": "B"
         },
         "23": {
@@ -4418,10 +4418,10 @@
           "grade": "B"
         },
         "27": {
-          "saving": -0.254,
-          "win": 39.5,
-          "count": 1244,
-          "saving_5m": -12700,
+          "saving": -0.251,
+          "win": 39.6,
+          "count": 1246,
+          "saving_5m": -12550,
           "grade": "B"
         },
         "28": {
@@ -4453,10 +4453,10 @@
           "grade": "B"
         },
         "32": {
-          "saving": 0.058,
+          "saving": 0.06,
           "win": 49.0,
-          "count": 1291,
-          "saving_5m": 2900,
+          "count": 1293,
+          "saving_5m": 3000,
           "grade": "B"
         },
         "33": {
@@ -4469,7 +4469,7 @@
         "34": {
           "saving": -0.203,
           "win": 43.1,
-          "count": 1240,
+          "count": 1241,
           "saving_5m": -10150,
           "grade": "B"
         },
@@ -4481,31 +4481,31 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.307,
-          "win": 54.3,
-          "count": 1416,
-          "saving_5m": 15350,
+          "saving": 0.308,
+          "win": 54.4,
+          "count": 1418,
+          "saving_5m": 15400,
           "grade": "B"
         },
         "37": {
-          "saving": -0.194,
-          "win": 43.4,
-          "count": 1411,
-          "saving_5m": -9700,
+          "saving": -0.192,
+          "win": 43.5,
+          "count": 1413,
+          "saving_5m": -9600,
           "grade": "B"
         },
         "38": {
-          "saving": -0.017,
+          "saving": -0.016,
           "win": 50.7,
-          "count": 2118,
-          "saving_5m": -850,
+          "count": 2120,
+          "saving_5m": -800,
           "grade": "B"
         },
         "39": {
-          "saving": -0.188,
+          "saving": -0.185,
           "win": 42.8,
-          "count": 1347,
-          "saving_5m": -9400,
+          "count": 1349,
+          "saving_5m": -9250,
           "grade": "B"
         },
         "40": {
@@ -4523,17 +4523,17 @@
           "grade": "C"
         },
         "42": {
-          "saving": 0.127,
-          "win": 50.7,
-          "count": 1423,
-          "saving_5m": 6350,
+          "saving": 0.128,
+          "win": 50.8,
+          "count": 1425,
+          "saving_5m": 6400,
           "grade": "C"
         },
         "43": {
-          "saving": 0.127,
+          "saving": 0.128,
           "win": 51.6,
-          "count": 1730,
-          "saving_5m": 6350,
+          "count": 1732,
+          "saving_5m": 6400,
           "grade": "C"
         },
         "44": {
@@ -4544,10 +4544,10 @@
           "grade": "C"
         },
         "45": {
-          "saving": -0.039,
+          "saving": -0.037,
           "win": 47.6,
-          "count": 1430,
-          "saving_5m": -1950,
+          "count": 1432,
+          "saving_5m": -1850,
           "grade": "C"
         },
         "46": {
@@ -4572,16 +4572,16 @@
           "grade": "C"
         },
         "49": {
-          "saving": -0.055,
+          "saving": -0.053,
           "win": 46.8,
-          "count": 1937,
-          "saving_5m": -2750,
+          "count": 1939,
+          "saving_5m": -2650,
           "grade": "C"
         },
         "50": {
           "saving": -0.326,
           "win": 42.3,
-          "count": 1770,
+          "count": 1772,
           "saving_5m": -16300,
           "grade": "C"
         },
@@ -4600,24 +4600,24 @@
           "grade": "C"
         },
         "53": {
-          "saving": -0.33,
-          "win": 44.4,
-          "count": 1600,
-          "saving_5m": -16500,
+          "saving": -0.329,
+          "win": 44.5,
+          "count": 1602,
+          "saving_5m": -16450,
           "grade": "C"
         },
         "54": {
-          "saving": -0.257,
+          "saving": -0.256,
           "win": 43.8,
-          "count": 1860,
-          "saving_5m": -12850,
+          "count": 1863,
+          "saving_5m": -12800,
           "grade": "C"
         },
         "55": {
-          "saving": -0.34,
+          "saving": -0.338,
           "win": 44.7,
-          "count": 1648,
-          "saving_5m": -17000,
+          "count": 1650,
+          "saving_5m": -16900,
           "grade": "C"
         },
         "56": {
@@ -4656,10 +4656,10 @@
           "grade": "C"
         },
         "61": {
-          "saving": -0.02,
+          "saving": -0.019,
           "win": 48.4,
-          "count": 1639,
-          "saving_5m": -1000,
+          "count": 1641,
+          "saving_5m": -950,
           "grade": "D"
         },
         "62": {
@@ -4686,7 +4686,7 @@
         "65": {
           "saving": 0.388,
           "win": 54.7,
-          "count": 1735,
+          "count": 1736,
           "saving_5m": 19400,
           "grade": "D"
         },
@@ -4698,10 +4698,10 @@
           "grade": "D"
         },
         "67": {
-          "saving": 0.017,
-          "win": 51.4,
-          "count": 2069,
-          "saving_5m": 850,
+          "saving": 0.019,
+          "win": 51.5,
+          "count": 2073,
+          "saving_5m": 950,
           "grade": "D"
         },
         "68": {
@@ -4726,10 +4726,10 @@
           "grade": "D"
         },
         "71": {
-          "saving": -0.211,
+          "saving": -0.209,
           "win": 48.5,
-          "count": 1653,
-          "saving_5m": -10550,
+          "count": 1655,
+          "saving_5m": -10450,
           "grade": "D"
         },
         "72": {
@@ -4740,17 +4740,17 @@
           "grade": "D"
         },
         "73": {
-          "saving": -0.306,
-          "win": 41.7,
-          "count": 2128,
-          "saving_5m": -15300,
+          "saving": -0.303,
+          "win": 41.8,
+          "count": 2132,
+          "saving_5m": -15150,
           "grade": "D"
         },
         "74": {
-          "saving": 0.227,
+          "saving": 0.228,
           "win": 55.2,
-          "count": 1931,
-          "saving_5m": 11350,
+          "count": 1933,
+          "saving_5m": 11400,
           "grade": "D"
         },
         "75": {
@@ -4763,7 +4763,7 @@
         "76": {
           "saving": 0.139,
           "win": 52.6,
-          "count": 2568,
+          "count": 2570,
           "saving_5m": 6950,
           "grade": "D"
         },
@@ -4819,22 +4819,22 @@
         "84": {
           "saving": -0.208,
           "win": 45.7,
-          "count": 2394,
+          "count": 2396,
           "saving_5m": -10400,
           "grade": "F"
         },
         "85": {
           "saving": -0.237,
-          "win": 46.1,
-          "count": 1701,
+          "win": 46.2,
+          "count": 1700,
           "saving_5m": -11850,
           "grade": "F"
         },
         "86": {
-          "saving": 0.27,
-          "win": 51.5,
-          "count": 1666,
-          "saving_5m": 13500,
+          "saving": 0.271,
+          "win": 51.6,
+          "count": 1668,
+          "saving_5m": 13550,
           "grade": "F"
         },
         "87": {
@@ -4922,10 +4922,10 @@
           "grade": "F"
         },
         "99": {
-          "saving": -0.123,
+          "saving": -0.124,
           "win": 42.7,
-          "count": 2625,
-          "saving_5m": -6150,
+          "count": 2627,
+          "saving_5m": -6200,
           "grade": "F"
         }
       }
@@ -4949,10 +4949,10 @@
           "grade": "A"
         },
         "2": {
-          "saving": 1.383,
-          "win": 66.1,
-          "count": 663,
-          "saving_5m": 69150,
+          "saving": 1.389,
+          "win": 66.2,
+          "count": 665,
+          "saving_5m": 69450,
           "grade": "A"
         },
         "3": {
@@ -5016,35 +5016,35 @@
           "win": 57.0,
           "count": 1271,
           "saving_5m": -150,
-          "grade": "B"
+          "grade": "A"
         },
         "12": {
           "saving": 0.443,
           "win": 56.7,
           "count": 1178,
           "saving_5m": 22150,
-          "grade": "B"
+          "grade": "A"
         },
         "13": {
           "saving": 0.714,
           "win": 60.3,
           "count": 1581,
           "saving_5m": 35700,
-          "grade": "B"
+          "grade": "A"
         },
         "14": {
           "saving": 0.609,
           "win": 53.9,
           "count": 1426,
           "saving_5m": 30450,
-          "grade": "B"
+          "grade": "A"
         },
         "15": {
-          "saving": 0.22,
-          "win": 55.5,
-          "count": 1046,
-          "saving_5m": 11000,
-          "grade": "B"
+          "saving": 0.223,
+          "win": 55.6,
+          "count": 1048,
+          "saving_5m": 11150,
+          "grade": "A"
         },
         "16": {
           "saving": 0.466,
@@ -5089,17 +5089,17 @@
           "grade": "B"
         },
         "22": {
-          "saving": 0.384,
-          "win": 49.7,
-          "count": 1220,
-          "saving_5m": 19200,
+          "saving": 0.388,
+          "win": 49.8,
+          "count": 1222,
+          "saving_5m": 19400,
           "grade": "B"
         },
         "23": {
-          "saving": 0.221,
-          "win": 50.5,
-          "count": 1228,
-          "saving_5m": 11050,
+          "saving": 0.223,
+          "win": 50.6,
+          "count": 1230,
+          "saving_5m": 11150,
           "grade": "B"
         },
         "24": {
@@ -5142,56 +5142,56 @@
           "win": 47.0,
           "count": 1395,
           "saving_5m": 2050,
-          "grade": "C"
+          "grade": "B"
         },
         "30": {
           "saving": 0.88,
           "win": 60.2,
-          "count": 1180,
+          "count": 1182,
           "saving_5m": 44000,
-          "grade": "C"
+          "grade": "B"
         },
         "31": {
           "saving": -0.036,
           "win": 46.7,
           "count": 1302,
           "saving_5m": -1800,
-          "grade": "C"
+          "grade": "B"
         },
         "32": {
-          "saving": -0.083,
-          "win": 47.1,
-          "count": 1105,
-          "saving_5m": -4150,
-          "grade": "C"
+          "saving": -0.081,
+          "win": 47.2,
+          "count": 1107,
+          "saving_5m": -4050,
+          "grade": "B"
         },
         "33": {
           "saving": -0.081,
           "win": 50.3,
           "count": 1333,
           "saving_5m": -4050,
-          "grade": "C"
+          "grade": "B"
         },
         "34": {
-          "saving": 0.008,
-          "win": 44.3,
-          "count": 1628,
-          "saving_5m": 400,
-          "grade": "C"
+          "saving": 0.01,
+          "win": 44.4,
+          "count": 1631,
+          "saving_5m": 500,
+          "grade": "B"
         },
         "35": {
           "saving": -0.167,
           "win": 46.7,
           "count": 1674,
           "saving_5m": -8350,
-          "grade": "C"
+          "grade": "B"
         },
         "36": {
-          "saving": 0.079,
-          "win": 49.5,
-          "count": 1554,
-          "saving_5m": 3950,
-          "grade": "C"
+          "saving": 0.083,
+          "win": 49.7,
+          "count": 1558,
+          "saving_5m": 4150,
+          "grade": "B"
         },
         "37": {
           "saving": 0.067,
@@ -5201,24 +5201,24 @@
           "grade": "C"
         },
         "38": {
-          "saving": 0.43,
+          "saving": 0.431,
           "win": 52.8,
-          "count": 1529,
-          "saving_5m": 21500,
+          "count": 1531,
+          "saving_5m": 21550,
           "grade": "C"
         },
         "39": {
-          "saving": -0.02,
-          "win": 46.3,
-          "count": 1709,
-          "saving_5m": -1000,
+          "saving": -0.018,
+          "win": 46.4,
+          "count": 1711,
+          "saving_5m": -900,
           "grade": "C"
         },
         "40": {
-          "saving": 0.353,
-          "win": 51.3,
-          "count": 1541,
-          "saving_5m": 17650,
+          "saving": 0.356,
+          "win": 51.5,
+          "count": 1545,
+          "saving_5m": 17800,
           "grade": "C"
         },
         "41": {
@@ -5229,10 +5229,10 @@
           "grade": "C"
         },
         "42": {
-          "saving": 0.047,
+          "saving": 0.048,
           "win": 48.5,
-          "count": 1574,
-          "saving_5m": 2350,
+          "count": 1576,
+          "saving_5m": 2400,
           "grade": "C"
         },
         "43": {
@@ -5250,10 +5250,10 @@
           "grade": "C"
         },
         "45": {
-          "saving": 0.062,
-          "win": 55.4,
-          "count": 1441,
-          "saving_5m": 3100,
+          "saving": 0.064,
+          "win": 55.5,
+          "count": 1443,
+          "saving_5m": 3200,
           "grade": "C"
         },
         "46": {
@@ -5285,10 +5285,10 @@
           "grade": "C"
         },
         "50": {
-          "saving": 0.116,
+          "saving": 0.117,
           "win": 49.0,
-          "count": 1548,
-          "saving_5m": 5800,
+          "count": 1550,
+          "saving_5m": 5850,
           "grade": "C"
         },
         "51": {
@@ -5348,30 +5348,30 @@
           "grade": "C"
         },
         "59": {
-          "saving": 0.183,
-          "win": 53.4,
-          "count": 1724,
-          "saving_5m": 9150,
+          "saving": 0.184,
+          "win": 53.5,
+          "count": 1726,
+          "saving_5m": 9200,
           "grade": "C"
         },
         "60": {
           "saving": 0.265,
           "win": 55.4,
-          "count": 1881,
+          "count": 1885,
           "saving_5m": 13250,
           "grade": "C"
         },
         "61": {
-          "saving": -0.346,
+          "saving": -0.344,
           "win": 44.9,
-          "count": 1360,
-          "saving_5m": -17300,
+          "count": 1362,
+          "saving_5m": -17200,
           "grade": "D"
         },
         "62": {
           "saving": -0.031,
           "win": 49.9,
-          "count": 1925,
+          "count": 1927,
           "saving_5m": -1550,
           "grade": "D"
         },
@@ -5390,10 +5390,10 @@
           "grade": "D"
         },
         "65": {
-          "saving": -0.077,
+          "saving": -0.075,
           "win": 47.6,
-          "count": 1877,
-          "saving_5m": -3850,
+          "count": 1879,
+          "saving_5m": -3750,
           "grade": "D"
         },
         "66": {
@@ -5404,10 +5404,10 @@
           "grade": "D"
         },
         "67": {
-          "saving": -0.145,
-          "win": 46.2,
-          "count": 1897,
-          "saving_5m": -7250,
+          "saving": -0.144,
+          "win": 46.3,
+          "count": 1899,
+          "saving_5m": -7200,
           "grade": "D"
         },
         "68": {
@@ -5418,10 +5418,10 @@
           "grade": "D"
         },
         "69": {
-          "saving": -0.068,
+          "saving": -0.066,
           "win": 51.4,
-          "count": 2056,
-          "saving_5m": -3400,
+          "count": 2058,
+          "saving_5m": -3300,
           "grade": "D"
         },
         "70": {
@@ -5432,10 +5432,10 @@
           "grade": "D"
         },
         "71": {
-          "saving": -0.202,
+          "saving": -0.201,
           "win": 48.2,
-          "count": 1948,
-          "saving_5m": -10100,
+          "count": 1950,
+          "saving_5m": -10050,
           "grade": "D"
         },
         "72": {
@@ -5446,17 +5446,17 @@
           "grade": "D"
         },
         "73": {
-          "saving": 0.14,
-          "win": 56.0,
-          "count": 1756,
-          "saving_5m": 7000,
+          "saving": 0.142,
+          "win": 56.1,
+          "count": 1760,
+          "saving_5m": 7100,
           "grade": "D"
         },
         "74": {
-          "saving": 0.027,
-          "win": 50.0,
-          "count": 2055,
-          "saving_5m": 1350,
+          "saving": 0.028,
+          "win": 50.1,
+          "count": 2057,
+          "saving_5m": 1400,
           "grade": "D"
         },
         "75": {
@@ -5524,8 +5524,8 @@
         },
         "84": {
           "saving": 0.093,
-          "win": 53.4,
-          "count": 2425,
+          "win": 53.3,
+          "count": 2427,
           "saving_5m": 4650,
           "grade": "D"
         },
@@ -5539,15 +5539,15 @@
         "86": {
           "saving": 0.199,
           "win": 53.7,
-          "count": 1599,
+          "count": 1601,
           "saving_5m": 9950,
           "grade": "D"
         },
         "87": {
-          "saving": -0.309,
+          "saving": -0.31,
           "win": 42.5,
-          "count": 1573,
-          "saving_5m": -15450,
+          "count": 1572,
+          "saving_5m": -15500,
           "grade": "D"
         },
         "88": {
@@ -5629,8 +5629,8 @@
         },
         "99": {
           "saving": -0.145,
-          "win": 42.7,
-          "count": 2246,
+          "win": 42.6,
+          "count": 2248,
           "saving_5m": -7250,
           "grade": "F"
         }
@@ -5888,93 +5888,93 @@
           "grade": "B"
         },
         "38": {
-          "saving": 0.282,
+          "saving": 0.285,
           "win": 55.2,
-          "count": 2027,
-          "saving_5m": 14100,
+          "count": 2029,
+          "saving_5m": 14250,
           "grade": "B"
         },
         "39": {
           "saving": 0.418,
           "win": 53.9,
-          "count": 2536,
+          "count": 2538,
           "saving_5m": 20900,
           "grade": "B"
         },
         "40": {
-          "saving": 0.573,
+          "saving": 0.574,
           "win": 59.3,
-          "count": 3552,
-          "saving_5m": 28650,
+          "count": 3554,
+          "saving_5m": 28700,
           "grade": "B"
         },
         "41": {
-          "saving": 0.376,
+          "saving": 0.378,
           "win": 55.0,
-          "count": 2793,
-          "saving_5m": 18800,
+          "count": 2797,
+          "saving_5m": 18900,
           "grade": "C"
         },
         "42": {
-          "saving": 0.101,
+          "saving": 0.102,
           "win": 51.7,
-          "count": 3740,
-          "saving_5m": 5050,
+          "count": 3743,
+          "saving_5m": 5100,
           "grade": "C"
         },
         "43": {
-          "saving": 0.134,
+          "saving": 0.136,
           "win": 51.2,
-          "count": 4795,
-          "saving_5m": 6700,
+          "count": 4801,
+          "saving_5m": 6800,
           "grade": "C"
         },
         "44": {
           "saving": 0.335,
           "win": 54.0,
-          "count": 4989,
+          "count": 4993,
           "saving_5m": 16750,
           "grade": "C"
         },
         "45": {
-          "saving": 0.028,
+          "saving": 0.029,
           "win": 46.9,
-          "count": 6246,
-          "saving_5m": 1400,
+          "count": 6248,
+          "saving_5m": 1450,
           "grade": "C"
         },
         "46": {
           "saving": 0.028,
-          "win": 47.9,
-          "count": 6982,
+          "win": 48.0,
+          "count": 6984,
           "saving_5m": 1400,
           "grade": "C"
         },
         "47": {
           "saving": 0.044,
           "win": 46.7,
-          "count": 7646,
+          "count": 7648,
           "saving_5m": 2200,
           "grade": "C"
         },
         "48": {
           "saving": 0.193,
           "win": 50.0,
-          "count": 7840,
+          "count": 7844,
           "saving_5m": 9650,
           "grade": "C"
         },
         "49": {
-          "saving": 0.136,
+          "saving": 0.137,
           "win": 48.5,
-          "count": 7434,
-          "saving_5m": 6800,
+          "count": 7439,
+          "saving_5m": 6850,
           "grade": "C"
         },
         "50": {
           "saving": 0.092,
           "win": 51.6,
-          "count": 7543,
+          "count": 7545,
           "saving_5m": 4600,
           "grade": "C"
         },
@@ -6002,21 +6002,21 @@
         "54": {
           "saving": -0.014,
           "win": 46.9,
-          "count": 7308,
+          "count": 7313,
           "saving_5m": -700,
           "grade": "C"
         },
         "55": {
           "saving": 0.05,
           "win": 51.8,
-          "count": 6640,
+          "count": 6644,
           "saving_5m": 2500,
           "grade": "C"
         },
         "56": {
           "saving": -0.026,
-          "win": 48.6,
-          "count": 5926,
+          "win": 48.7,
+          "count": 5928,
           "saving_5m": -1300,
           "grade": "C"
         },
@@ -6030,21 +6030,21 @@
         "58": {
           "saving": -0.073,
           "win": 46.7,
-          "count": 4535,
+          "count": 4537,
           "saving_5m": -3650,
           "grade": "C"
         },
         "59": {
           "saving": -0.303,
           "win": 42.2,
-          "count": 3103,
+          "count": 3107,
           "saving_5m": -15150,
           "grade": "C"
         },
         "60": {
           "saving": -0.042,
           "win": 48.7,
-          "count": 3581,
+          "count": 3582,
           "saving_5m": -2100,
           "grade": "C"
         },
@@ -6072,7 +6072,7 @@
         "64": {
           "saving": 0.036,
           "win": 45.0,
-          "count": 1402,
+          "count": 1404,
           "saving_5m": 1800,
           "grade": "D"
         },
@@ -6091,10 +6091,10 @@
           "grade": "D"
         },
         "67": {
-          "saving": 0.15,
-          "win": 52.8,
-          "count": 684,
-          "saving_5m": 7500,
+          "saving": 0.149,
+          "win": 52.6,
+          "count": 686,
+          "saving_5m": 7450,
           "grade": "D"
         },
         "68": {
@@ -6316,15 +6316,15 @@
         "0": {
           "saving": 1.284,
           "win": 72.9,
-          "count": 3280,
+          "count": 3282,
           "saving_5m": 64200,
           "grade": "A"
         },
         "1": {
-          "saving": -0.906,
-          "win": 50.1,
-          "count": 517,
-          "saving_5m": -45300,
+          "saving": -0.898,
+          "win": 50.3,
+          "count": 519,
+          "saving_5m": -44900,
           "grade": "A"
         },
         "2": {
@@ -6335,10 +6335,10 @@
           "grade": "A"
         },
         "3": {
-          "saving": 1.326,
-          "win": 71.6,
-          "count": 631,
-          "saving_5m": 66300,
+          "saving": 1.33,
+          "win": 71.8,
+          "count": 634,
+          "saving_5m": 66500,
           "grade": "A"
         },
         "4": {
@@ -6363,10 +6363,10 @@
           "grade": "A"
         },
         "7": {
-          "saving": -0.075,
-          "win": 51.6,
-          "count": 733,
-          "saving_5m": -3750,
+          "saving": -0.071,
+          "win": 51.7,
+          "count": 735,
+          "saving_5m": -3550,
           "grade": "A"
         },
         "8": {
@@ -6391,23 +6391,23 @@
           "grade": "A"
         },
         "11": {
-          "saving": 0.156,
-          "win": 52.4,
-          "count": 886,
-          "saving_5m": 7800,
+          "saving": 0.16,
+          "win": 52.5,
+          "count": 888,
+          "saving_5m": 8000,
           "grade": "A"
         },
         "12": {
-          "saving": 0.481,
-          "win": 58.4,
-          "count": 1006,
-          "saving_5m": 24050,
+          "saving": 0.485,
+          "win": 58.5,
+          "count": 1008,
+          "saving_5m": 24250,
           "grade": "A"
         },
         "13": {
           "saving": 0.934,
-          "win": 57.8,
-          "count": 1206,
+          "win": 57.9,
+          "count": 1208,
           "saving_5m": 46700,
           "grade": "A"
         },
@@ -6426,17 +6426,17 @@
           "grade": "A"
         },
         "16": {
-          "saving": 0.813,
+          "saving": 0.812,
           "win": 64.8,
           "count": 1333,
-          "saving_5m": 40650,
+          "saving_5m": 40600,
           "grade": "A"
         },
         "17": {
-          "saving": 0.267,
+          "saving": 0.269,
           "win": 51.9,
-          "count": 1101,
-          "saving_5m": 13350,
+          "count": 1103,
+          "saving_5m": 13450,
           "grade": "A"
         },
         "18": {
@@ -6468,10 +6468,10 @@
           "grade": "B"
         },
         "22": {
-          "saving": 0.627,
-          "win": 57.2,
-          "count": 1257,
-          "saving_5m": 31350,
+          "saving": 0.629,
+          "win": 57.3,
+          "count": 1259,
+          "saving_5m": 31450,
           "grade": "B"
         },
         "23": {
@@ -6489,10 +6489,10 @@
           "grade": "B"
         },
         "25": {
-          "saving": 0.209,
-          "win": 49.9,
-          "count": 1371,
-          "saving_5m": 10450,
+          "saving": 0.211,
+          "win": 50.1,
+          "count": 1378,
+          "saving_5m": 10550,
           "grade": "B"
         },
         "26": {
@@ -6510,10 +6510,10 @@
           "grade": "B"
         },
         "28": {
-          "saving": 0.572,
-          "win": 56.8,
-          "count": 1038,
-          "saving_5m": 28600,
+          "saving": 0.575,
+          "win": 56.9,
+          "count": 1040,
+          "saving_5m": 28750,
           "grade": "B"
         },
         "29": {
@@ -6559,10 +6559,10 @@
           "grade": "B"
         },
         "35": {
-          "saving": 0.111,
+          "saving": 0.114,
           "win": 48.9,
-          "count": 1497,
-          "saving_5m": 5550,
+          "count": 1501,
+          "saving_5m": 5700,
           "grade": "B"
         },
         "36": {
@@ -6580,10 +6580,10 @@
           "grade": "B"
         },
         "38": {
-          "saving": 0.18,
-          "win": 48.6,
-          "count": 1603,
-          "saving_5m": 9000,
+          "saving": 0.181,
+          "win": 48.7,
+          "count": 1605,
+          "saving_5m": 9050,
           "grade": "B"
         },
         "39": {
@@ -6610,7 +6610,7 @@
         "42": {
           "saving": 0.164,
           "win": 49.6,
-          "count": 1235,
+          "count": 1237,
           "saving_5m": 8200,
           "grade": "C"
         },
@@ -6685,10 +6685,10 @@
           "grade": "C"
         },
         "53": {
-          "saving": 0.138,
-          "win": 52.0,
-          "count": 1890,
-          "saving_5m": 6900,
+          "saving": 0.14,
+          "win": 52.1,
+          "count": 1892,
+          "saving_5m": 7000,
           "grade": "C"
         },
         "54": {
@@ -6741,10 +6741,10 @@
           "grade": "C"
         },
         "61": {
-          "saving": 0.234,
+          "saving": 0.235,
           "win": 50.7,
-          "count": 1824,
-          "saving_5m": 11700,
+          "count": 1826,
+          "saving_5m": 11750,
           "grade": "D"
         },
         "62": {
@@ -6776,10 +6776,10 @@
           "grade": "D"
         },
         "66": {
-          "saving": -0.302,
-          "win": 42.9,
-          "count": 1834,
-          "saving_5m": -15100,
+          "saving": -0.301,
+          "win": 43.0,
+          "count": 1836,
+          "saving_5m": -15050,
           "grade": "D"
         },
         "67": {
@@ -6797,23 +6797,23 @@
           "grade": "D"
         },
         "69": {
-          "saving": 0.003,
+          "saving": 0.004,
           "win": 45.9,
-          "count": 1993,
-          "saving_5m": 150,
+          "count": 1995,
+          "saving_5m": 200,
           "grade": "D"
         },
         "70": {
-          "saving": -0.163,
+          "saving": -0.162,
           "win": 41.4,
-          "count": 2046,
-          "saving_5m": -8150,
+          "count": 2049,
+          "saving_5m": -8100,
           "grade": "D"
         },
         "71": {
           "saving": -0.043,
           "win": 50.6,
-          "count": 2081,
+          "count": 2083,
           "saving_5m": -2150,
           "grade": "D"
         },
@@ -6853,17 +6853,17 @@
           "grade": "D"
         },
         "77": {
-          "saving": 0.412,
+          "saving": 0.411,
           "win": 56.3,
-          "count": 2069,
-          "saving_5m": 20600,
+          "count": 2071,
+          "saving_5m": 20550,
           "grade": "D"
         },
         "78": {
-          "saving": 0.004,
+          "saving": 0.005,
           "win": 49.7,
-          "count": 2147,
-          "saving_5m": 200,
+          "count": 2151,
+          "saving_5m": 250,
           "grade": "D"
         },
         "79": {
@@ -6888,10 +6888,10 @@
           "grade": "F"
         },
         "82": {
-          "saving": 0.074,
-          "win": 57.2,
-          "count": 1953,
-          "saving_5m": 3700,
+          "saving": 0.073,
+          "win": 57.1,
+          "count": 1955,
+          "saving_5m": 3650,
           "grade": "F"
         },
         "83": {
@@ -6911,14 +6911,14 @@
         "85": {
           "saving": -0.299,
           "win": 48.0,
-          "count": 2136,
+          "count": 2138,
           "saving_5m": -14950,
           "grade": "F"
         },
         "86": {
           "saving": 0.108,
           "win": 49.6,
-          "count": 2068,
+          "count": 2070,
           "saving_5m": 5400,
           "grade": "F"
         },
@@ -6930,10 +6930,10 @@
           "grade": "F"
         },
         "88": {
-          "saving": -0.355,
-          "win": 43.7,
-          "count": 1868,
-          "saving_5m": -17750,
+          "saving": -0.354,
+          "win": 43.6,
+          "count": 1870,
+          "saving_5m": -17700,
           "grade": "F"
         },
         "89": {
@@ -6972,10 +6972,10 @@
           "grade": "F"
         },
         "94": {
-          "saving": 0.845,
+          "saving": 0.846,
           "win": 52.9,
-          "count": 1325,
-          "saving_5m": 42250,
+          "count": 1324,
+          "saving_5m": 42300,
           "grade": "F"
         },
         "95": {
@@ -7182,79 +7182,79 @@
         },
         "23": {
           "saving": 1.232,
-          "win": 60.5,
-          "count": 769,
+          "win": 60.6,
+          "count": 771,
           "saving_5m": 61600,
           "grade": "A"
         },
         "24": {
-          "saving": 0.265,
+          "saving": 0.27,
           "win": 58.1,
-          "count": 1035,
-          "saving_5m": 13250,
+          "count": 1037,
+          "saving_5m": 13500,
           "grade": "A"
         },
         "25": {
-          "saving": 0.236,
-          "win": 55.2,
-          "count": 948,
-          "saving_5m": 11800,
+          "saving": 0.238,
+          "win": 55.3,
+          "count": 950,
+          "saving_5m": 11900,
           "grade": "A"
         },
         "26": {
           "saving": 0.254,
-          "win": 53.0,
-          "count": 1084,
+          "win": 53.1,
+          "count": 1085,
           "saving_5m": 12700,
           "grade": "A"
         },
         "27": {
-          "saving": 0.554,
+          "saving": 0.555,
           "win": 59.4,
-          "count": 1632,
-          "saving_5m": 27700,
+          "count": 1634,
+          "saving_5m": 27750,
           "grade": "A"
         },
         "28": {
-          "saving": -0.157,
-          "win": 51.4,
-          "count": 1444,
-          "saving_5m": -7850,
+          "saving": -0.155,
+          "win": 51.5,
+          "count": 1446,
+          "saving_5m": -7750,
           "grade": "A"
         },
         "29": {
-          "saving": 0.476,
-          "win": 55.6,
-          "count": 1812,
-          "saving_5m": 23800,
-          "grade": "B"
+          "saving": 0.478,
+          "win": 55.7,
+          "count": 1814,
+          "saving_5m": 23900,
+          "grade": "A"
         },
         "30": {
           "saving": 0.186,
           "win": 51.7,
           "count": 1519,
           "saving_5m": 9300,
-          "grade": "B"
+          "grade": "A"
         },
         "31": {
           "saving": 0.572,
           "win": 60.3,
           "count": 1798,
           "saving_5m": 28600,
-          "grade": "B"
+          "grade": "A"
         },
         "32": {
           "saving": 0.351,
           "win": 55.2,
-          "count": 2043,
+          "count": 2045,
           "saving_5m": 17550,
-          "grade": "B"
+          "grade": "A"
         },
         "33": {
-          "saving": 0.223,
+          "saving": 0.225,
           "win": 54.7,
-          "count": 2217,
-          "saving_5m": 11150,
+          "count": 2219,
+          "saving_5m": 11250,
           "grade": "B"
         },
         "34": {
@@ -7265,67 +7265,67 @@
           "grade": "B"
         },
         "35": {
-          "saving": 0.403,
+          "saving": 0.404,
           "win": 55.8,
-          "count": 2280,
-          "saving_5m": 20150,
+          "count": 2282,
+          "saving_5m": 20200,
           "grade": "B"
         },
         "36": {
-          "saving": 0.572,
-          "win": 55.4,
-          "count": 2235,
-          "saving_5m": 28600,
+          "saving": 0.573,
+          "win": 55.5,
+          "count": 2237,
+          "saving_5m": 28650,
           "grade": "B"
         },
         "37": {
-          "saving": 0.391,
+          "saving": 0.393,
           "win": 52.9,
-          "count": 2247,
-          "saving_5m": 19550,
+          "count": 2249,
+          "saving_5m": 19650,
           "grade": "B"
         },
         "38": {
           "saving": 0.2,
           "win": 55.2,
-          "count": 2163,
+          "count": 2165,
           "saving_5m": 10000,
           "grade": "B"
         },
         "39": {
-          "saving": 0.553,
+          "saving": 0.552,
           "win": 57.0,
-          "count": 2383,
-          "saving_5m": 27650,
-          "grade": "C"
+          "count": 2386,
+          "saving_5m": 27600,
+          "grade": "B"
         },
         "40": {
           "saving": 0.005,
           "win": 48.1,
           "count": 2759,
           "saving_5m": 250,
-          "grade": "C"
+          "grade": "B"
         },
         "41": {
-          "saving": 0.086,
+          "saving": 0.088,
           "win": 52.2,
-          "count": 2522,
-          "saving_5m": 4300,
-          "grade": "C"
+          "count": 2524,
+          "saving_5m": 4400,
+          "grade": "B"
         },
         "42": {
           "saving": 0.15,
           "win": 48.0,
           "count": 3038,
           "saving_5m": 7500,
-          "grade": "C"
+          "grade": "B"
         },
         "43": {
-          "saving": 0.011,
+          "saving": 0.012,
           "win": 44.8,
-          "count": 3306,
-          "saving_5m": 550,
-          "grade": "C"
+          "count": 3310,
+          "saving_5m": 600,
+          "grade": "B"
         },
         "44": {
           "saving": 0.116,
@@ -7344,7 +7344,7 @@
         "46": {
           "saving": 0.199,
           "win": 50.8,
-          "count": 2785,
+          "count": 2787,
           "saving_5m": 9950,
           "grade": "C"
         },
@@ -7377,10 +7377,10 @@
           "grade": "C"
         },
         "51": {
-          "saving": 0.308,
+          "saving": 0.309,
           "win": 53.0,
-          "count": 2955,
-          "saving_5m": 15400,
+          "count": 2957,
+          "saving_5m": 15450,
           "grade": "C"
         },
         "52": {
@@ -7398,10 +7398,10 @@
           "grade": "C"
         },
         "54": {
-          "saving": -0.086,
+          "saving": -0.085,
           "win": 46.6,
-          "count": 3361,
-          "saving_5m": -4300,
+          "count": 3363,
+          "saving_5m": -4250,
           "grade": "C"
         },
         "55": {
@@ -7441,36 +7441,36 @@
         },
         "60": {
           "saving": 0.139,
-          "win": 49.7,
-          "count": 4004,
+          "win": 49.8,
+          "count": 4006,
           "saving_5m": 6950,
           "grade": "D"
         },
         "61": {
           "saving": -0.182,
           "win": 45.4,
-          "count": 3489,
+          "count": 3494,
           "saving_5m": -9100,
           "grade": "D"
         },
         "62": {
-          "saving": -0.139,
+          "saving": -0.138,
           "win": 48.2,
-          "count": 3606,
-          "saving_5m": -6950,
+          "count": 3608,
+          "saving_5m": -6900,
           "grade": "D"
         },
         "63": {
           "saving": 0.021,
           "win": 50.3,
-          "count": 3693,
+          "count": 3695,
           "saving_5m": 1050,
           "grade": "D"
         },
         "64": {
           "saving": 0.199,
           "win": 54.4,
-          "count": 3478,
+          "count": 3480,
           "saving_5m": 9950,
           "grade": "D"
         },
@@ -7489,16 +7489,16 @@
           "grade": "D"
         },
         "67": {
-          "saving": -0.131,
+          "saving": -0.13,
           "win": 50.7,
-          "count": 3540,
-          "saving_5m": -6550,
+          "count": 3542,
+          "saving_5m": -6500,
           "grade": "D"
         },
         "68": {
           "saving": -0.062,
           "win": 45.1,
-          "count": 3410,
+          "count": 3412,
           "saving_5m": -3100,
           "grade": "D"
         },
@@ -7512,7 +7512,7 @@
         "70": {
           "saving": -0.334,
           "win": 40.7,
-          "count": 2731,
+          "count": 2733,
           "saving_5m": -16700,
           "grade": "D"
         },
@@ -7533,14 +7533,14 @@
         "73": {
           "saving": -0.09,
           "win": 45.0,
-          "count": 2177,
+          "count": 2179,
           "saving_5m": -4500,
           "grade": "F"
         },
         "74": {
           "saving": -0.185,
           "win": 46.1,
-          "count": 1855,
+          "count": 1854,
           "saving_5m": -9250,
           "grade": "F"
         },
@@ -7553,8 +7553,8 @@
         },
         "76": {
           "saving": -0.102,
-          "win": 43.0,
-          "count": 851,
+          "win": 42.9,
+          "count": 853,
           "saving_5m": -5100,
           "grade": "F"
         },
@@ -7721,10 +7721,10 @@
       "weight": 1.0,
       "scores": {
         "0": {
-          "saving": 1.439,
+          "saving": 1.441,
           "win": 69.8,
-          "count": 1686,
-          "saving_5m": 71950,
+          "count": 1688,
+          "saving_5m": 72050,
           "grade": "A"
         },
         "1": {
@@ -7833,10 +7833,10 @@
           "grade": "A"
         },
         "16": {
-          "saving": 0.584,
+          "saving": 0.586,
           "win": 61.8,
-          "count": 1301,
-          "saving_5m": 29200,
+          "count": 1302,
+          "saving_5m": 29300,
           "grade": "A"
         },
         "17": {
@@ -7847,10 +7847,10 @@
           "grade": "A"
         },
         "18": {
-          "saving": 0.49,
-          "win": 56.9,
-          "count": 1344,
-          "saving_5m": 24500,
+          "saving": 0.493,
+          "win": 57.0,
+          "count": 1346,
+          "saving_5m": 24650,
           "grade": "A"
         },
         "19": {
@@ -7952,10 +7952,10 @@
           "grade": "B"
         },
         "33": {
-          "saving": -0.17,
-          "win": 47.8,
-          "count": 1606,
-          "saving_5m": -8500,
+          "saving": -0.167,
+          "win": 47.9,
+          "count": 1608,
+          "saving_5m": -8350,
           "grade": "B"
         },
         "34": {
@@ -8029,24 +8029,24 @@
           "grade": "C"
         },
         "44": {
-          "saving": 0.2,
-          "win": 48.9,
-          "count": 1364,
-          "saving_5m": 10000,
+          "saving": 0.203,
+          "win": 49.0,
+          "count": 1366,
+          "saving_5m": 10150,
           "grade": "C"
         },
         "45": {
-          "saving": -0.034,
-          "win": 48.3,
-          "count": 1826,
-          "saving_5m": -1700,
+          "saving": -0.03,
+          "win": 48.4,
+          "count": 1828,
+          "saving_5m": -1500,
           "grade": "C"
         },
         "46": {
-          "saving": 0.163,
+          "saving": 0.165,
           "win": 48.0,
-          "count": 1378,
-          "saving_5m": 8150,
+          "count": 1380,
+          "saving_5m": 8250,
           "grade": "C"
         },
         "47": {
@@ -8057,17 +8057,17 @@
           "grade": "C"
         },
         "48": {
-          "saving": -0.042,
+          "saving": -0.039,
           "win": 50.9,
-          "count": 1496,
-          "saving_5m": -2100,
+          "count": 1498,
+          "saving_5m": -1950,
           "grade": "C"
         },
         "49": {
-          "saving": 0.69,
+          "saving": 0.691,
           "win": 61.2,
-          "count": 1250,
-          "saving_5m": 34500,
+          "count": 1253,
+          "saving_5m": 34550,
           "grade": "C"
         },
         "50": {
@@ -8106,10 +8106,10 @@
           "grade": "C"
         },
         "55": {
-          "saving": -0.025,
+          "saving": -0.023,
           "win": 48.3,
-          "count": 1618,
-          "saving_5m": -1250,
+          "count": 1620,
+          "saving_5m": -1150,
           "grade": "C"
         },
         "56": {
@@ -8141,24 +8141,24 @@
           "grade": "C"
         },
         "60": {
-          "saving": 0.242,
-          "win": 54.0,
-          "count": 1808,
-          "saving_5m": 12100,
+          "saving": 0.244,
+          "win": 54.1,
+          "count": 1810,
+          "saving_5m": 12200,
           "grade": "C"
         },
         "61": {
-          "saving": -0.079,
+          "saving": -0.078,
           "win": 50.9,
-          "count": 1864,
-          "saving_5m": -3950,
+          "count": 1866,
+          "saving_5m": -3900,
           "grade": "D"
         },
         "62": {
-          "saving": 0.139,
-          "win": 54.9,
-          "count": 1850,
-          "saving_5m": 6950,
+          "saving": 0.142,
+          "win": 55.0,
+          "count": 1855,
+          "saving_5m": 7100,
           "grade": "D"
         },
         "63": {
@@ -8169,10 +8169,10 @@
           "grade": "D"
         },
         "64": {
-          "saving": 0.318,
-          "win": 58.3,
-          "count": 1989,
-          "saving_5m": 15900,
+          "saving": 0.319,
+          "win": 58.4,
+          "count": 1993,
+          "saving_5m": 15950,
           "grade": "D"
         },
         "65": {
@@ -8197,10 +8197,10 @@
           "grade": "D"
         },
         "68": {
-          "saving": 0.172,
-          "win": 51.2,
-          "count": 2166,
-          "saving_5m": 8600,
+          "saving": 0.174,
+          "win": 51.3,
+          "count": 2170,
+          "saving_5m": 8700,
           "grade": "D"
         },
         "69": {
@@ -8239,17 +8239,17 @@
           "grade": "D"
         },
         "74": {
-          "saving": 0.473,
+          "saving": 0.475,
           "win": 57.6,
-          "count": 1805,
-          "saving_5m": 23650,
+          "count": 1807,
+          "saving_5m": 23750,
           "grade": "D"
         },
         "75": {
-          "saving": -0.035,
-          "win": 50.1,
-          "count": 2502,
-          "saving_5m": -1750,
+          "saving": -0.033,
+          "win": 50.2,
+          "count": 2504,
+          "saving_5m": -1650,
           "grade": "D"
         },
         "76": {
@@ -8267,31 +8267,31 @@
           "grade": "D"
         },
         "78": {
-          "saving": 0.022,
-          "win": 50.2,
-          "count": 2279,
-          "saving_5m": 1100,
+          "saving": 0.024,
+          "win": 50.3,
+          "count": 2281,
+          "saving_5m": 1200,
           "grade": "D"
         },
         "79": {
-          "saving": 0.013,
+          "saving": 0.015,
           "win": 49.8,
-          "count": 2001,
-          "saving_5m": 650,
+          "count": 2003,
+          "saving_5m": 750,
           "grade": "D"
         },
         "80": {
-          "saving": 0.014,
+          "saving": 0.015,
           "win": 50.5,
-          "count": 2129,
-          "saving_5m": 700,
+          "count": 2133,
+          "saving_5m": 750,
           "grade": "D"
         },
         "81": {
-          "saving": 0.055,
-          "win": 49.4,
-          "count": 2201,
-          "saving_5m": 2750,
+          "saving": 0.054,
+          "win": 49.3,
+          "count": 2203,
+          "saving_5m": 2700,
           "grade": "F"
         },
         "82": {
@@ -8309,10 +8309,10 @@
           "grade": "F"
         },
         "84": {
-          "saving": -0.202,
-          "win": 45.9,
-          "count": 2043,
-          "saving_5m": -10100,
+          "saving": -0.2,
+          "win": 46.0,
+          "count": 2044,
+          "saving_5m": -10000,
           "grade": "F"
         },
         "85": {
@@ -8323,24 +8323,24 @@
           "grade": "F"
         },
         "86": {
-          "saving": 0.002,
+          "saving": 0.003,
           "win": 49.4,
-          "count": 2118,
-          "saving_5m": 100,
+          "count": 2120,
+          "saving_5m": 150,
           "grade": "F"
         },
         "87": {
-          "saving": -0.06,
+          "saving": -0.059,
           "win": 50.4,
-          "count": 2353,
-          "saving_5m": -3000,
+          "count": 2357,
+          "saving_5m": -2950,
           "grade": "F"
         },
         "88": {
-          "saving": -0.383,
+          "saving": -0.382,
           "win": 39.4,
-          "count": 1919,
-          "saving_5m": -19150,
+          "count": 1921,
+          "saving_5m": -19100,
           "grade": "F"
         },
         "89": {
@@ -8400,10 +8400,10 @@
           "grade": "F"
         },
         "97": {
-          "saving": 0.173,
+          "saving": 0.175,
           "win": 53.3,
-          "count": 1222,
-          "saving_5m": 8650,
+          "count": 1224,
+          "saving_5m": 8750,
           "grade": "F"
         },
         "98": {
@@ -8427,10 +8427,10 @@
       "weight": 1.0,
       "scores": {
         "0": {
-          "saving": 1.439,
+          "saving": 1.441,
           "win": 69.8,
-          "count": 1686,
-          "saving_5m": 71950,
+          "count": 1688,
+          "saving_5m": 72050,
           "grade": "A"
         },
         "1": {
@@ -8536,28 +8536,28 @@
           "win": 57.5,
           "count": 1147,
           "saving_5m": 18400,
-          "grade": "B"
+          "grade": "A"
         },
         "16": {
-          "saving": 0.584,
+          "saving": 0.586,
           "win": 61.8,
-          "count": 1301,
-          "saving_5m": 29200,
-          "grade": "B"
+          "count": 1302,
+          "saving_5m": 29300,
+          "grade": "A"
         },
         "17": {
           "saving": 0.39,
           "win": 58.8,
           "count": 1209,
           "saving_5m": 19500,
-          "grade": "B"
+          "grade": "A"
         },
         "18": {
-          "saving": 0.49,
-          "win": 56.9,
-          "count": 1344,
-          "saving_5m": 24500,
-          "grade": "B"
+          "saving": 0.493,
+          "win": 57.0,
+          "count": 1346,
+          "saving_5m": 24650,
+          "grade": "A"
         },
         "19": {
           "saving": 0.226,
@@ -8658,46 +8658,46 @@
           "grade": "B"
         },
         "33": {
-          "saving": -0.17,
-          "win": 47.8,
-          "count": 1606,
-          "saving_5m": -8500,
-          "grade": "C"
+          "saving": -0.167,
+          "win": 47.9,
+          "count": 1608,
+          "saving_5m": -8350,
+          "grade": "B"
         },
         "34": {
           "saving": -0.102,
           "win": 46.0,
           "count": 1364,
           "saving_5m": -5100,
-          "grade": "C"
+          "grade": "B"
         },
         "35": {
           "saving": 0.007,
           "win": 46.7,
           "count": 1426,
           "saving_5m": 350,
-          "grade": "C"
+          "grade": "B"
         },
         "36": {
           "saving": 0.572,
           "win": 57.4,
           "count": 1363,
           "saving_5m": 28600,
-          "grade": "C"
+          "grade": "B"
         },
         "37": {
           "saving": 0.075,
           "win": 49.6,
           "count": 1147,
           "saving_5m": 3750,
-          "grade": "C"
+          "grade": "B"
         },
         "38": {
           "saving": -0.153,
           "win": 43.5,
           "count": 1581,
           "saving_5m": -7650,
-          "grade": "C"
+          "grade": "B"
         },
         "39": {
           "saving": 0.463,
@@ -8735,24 +8735,24 @@
           "grade": "C"
         },
         "44": {
-          "saving": 0.2,
-          "win": 48.9,
-          "count": 1364,
-          "saving_5m": 10000,
+          "saving": 0.203,
+          "win": 49.0,
+          "count": 1366,
+          "saving_5m": 10150,
           "grade": "C"
         },
         "45": {
-          "saving": -0.034,
-          "win": 48.3,
-          "count": 1826,
-          "saving_5m": -1700,
+          "saving": -0.03,
+          "win": 48.4,
+          "count": 1828,
+          "saving_5m": -1500,
           "grade": "C"
         },
         "46": {
-          "saving": 0.163,
+          "saving": 0.165,
           "win": 48.0,
-          "count": 1378,
-          "saving_5m": 8150,
+          "count": 1380,
+          "saving_5m": 8250,
           "grade": "C"
         },
         "47": {
@@ -8763,17 +8763,17 @@
           "grade": "C"
         },
         "48": {
-          "saving": -0.042,
+          "saving": -0.039,
           "win": 50.9,
-          "count": 1496,
-          "saving_5m": -2100,
+          "count": 1498,
+          "saving_5m": -1950,
           "grade": "C"
         },
         "49": {
-          "saving": 0.69,
+          "saving": 0.691,
           "win": 61.2,
-          "count": 1250,
-          "saving_5m": 34500,
+          "count": 1253,
+          "saving_5m": 34550,
           "grade": "C"
         },
         "50": {
@@ -8812,10 +8812,10 @@
           "grade": "C"
         },
         "55": {
-          "saving": -0.025,
+          "saving": -0.023,
           "win": 48.3,
-          "count": 1618,
-          "saving_5m": -1250,
+          "count": 1620,
+          "saving_5m": -1150,
           "grade": "C"
         },
         "56": {
@@ -8847,24 +8847,24 @@
           "grade": "C"
         },
         "60": {
-          "saving": 0.242,
-          "win": 54.0,
-          "count": 1808,
-          "saving_5m": 12100,
+          "saving": 0.244,
+          "win": 54.1,
+          "count": 1810,
+          "saving_5m": 12200,
           "grade": "C"
         },
         "61": {
-          "saving": -0.079,
+          "saving": -0.078,
           "win": 50.9,
-          "count": 1864,
-          "saving_5m": -3950,
+          "count": 1866,
+          "saving_5m": -3900,
           "grade": "C"
         },
         "62": {
-          "saving": 0.139,
-          "win": 54.9,
-          "count": 1850,
-          "saving_5m": 6950,
+          "saving": 0.142,
+          "win": 55.0,
+          "count": 1855,
+          "saving_5m": 7100,
           "grade": "C"
         },
         "63": {
@@ -8875,10 +8875,10 @@
           "grade": "D"
         },
         "64": {
-          "saving": 0.318,
-          "win": 58.3,
-          "count": 1989,
-          "saving_5m": 15900,
+          "saving": 0.319,
+          "win": 58.4,
+          "count": 1993,
+          "saving_5m": 15950,
           "grade": "D"
         },
         "65": {
@@ -8903,10 +8903,10 @@
           "grade": "D"
         },
         "68": {
-          "saving": 0.172,
-          "win": 51.2,
-          "count": 2166,
-          "saving_5m": 8600,
+          "saving": 0.174,
+          "win": 51.3,
+          "count": 2170,
+          "saving_5m": 8700,
           "grade": "D"
         },
         "69": {
@@ -8945,17 +8945,17 @@
           "grade": "D"
         },
         "74": {
-          "saving": 0.473,
+          "saving": 0.475,
           "win": 57.6,
-          "count": 1805,
-          "saving_5m": 23650,
+          "count": 1807,
+          "saving_5m": 23750,
           "grade": "D"
         },
         "75": {
-          "saving": -0.035,
-          "win": 50.1,
-          "count": 2502,
-          "saving_5m": -1750,
+          "saving": -0.033,
+          "win": 50.2,
+          "count": 2504,
+          "saving_5m": -1650,
           "grade": "D"
         },
         "76": {
@@ -8973,31 +8973,31 @@
           "grade": "D"
         },
         "78": {
-          "saving": 0.022,
-          "win": 50.2,
-          "count": 2279,
-          "saving_5m": 1100,
+          "saving": 0.024,
+          "win": 50.3,
+          "count": 2281,
+          "saving_5m": 1200,
           "grade": "D"
         },
         "79": {
-          "saving": 0.013,
+          "saving": 0.015,
           "win": 49.8,
-          "count": 2001,
-          "saving_5m": 650,
+          "count": 2003,
+          "saving_5m": 750,
           "grade": "D"
         },
         "80": {
-          "saving": 0.014,
+          "saving": 0.015,
           "win": 50.5,
-          "count": 2129,
-          "saving_5m": 700,
+          "count": 2133,
+          "saving_5m": 750,
           "grade": "D"
         },
         "81": {
-          "saving": 0.055,
-          "win": 49.4,
-          "count": 2201,
-          "saving_5m": 2750,
+          "saving": 0.054,
+          "win": 49.3,
+          "count": 2203,
+          "saving_5m": 2700,
           "grade": "D"
         },
         "82": {
@@ -9015,10 +9015,10 @@
           "grade": "D"
         },
         "84": {
-          "saving": -0.202,
-          "win": 45.9,
-          "count": 2043,
-          "saving_5m": -10100,
+          "saving": -0.2,
+          "win": 46.0,
+          "count": 2044,
+          "saving_5m": -10000,
           "grade": "D"
         },
         "85": {
@@ -9029,24 +9029,24 @@
           "grade": "D"
         },
         "86": {
-          "saving": 0.002,
+          "saving": 0.003,
           "win": 49.4,
-          "count": 2118,
-          "saving_5m": 100,
+          "count": 2120,
+          "saving_5m": 150,
           "grade": "D"
         },
         "87": {
-          "saving": -0.06,
+          "saving": -0.059,
           "win": 50.4,
-          "count": 2353,
-          "saving_5m": -3000,
+          "count": 2357,
+          "saving_5m": -2950,
           "grade": "D"
         },
         "88": {
-          "saving": -0.383,
+          "saving": -0.382,
           "win": 39.4,
-          "count": 1919,
-          "saving_5m": -19150,
+          "count": 1921,
+          "saving_5m": -19100,
           "grade": "D"
         },
         "89": {
@@ -9106,10 +9106,10 @@
           "grade": "F"
         },
         "97": {
-          "saving": 0.173,
+          "saving": 0.175,
           "win": 53.3,
-          "count": 1222,
-          "saving_5m": 8650,
+          "count": 1224,
+          "saving_5m": 8750,
           "grade": "F"
         },
         "98": {
@@ -9170,17 +9170,17 @@
           "grade": "A"
         },
         "5": {
-          "saving": 1.155,
+          "saving": 1.156,
           "win": 69.7,
-          "count": 1019,
-          "saving_5m": 57750,
+          "count": 1020,
+          "saving_5m": 57800,
           "grade": "A"
         },
         "6": {
-          "saving": 0.109,
+          "saving": 0.108,
           "win": 54.2,
           "count": 837,
-          "saving_5m": 5450,
+          "saving_5m": 5400,
           "grade": "A"
         },
         "7": {
@@ -9205,10 +9205,10 @@
           "grade": "A"
         },
         "10": {
-          "saving": 0.634,
+          "saving": 0.638,
           "win": 63.1,
-          "count": 753,
-          "saving_5m": 31700,
+          "count": 754,
+          "saving_5m": 31900,
           "grade": "A"
         },
         "11": {
@@ -9282,23 +9282,23 @@
           "grade": "A"
         },
         "21": {
-          "saving": -0.331,
+          "saving": -0.33,
           "win": 48.2,
-          "count": 1393,
-          "saving_5m": -16550,
+          "count": 1394,
+          "saving_5m": -16500,
           "grade": "B"
         },
         "22": {
           "saving": 0.893,
           "win": 64.1,
-          "count": 1360,
+          "count": 1361,
           "saving_5m": 44650,
           "grade": "B"
         },
         "23": {
           "saving": 0.969,
           "win": 69.2,
-          "count": 1351,
+          "count": 1352,
           "saving_5m": 48450,
           "grade": "B"
         },
@@ -9317,10 +9317,10 @@
           "grade": "B"
         },
         "26": {
-          "saving": 0.81,
+          "saving": 0.812,
           "win": 63.6,
-          "count": 1451,
-          "saving_5m": 40500,
+          "count": 1452,
+          "saving_5m": 40600,
           "grade": "B"
         },
         "27": {
@@ -9331,10 +9331,10 @@
           "grade": "B"
         },
         "28": {
-          "saving": 0.154,
-          "win": 52.7,
-          "count": 1022,
-          "saving_5m": 7700,
+          "saving": 0.155,
+          "win": 52.8,
+          "count": 1023,
+          "saving_5m": 7750,
           "grade": "B"
         },
         "29": {
@@ -9359,17 +9359,17 @@
           "grade": "B"
         },
         "32": {
-          "saving": -0.453,
+          "saving": -0.451,
           "win": 41.4,
-          "count": 1406,
-          "saving_5m": -22650,
+          "count": 1407,
+          "saving_5m": -22550,
           "grade": "B"
         },
         "33": {
-          "saving": 0.495,
-          "win": 50.2,
-          "count": 1658,
-          "saving_5m": 24750,
+          "saving": 0.496,
+          "win": 50.3,
+          "count": 1659,
+          "saving_5m": 24800,
           "grade": "B"
         },
         "34": {
@@ -9387,10 +9387,10 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.329,
-          "win": 53.1,
-          "count": 1838,
-          "saving_5m": 16450,
+          "saving": 0.331,
+          "win": 53.2,
+          "count": 1840,
+          "saving_5m": 16550,
           "grade": "B"
         },
         "37": {
@@ -9415,10 +9415,10 @@
           "grade": "B"
         },
         "40": {
-          "saving": -0.034,
+          "saving": -0.033,
           "win": 46.9,
-          "count": 1879,
-          "saving_5m": -1700,
+          "count": 1880,
+          "saving_5m": -1650,
           "grade": "B"
         },
         "41": {
@@ -9485,10 +9485,10 @@
           "grade": "C"
         },
         "50": {
-          "saving": -0.218,
-          "win": 46.1,
-          "count": 1721,
-          "saving_5m": -10900,
+          "saving": -0.217,
+          "win": 46.2,
+          "count": 1723,
+          "saving_5m": -10850,
           "grade": "C"
         },
         "51": {
@@ -9506,10 +9506,10 @@
           "grade": "C"
         },
         "53": {
-          "saving": 0.7,
+          "saving": 0.699,
           "win": 49.2,
-          "count": 1612,
-          "saving_5m": 35000,
+          "count": 1614,
+          "saving_5m": 34950,
           "grade": "C"
         },
         "54": {
@@ -9520,17 +9520,17 @@
           "grade": "C"
         },
         "55": {
-          "saving": 0.231,
+          "saving": 0.232,
           "win": 63.4,
-          "count": 1591,
-          "saving_5m": 11550,
+          "count": 1592,
+          "saving_5m": 11600,
           "grade": "C"
         },
         "56": {
-          "saving": 0.297,
+          "saving": 0.298,
           "win": 51.2,
-          "count": 1483,
-          "saving_5m": 14850,
+          "count": 1484,
+          "saving_5m": 14900,
           "grade": "C"
         },
         "57": {
@@ -9548,10 +9548,10 @@
           "grade": "C"
         },
         "59": {
-          "saving": 0.044,
+          "saving": 0.045,
           "win": 49.7,
-          "count": 1833,
-          "saving_5m": 2200,
+          "count": 1834,
+          "saving_5m": 2250,
           "grade": "C"
         },
         "60": {
@@ -9583,17 +9583,17 @@
           "grade": "D"
         },
         "64": {
-          "saving": 0.38,
+          "saving": 0.381,
           "win": 55.4,
-          "count": 1652,
-          "saving_5m": 19000,
+          "count": 1653,
+          "saving_5m": 19050,
           "grade": "D"
         },
         "65": {
-          "saving": 0.139,
+          "saving": 0.14,
           "win": 52.2,
-          "count": 1880,
-          "saving_5m": 6950,
+          "count": 1881,
+          "saving_5m": 7000,
           "grade": "D"
         },
         "66": {
@@ -9627,7 +9627,7 @@
         "70": {
           "saving": 0.177,
           "win": 50.7,
-          "count": 2562,
+          "count": 2563,
           "saving_5m": 8850,
           "grade": "D"
         },
@@ -9667,10 +9667,10 @@
           "grade": "D"
         },
         "76": {
-          "saving": -0.004,
+          "saving": -0.003,
           "win": 49.2,
-          "count": 2118,
-          "saving_5m": -200,
+          "count": 2120,
+          "saving_5m": -150,
           "grade": "D"
         },
         "77": {
@@ -9688,17 +9688,17 @@
           "grade": "D"
         },
         "79": {
-          "saving": -0.321,
-          "win": 40.8,
-          "count": 1567,
-          "saving_5m": -16050,
+          "saving": -0.32,
+          "win": 40.9,
+          "count": 1568,
+          "saving_5m": -16000,
           "grade": "D"
         },
         "80": {
-          "saving": 0.004,
+          "saving": 0.005,
           "win": 45.6,
-          "count": 1984,
-          "saving_5m": 200,
+          "count": 1985,
+          "saving_5m": 250,
           "grade": "D"
         },
         "81": {
@@ -9709,17 +9709,17 @@
           "grade": "F"
         },
         "82": {
-          "saving": -0.192,
+          "saving": -0.191,
           "win": 43.7,
-          "count": 1912,
-          "saving_5m": -9600,
+          "count": 1913,
+          "saving_5m": -9550,
           "grade": "F"
         },
         "83": {
-          "saving": -0.399,
+          "saving": -0.398,
           "win": 40.2,
-          "count": 2053,
-          "saving_5m": -19950,
+          "count": 2054,
+          "saving_5m": -19900,
           "grade": "F"
         },
         "84": {
@@ -9739,7 +9739,7 @@
         "86": {
           "saving": 0.329,
           "win": 50.6,
-          "count": 1770,
+          "count": 1771,
           "saving_5m": 16450,
           "grade": "F"
         },
@@ -9753,7 +9753,7 @@
         "88": {
           "saving": 0.086,
           "win": 46.9,
-          "count": 1403,
+          "count": 1404,
           "saving_5m": 4300,
           "grade": "F"
         },
@@ -9781,7 +9781,7 @@
         "92": {
           "saving": 0.144,
           "win": 42.5,
-          "count": 1489,
+          "count": 1488,
           "saving_5m": 7200,
           "grade": "F"
         },
@@ -9800,10 +9800,10 @@
           "grade": "F"
         },
         "95": {
-          "saving": 0.014,
+          "saving": 0.015,
           "win": 41.7,
-          "count": 1536,
-          "saving_5m": 700,
+          "count": 1537,
+          "saving_5m": 750,
           "grade": "F"
         },
         "96": {
@@ -9828,10 +9828,10 @@
           "grade": "F"
         },
         "99": {
-          "saving": -0.961,
-          "win": 26.5,
-          "count": 1542,
-          "saving_5m": -48050,
+          "saving": -0.959,
+          "win": 26.6,
+          "count": 1543,
+          "saving_5m": -47950,
           "grade": "F"
         }
       }
@@ -9967,10 +9967,10 @@
           "grade": "B"
         },
         "25": {
-          "saving": 0.04,
-          "win": 49.3,
-          "count": 1172,
-          "saving_5m": 2000,
+          "saving": 0.042,
+          "win": 49.4,
+          "count": 1173,
+          "saving_5m": 2100,
           "grade": "B"
         },
         "26": {
@@ -10016,10 +10016,10 @@
           "grade": "B"
         },
         "32": {
-          "saving": -0.086,
+          "saving": -0.084,
           "win": 46.2,
-          "count": 2035,
-          "saving_5m": -4300,
+          "count": 2037,
+          "saving_5m": -4200,
           "grade": "B"
         },
         "33": {
@@ -10032,29 +10032,29 @@
         "34": {
           "saving": 0.53,
           "win": 57.4,
-          "count": 2291,
+          "count": 2292,
           "saving_5m": 26500,
           "grade": "B"
         },
         "35": {
-          "saving": 0.527,
-          "win": 54.7,
-          "count": 2466,
-          "saving_5m": 26350,
+          "saving": 0.529,
+          "win": 54.8,
+          "count": 2470,
+          "saving_5m": 26450,
           "grade": "B"
         },
         "36": {
           "saving": -0.049,
           "win": 47.8,
-          "count": 2811,
+          "count": 2812,
           "saving_5m": -2450,
           "grade": "B"
         },
         "37": {
-          "saving": 0.148,
+          "saving": 0.149,
           "win": 50.3,
-          "count": 2398,
-          "saving_5m": 7400,
+          "count": 2400,
+          "saving_5m": 7450,
           "grade": "B"
         },
         "38": {
@@ -10067,7 +10067,7 @@
         "39": {
           "saving": -0.297,
           "win": 43.4,
-          "count": 3160,
+          "count": 3161,
           "saving_5m": -14850,
           "grade": "B"
         },
@@ -10107,37 +10107,37 @@
           "grade": "C"
         },
         "45": {
-          "saving": 0.143,
-          "win": 51.2,
-          "count": 5077,
-          "saving_5m": 7150,
+          "saving": 0.144,
+          "win": 51.3,
+          "count": 5080,
+          "saving_5m": 7200,
           "grade": "C"
         },
         "46": {
-          "saving": 0.005,
-          "win": 48.3,
-          "count": 4182,
-          "saving_5m": 250,
+          "saving": 0.006,
+          "win": 48.4,
+          "count": 4184,
+          "saving_5m": 300,
           "grade": "C"
         },
         "47": {
-          "saving": 0.014,
-          "win": 49.5,
-          "count": 4386,
-          "saving_5m": 700,
+          "saving": 0.015,
+          "win": 49.6,
+          "count": 4387,
+          "saving_5m": 750,
           "grade": "C"
         },
         "48": {
           "saving": 0.17,
           "win": 52.4,
-          "count": 4254,
+          "count": 4255,
           "saving_5m": 8500,
           "grade": "C"
         },
         "49": {
           "saving": 0.099,
           "win": 49.3,
-          "count": 4455,
+          "count": 4456,
           "saving_5m": 4950,
           "grade": "C"
         },
@@ -10165,7 +10165,7 @@
         "53": {
           "saving": 0.323,
           "win": 52.6,
-          "count": 3308,
+          "count": 3310,
           "saving_5m": 16150,
           "grade": "C"
         },
@@ -10179,7 +10179,7 @@
         "55": {
           "saving": 0.313,
           "win": 54.7,
-          "count": 3713,
+          "count": 3714,
           "saving_5m": 15650,
           "grade": "C"
         },
@@ -10192,8 +10192,8 @@
         },
         "57": {
           "saving": 0.009,
-          "win": 47.8,
-          "count": 3846,
+          "win": 47.9,
+          "count": 3850,
           "saving_5m": 450,
           "grade": "C"
         },
@@ -10207,14 +10207,14 @@
         "59": {
           "saving": 0.433,
           "win": 55.2,
-          "count": 3477,
+          "count": 3478,
           "saving_5m": 21650,
           "grade": "C"
         },
         "60": {
           "saving": 0.057,
-          "win": 48.7,
-          "count": 3133,
+          "win": 48.8,
+          "count": 3134,
           "saving_5m": 2850,
           "grade": "C"
         },
@@ -10227,15 +10227,15 @@
         },
         "62": {
           "saving": 0.213,
-          "win": 53.8,
-          "count": 3105,
+          "win": 53.7,
+          "count": 3107,
           "saving_5m": 10650,
           "grade": "D"
         },
         "63": {
           "saving": 0.212,
           "win": 46.1,
-          "count": 2821,
+          "count": 2822,
           "saving_5m": 10600,
           "grade": "D"
         },
@@ -10255,8 +10255,8 @@
         },
         "66": {
           "saving": 0.284,
-          "win": 49.7,
-          "count": 2388,
+          "win": 49.8,
+          "count": 2387,
           "saving_5m": 14200,
           "grade": "D"
         },
@@ -10547,10 +10547,10 @@
           "grade": "A"
         },
         "16": {
-          "saving": 1.019,
+          "saving": 1.021,
           "win": 69.8,
-          "count": 834,
-          "saving_5m": 50950,
+          "count": 835,
+          "saving_5m": 51050,
           "grade": "A"
         },
         "17": {
@@ -10575,10 +10575,10 @@
           "grade": "A"
         },
         "20": {
-          "saving": 0.588,
+          "saving": 0.59,
           "win": 61.4,
-          "count": 1438,
-          "saving_5m": 29400,
+          "count": 1439,
+          "saving_5m": 29500,
           "grade": "A"
         },
         "21": {
@@ -10617,10 +10617,10 @@
           "grade": "A"
         },
         "26": {
-          "saving": 1.033,
+          "saving": 1.034,
           "win": 61.4,
-          "count": 1664,
-          "saving_5m": 51650,
+          "count": 1666,
+          "saving_5m": 51700,
           "grade": "A"
         },
         "27": {
@@ -10633,7 +10633,7 @@
         "28": {
           "saving": 0.639,
           "win": 60.3,
-          "count": 2013,
+          "count": 2014,
           "saving_5m": 31950,
           "grade": "B"
         },
@@ -10666,17 +10666,17 @@
           "grade": "B"
         },
         "33": {
-          "saving": 0.071,
+          "saving": 0.072,
           "win": 51.5,
-          "count": 2374,
-          "saving_5m": 3550,
+          "count": 2375,
+          "saving_5m": 3600,
           "grade": "B"
         },
         "34": {
-          "saving": 0.493,
+          "saving": 0.494,
           "win": 57.7,
-          "count": 1729,
-          "saving_5m": 24650,
+          "count": 1730,
+          "saving_5m": 24700,
           "grade": "B"
         },
         "35": {
@@ -10687,39 +10687,39 @@
           "grade": "B"
         },
         "36": {
-          "saving": 0.118,
-          "win": 56.1,
-          "count": 1890,
-          "saving_5m": 5900,
+          "saving": 0.119,
+          "win": 56.2,
+          "count": 1891,
+          "saving_5m": 5950,
           "grade": "B"
         },
         "37": {
-          "saving": 0.016,
+          "saving": 0.017,
           "win": 48.6,
-          "count": 2150,
-          "saving_5m": 800,
+          "count": 2151,
+          "saving_5m": 850,
           "grade": "B"
         },
         "38": {
-          "saving": -0.067,
+          "saving": -0.066,
           "win": 45.5,
-          "count": 1937,
-          "saving_5m": -3350,
+          "count": 1938,
+          "saving_5m": -3300,
           "grade": "B"
         },
         "39": {
-          "saving": 0.065,
-          "win": 50.7,
-          "count": 1988,
-          "saving_5m": 3250,
-          "grade": "C"
+          "saving": 0.066,
+          "win": 50.8,
+          "count": 1990,
+          "saving_5m": 3300,
+          "grade": "B"
         },
         "40": {
           "saving": 0.163,
           "win": 51.7,
           "count": 2325,
           "saving_5m": 8150,
-          "grade": "C"
+          "grade": "B"
         },
         "41": {
           "saving": 0.417,
@@ -10766,7 +10766,7 @@
         "47": {
           "saving": 0.054,
           "win": 51.5,
-          "count": 2320,
+          "count": 2321,
           "saving_5m": 2700,
           "grade": "C"
         },
@@ -10792,10 +10792,10 @@
           "grade": "C"
         },
         "51": {
-          "saving": 0.447,
+          "saving": 0.448,
           "win": 49.3,
-          "count": 2566,
-          "saving_5m": 22350,
+          "count": 2568,
+          "saving_5m": 22400,
           "grade": "C"
         },
         "52": {
@@ -10806,16 +10806,16 @@
           "grade": "C"
         },
         "53": {
-          "saving": 0.034,
+          "saving": 0.035,
           "win": 50.3,
-          "count": 2534,
-          "saving_5m": 1700,
+          "count": 2535,
+          "saving_5m": 1750,
           "grade": "C"
         },
         "54": {
           "saving": 0.131,
           "win": 47.2,
-          "count": 2482,
+          "count": 2483,
           "saving_5m": 6550,
           "grade": "C"
         },
@@ -10827,23 +10827,23 @@
           "grade": "C"
         },
         "56": {
-          "saving": -0.271,
-          "win": 43.7,
-          "count": 2334,
-          "saving_5m": -13550,
+          "saving": -0.27,
+          "win": 43.8,
+          "count": 2335,
+          "saving_5m": -13500,
           "grade": "C"
         },
         "57": {
           "saving": 0.163,
           "win": 50.7,
-          "count": 2418,
+          "count": 2420,
           "saving_5m": 8150,
           "grade": "D"
         },
         "58": {
           "saving": -0.472,
-          "win": 42.4,
-          "count": 2778,
+          "win": 42.5,
+          "count": 2779,
           "saving_5m": -23600,
           "grade": "D"
         },
@@ -10857,7 +10857,7 @@
         "60": {
           "saving": 0.026,
           "win": 50.3,
-          "count": 3054,
+          "count": 3055,
           "saving_5m": 1300,
           "grade": "D"
         },
@@ -10869,16 +10869,16 @@
           "grade": "D"
         },
         "62": {
-          "saving": 0.153,
+          "saving": 0.154,
           "win": 51.2,
-          "count": 2989,
-          "saving_5m": 7650,
+          "count": 2990,
+          "saving_5m": 7700,
           "grade": "D"
         },
         "63": {
           "saving": 0.062,
           "win": 48.4,
-          "count": 3302,
+          "count": 3303,
           "saving_5m": 3100,
           "grade": "D"
         },
@@ -10927,21 +10927,21 @@
         "70": {
           "saving": -0.394,
           "win": 38.5,
-          "count": 2895,
+          "count": 2896,
           "saving_5m": -19700,
           "grade": "D"
         },
         "71": {
           "saving": 0.186,
           "win": 49.6,
-          "count": 2890,
+          "count": 2892,
           "saving_5m": 9300,
           "grade": "D"
         },
         "72": {
           "saving": -0.033,
           "win": 47.9,
-          "count": 2615,
+          "count": 2616,
           "saving_5m": -1650,
           "grade": "D"
         },
@@ -10953,16 +10953,16 @@
           "grade": "D"
         },
         "74": {
-          "saving": 0.002,
+          "saving": 0.003,
           "win": 46.5,
-          "count": 2410,
-          "saving_5m": 100,
+          "count": 2411,
+          "saving_5m": 150,
           "grade": "D"
         },
         "75": {
           "saving": 0.007,
           "win": 49.7,
-          "count": 2555,
+          "count": 2557,
           "saving_5m": 350,
           "grade": "D"
         },
@@ -10995,10 +10995,10 @@
           "grade": "F"
         },
         "80": {
-          "saving": -0.328,
+          "saving": -0.327,
           "win": 37.3,
-          "count": 1481,
-          "saving_5m": -16400,
+          "count": 1482,
+          "saving_5m": -16350,
           "grade": "F"
         },
         "81": {
@@ -11010,8 +11010,8 @@
         },
         "82": {
           "saving": -0.018,
-          "win": 41.3,
-          "count": 1055,
+          "win": 41.4,
+          "count": 1054,
           "saving_5m": -900,
           "grade": "F"
         },

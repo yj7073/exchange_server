@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -61,11 +62,11 @@ THERMO_WEIGHTS = {
 
 # 통화별 ABCDF 등급 경계 (그리드서치 최적화) — A≤[0] B≤[1] C≤[2] D≤[3] F>[3]
 GRADE_CUTS = {
-    'EUR': (10, 28, 60, 90),
-    'JPY': (18, 30, 52, 76),
-    'THB': (28, 38, 56, 72),
-    'AUD': (14, 32, 62, 90),
-    'USD': (26, 38, 56, 76),
+    'EUR': (15, 36, 60, 90),
+    'JPY': (22, 36, 52, 76),
+    'THB': (32, 43, 56, 72),
+    'AUD': (18, 38, 62, 90),
+    'USD': (26, 40, 56, 76),
 }
 
 INVESTOR_STRATEGIES = {
@@ -491,6 +492,7 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
             "inv_strategy": inv_strategy, "inv_tpsl": inv_tpsl, "inv_conds": inv_conds, "sub_details": sub_details_dict,
             "macro_items": m_items, "macro_count": warn_total, "ai_message": stat_msg, "stat_details": stat_details,
             "rt_status": rt_status, "rt_valid": rt_valid,
+            "grade_cuts": list(GRADE_CUTS[currency]),
         }
     except Exception as e:
         print(f"Error: {e}")

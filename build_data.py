@@ -48,10 +48,28 @@ for name, ticker in tickers.items():
 thermo_weights = {
     'JPY': {'WR10': 0.45, 'SYNC': 0.15, 'DISP10': 0.20, 'WR7': 0.20},
     'EUR': {'WR10': 0.40, 'WR7': 0.60},
-    'THB': {'WR10': 0.45, 'MOM3': 0.45, 'WR14': 0.05, 'STOCH': 0.05},
+    'THB': {'DISP10': 0.60, 'WR10': 0.40},
     'AUD': {'WR10': 1.00},
-    'USD': {'WR10': 0.60, 'WR7': 0.15, 'DISP20': 0.05, 'WR20': 0.20},
+    'USD': {'WR7': 0.60, 'RSI14': 0.40},
 }
+
+# 통화별 ABCDF 등급 경계 (그리드서치 최적화 결과)
+# A≤[0], B≤[1], C≤[2], D≤[3], F>[3]
+grade_cuts = {
+    'EUR': (15, 36, 60, 90),
+    'JPY': (22, 36, 52, 76),
+    'THB': (32, 43, 56, 72),
+    'AUD': (18, 38, 62, 90),
+    'USD': (26, 40, 56, 76),
+}
+
+def grade_of(score, cuts):
+    a, b, c, d = cuts
+    if score <= a: return "A"
+    elif score <= b: return "B"
+    elif score <= c: return "C"
+    elif score <= d: return "D"
+    else: return "F"
 
 indicator_names_kr = {
     'WR10': 'WR (10일)',
@@ -64,6 +82,8 @@ indicator_names_kr = {
     'DISP10': '10일 이격도',
     'DISP20': '20일 이격도',
     'STOCH': '스토캐스틱',
+    'RSI7': 'RSI (7일)',
+    'RSI14': 'RSI (14일)',
     'THERMO': '종합 온도계',
 }
 
@@ -109,6 +129,14 @@ def build_indicators(name):
     low14 = df['LOW'].rolling(14).min()
     high14 = df['HIGH'].rolling(14).max()
     df['STOCH'] = ((df['PRICE'] - low14) / (high14 - low14) * 100).clip(0, 100)
+    
+    # RSI (USD용 — RSI14)
+    for p in [7, 14]:
+        delta = df['PRICE'].diff()
+        gain = delta.where(delta > 0, 0).rolling(p).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(p).mean()
+        rs = gain / (loss + 1e-10)
+        df[f'RSI{p}'] = (100 - (100 / (1 + rs))).clip(0, 100)
     
     df.dropna(inplace=True)
     
@@ -163,25 +191,33 @@ for name in ['JPY', 'EUR', 'THB', 'AUD', 'USD']:
                 saving = (dep_price - prices[j]) / dep_price * 100
                 score_data[score].append(saving)
         
-        ind_lookup = {}
+        # 점수별 평균 절감률/승률 (1점 단위 원본)
+        raw = {}
         for score in range(100):
             data = score_data[score]
             if len(data) < 20: continue
-            
-            avg = round(np.mean(data), 3)
-            win = round(sum(1 for d in data if d > 0) / len(data) * 100, 1)
+            raw[score] = {
+                'avg': round(np.mean(data), 3),
+                'win': round(sum(1 for d in data if d > 0) / len(data) * 100, 1),
+                'count': len(data),
+            }
+
+        ind_lookup = {}
+        for score in sorted(raw.keys()):
+            avg = raw[score]['avg']
+            win = raw[score]['win']
             amt = round(avg / 100 * 5000000)
-            
-            if score <= 25: grade = "A"
-            elif score <= 40: grade = "B"
-            elif score <= 55: grade = "C"
-            elif score <= 70: grade = "D"
-            else: grade = "F"
+
+            if ind_name == 'THERMO':
+                grade = grade_of(score, grade_cuts[name])
+            else:
+                # 개별지표는 참고용 — 단순 5등분 (20/40/60/80)
+                grade = grade_of(score, (20, 40, 60, 80))
             
             ind_lookup[str(score)] = {
                 "saving": avg,
                 "win": win,
-                "count": len(data),
+                "count": raw[score]['count'],
                 "saving_5m": amt,
                 "grade": grade,
             }
@@ -270,13 +306,14 @@ print(f"\n{'█'*80}")
 print(f"█  3. D-Day 완화 공식 v7")
 print(f"{'█'*80}")
 
-# 패턴: 5일마다 +5점씩 완화, D-1은 무조건
+# 곡선 v8: D-30~14는 B등급(유리)까지 신호, D-10부터 C(보통)까지 완화, D-1 무조건
+# 검증: verify_dday_curve.py — 신호빈도 81~100%, 전 D-day 절감 +, In/Out 양수 확인
 dday_formulas = {
-    "JPY": {"30": 18, "25": 18, "20": 18, "15": 23, "14": 23, "10": 28, "7": 28, "5": 33, "3": 38, "1": 100},
-    "EUR": {"30": 17, "25": 17, "20": 17, "15": 22, "14": 22, "10": 27, "7": 27, "5": 32, "3": 37, "1": 100},
-    "THB": {"30": 23, "25": 23, "20": 23, "15": 28, "14": 28, "10": 33, "7": 33, "5": 38, "3": 43, "1": 100},
-    "AUD": {"30": 14, "25": 14, "20": 14, "15": 19, "14": 19, "10": 24, "7": 24, "5": 29, "3": 34, "1": 100},
-    "USD": {"30": 24, "25": 24, "20": 24, "15": 29, "14": 29, "10": 34, "7": 34, "5": 39, "3": 44, "1": 100},
+    "EUR": {"30": 36, "25": 36, "20": 36, "15": 36, "14": 36, "10": 48, "7": 58, "5": 60, "3": 60, "1": 100},
+    "JPY": {"30": 36, "25": 36, "20": 36, "15": 36, "14": 36, "10": 44, "7": 50, "5": 52, "3": 52, "1": 100},
+    "AUD": {"30": 38, "25": 38, "20": 38, "15": 38, "14": 38, "10": 50, "7": 60, "5": 62, "3": 62, "1": 100},
+    "THB": {"30": 43, "25": 43, "20": 43, "15": 43, "14": 43, "10": 49, "7": 54, "5": 56, "3": 56, "1": 100},
+    "USD": {"30": 40, "25": 40, "20": 40, "15": 40, "14": 40, "10": 48, "7": 54, "5": 56, "3": 56, "1": 100},
 }
 
 with open('./outputs/dday_formulas.json', 'w', encoding='utf-8') as f:
@@ -396,20 +433,21 @@ print(f"{'█'*80}")
 
 thermo_config = {
     "weights": thermo_weights,
-    "grades": {
-        "A": {"min": 0, "max": 25, "label": "매우 유리", "msg": "환전 적기!"},
-        "B": {"min": 26, "max": 40, "label": "유리", "msg": "환전 추천"},
-        "C": {"min": 41, "max": 55, "label": "보통", "msg": "급하면 환전"},
-        "D": {"min": 56, "max": 70, "label": "불리", "msg": "조금 더 대기"},
-        "F": {"min": 71, "max": 100, "label": "매우 불리", "msg": "환전 미루기"},
+    "grade_cuts": {k: list(v) for k, v in grade_cuts.items()},
+    "grade_labels": {
+        "A": {"label": "매우 유리", "msg": "지금이 환전하기 아주 좋은 시점"},
+        "B": {"label": "유리", "msg": "환전하기 좋은 편"},
+        "C": {"label": "보통", "msg": "일정에 맞춰 환전"},
+        "D": {"label": "불리", "msg": "다소 불리, 여유 있으면 대기"},
+        "F": {"label": "매우 불리", "msg": "불리, 며칠 기다려 보기"},
     },
     "indicator_names": indicator_names_kr,
     "optimal_thresholds": {
-        "JPY": 18, "EUR": 17, "THB": 23, "AUD": 14, "USD": 24,
+        "EUR": 15, "JPY": 22, "THB": 32, "AUD": 18, "USD": 26,
     },
-    "version": "v7",
-    "base_indicator": "Williams %R",
-    "description": "WR 기반 통화별 맞춤 온도계. RSI/VIX/KOSPI/DXY/VOL/ATR/CCI 제거, WR7/DISP10/MOM3/STOCH 추가.",
+    "version": "v8",
+    "base_indicator": "Williams %R + RSI(USD)",
+    "description": "통화별 맞춤 온도계 v8. USD=WR7/RSI14, THB=DISP10/WR10으로 재최적화. 등급경계 그리드서치 최적화(분위수→손익전환 기반). 추세예측 제거.",
 }
 
 with open('./outputs/thermo_config.json', 'w', encoding='utf-8') as f:
