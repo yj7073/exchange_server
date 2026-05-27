@@ -427,7 +427,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
       <div class="chart-box" id="chart-panel" style="display:none;">
         <div class="collapsible-header chart-header" onclick="togglePanel('chart-content-wrapper', this)" style="margin-bottom:0;">
             <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:14px; font-weight:800;">📈 가격 차트 & WR</span>
+                <span style="font-size:14px; font-weight:800;">📈 가격 차트 & <span id="chart-title-ind">지표</span></span>
                 <div class="toggle-icon">▼</div>
             </div>
         </div>
@@ -445,7 +445,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1a73e8;"></div>종가</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#EF9F27;"></div>이동평균</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(226,75,74,0.3);"></div>BB 밴드</div>
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div>WR <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div><span id="chart-ind-label">지표</span> <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
             </div>
         </div>
       </div>
@@ -552,6 +552,11 @@ const subMap = {"WR10": "WR (10일)", "WR7": "WR (7일)", "WR14": "WR (14일)", 
 
 // 지표 설명 데이터
 const indicatorHelp = {
+    'RSI': {
+        title: 'RSI (상대강도지수)',
+        desc: '<p><strong>최근 가격 흐름에서 지금이 과매도(너무 많이 팔림) 상태인지 보는 지표예요.</strong> 낮을수록 평소보다 싸게 눌린 상태예요.</p>',
+        scale: '<p>📊 <strong>0~100</strong>으로 표시돼요<br>→ <strong>30~45 이하</strong>: 과매도 (매수 구간)<br>→ <strong>50 부근</strong>: 중립<br>→ <strong>70 이상</strong>: 과매수 (비쌈)<br><br>※ 통화별로 신호 기준선이 달라요 (USD ≤35 · THB ≤45)</p>'
+    },
     'WR': {
         title: 'WR (Williams %R)',
         desc: '<p><strong>최근 N일 중 지금 가격이 어디쯤인지 보는 지표예요.</strong> 바닥에 가까우면 평소보다 싼 상태예요.</p>',
@@ -728,28 +733,41 @@ function renderSignalBanner(signals) {
         const s = activeSignals[0];
         if (s.rt_valid) {
             banner.className = 'signal-banner';
-            banner.innerHTML = `<div class="signal-banner-title">🔥 ${s.currency} 매수 시그널 — 실시간 확인 완료!</div><div class="signal-banner-detail">WR: ${s.wr10} | ${s.strategy} | 💰 익절: ${s.tp_price} | 🛑 손절: ${s.sl_price}</div>`;
+            banner.innerHTML = `<div class="signal-banner-title">🔥 ${s.currency} 매수 시그널 — 매수 가능!</div><div class="signal-banner-detail">${s.strategy} | 💰 익절: ${s.tp_price} | 🛑 손절: ${s.sl_price}</div>`;
         } else {
             banner.className = 'signal-banner';
             banner.style.background = 'linear-gradient(135deg, #EF9F27, #d4870e)';
-            banner.innerHTML = `<div class="signal-banner-title">⚠️ ${s.currency} 시그널 발생 — BB 위 복귀 (보류)</div><div class="signal-banner-detail">${s.rt_status} | 실시간 BB 하단 재돌파 시 매수</div>`;
+            banner.innerHTML = `<div class="signal-banner-title">⚠️ ${s.currency} 시그널 발생 — 매수 보류</div><div class="signal-banner-detail">${s.rt_status}</div>`;
         }
         banner.style.display = 'block';
         banner.onclick = () => openDetail(s.currency);
     } else if (appMode === 'investor') {
         banner.className = 'signal-banner no-signal';
         banner.style.display = 'block';
-        // 투자 가능 통화 중 WR이 가장 작은(가장 시그널에 가까운) 통화 찾기
-        // WR은 -100~0 범위, 더 음수일수록 시그널에 가까움
-        const validSignals = signals.filter(s => 
-            s && s.wr10 !== null && s.wr10 !== undefined && !isNaN(s.wr10)
+        // 투자 가능 통화 중 신호 임계값에 가장 근접한 통화 찾기
+        //  RSI/WR 스케일이 다르므로 '임계값 대비 근접도(비율)'로 정규화해서 비교
+        //  EUR(부적합)은 제외
+        const indInfo = {
+            'USD': {sig:'RSI', th:35}, 'THB': {sig:'RSI', th:45},
+            'JPY': {sig:'WR', th:-95}, 'AUD': {sig:'WR', th:-80},
+        };
+        const validSignals = signals.filter(s =>
+            s && s.currency !== 'EUR' && indInfo[s.currency] &&
+            s.wr10 !== null && s.wr10 !== undefined && !isNaN(s.wr10)
         );
         let closestText = '-';
         if (validSignals.length > 0) {
-            const closest = validSignals.reduce((best, s) => 
-                (s.wr10 < best.wr10) ? s : best, validSignals[0]);
+            // 근접도 = 현재값 - 임계값 (작을수록 신호에 가까움). 부호 일관되게 처리
+            const proximity = (s) => {
+                const info = indInfo[s.currency];
+                // RSI/WR 모두 '값 ≤ 임계값'에서 신호. (값 - 임계값)이 작을수록 근접
+                return s.wr10 - info.th;
+            };
+            const closest = validSignals.reduce((best, s) =>
+                (proximity(s) < proximity(best)) ? s : best, validSignals[0]);
             if (closest && closest.currency) {
-                closestText = `${closest.currency} WR ${closest.wr10}`;
+                const info = indInfo[closest.currency];
+                closestText = `${closest.currency} ${info.sig} ${closest.wr10} (목표 ≤${info.th})`;
             }
         }
         banner.innerHTML = `<div class="signal-banner-title">📊 현재 매수 시그널 없음</div><div class="signal-banner-detail">가장 근접: ${closestText}</div>`;
@@ -943,18 +961,21 @@ function updateDetailView(currencyCode) {
             return `<div class="inv-check-item ${statusClass}"><div style="font-weight:700; display:flex; align-items:center;">${cond.name}${helpBtn}</div><div class="inv-val-box"><div class="inv-target">목표: ${cond.target}</div><div class="inv-curr" style="color:${statusColor}">${cond.current}</div></div></div>`;
         }).join('');
         
-        // CAGR 한 줄 (백테스트 결과)
+        // 검증 결과 (OOS 기준, 합산/look-ahead 착시 배제한 보수적 값)
         const investorStats = {
-            'USD': { win: 86.4, cagr: 5.22 },
-            'JPY': { win: 81.8, cagr: 9.28 },
-            'EUR': { win: 81.6, cagr: 12.05 },
-            'AUD': { win: 85.1, cagr: 12.77 },
-            'THB': { win: 87.5, cagr: 10.35 }
+            'USD': { win: 85.7, cagr: 3.79, grade: '★★★', ok: true },
+            'JPY': { win: 73.8, cagr: 3.05, grade: '★★',  ok: true },
+            'AUD': { win: 66.7, cagr: 3.97, grade: '★★',  ok: true },
+            'THB': { win: 58.5, cagr: 2.85, grade: '★',   ok: true },
+            'EUR': { ok: false }
         };
         const stats = investorStats[currencyCode];
-        if (stats) {
+        if (stats && stats.ok) {
             document.getElementById('inv-backtest-line').innerHTML = 
-                `📊 승률 <strong>${stats.win}%</strong><span class="help-icon" onclick="showHelp('WIN_RATE')" style="cursor:pointer; margin-left:2px;">i</span> · CAGR <strong style="color:#1D9E75">+${stats.cagr}%</strong><span class="help-icon" onclick="showHelp('CAGR')" style="cursor:pointer; margin-left:2px;">i</span>`;
+                `📊 승률 <strong>${stats.win}%</strong><span class="help-icon" onclick="showHelp('WIN_RATE')" style="cursor:pointer; margin-left:2px;">i</span> · 연수익(OOS) <strong style="color:#1D9E75">+${stats.cagr}%</strong><span class="help-icon" onclick="showHelp('CAGR')" style="cursor:pointer; margin-left:2px;">i</span> · <strong>${stats.grade}</strong>`;
+        } else if (stats && !stats.ok) {
+            document.getElementById('inv-backtest-line').innerHTML = 
+                `<span style="color:#E2954B; font-size:12px;">⚠️ 검증 결과 평균회귀 부적합 — 투자 신호 미제공</span>`;
         }
     } else {
         document.getElementById('inv-status-badge').textContent = '';
@@ -1043,11 +1064,11 @@ function updateDetailView(currencyCode) {
         iBtn.style.cursor = "pointer";
         if (d.inv_signal && d.rt_valid) {
             document.getElementById('i-cutoffText').innerHTML = `🎯 매수 시점 발견! | ${d.inv_tpsl}<br><span style="color:#1D9E75; font-size:12px;">${d.rt_status}</span>`;
-            iBtn.textContent = `🔥 실시간 확인 완료 — 매수 진입 (${d.inv_strategy})`;
+            iBtn.textContent = `🔥 매수 가능 — 진입 (${d.inv_strategy})`;
             iBtn.style.background = "#E24B4A"; iBtn.style.color = "white";
         } else if (d.inv_signal && !d.rt_valid) {
             document.getElementById('i-cutoffText').innerHTML = `🎯 전일 시그널 발생 | ${d.inv_tpsl}<br><span style="color:#EF9F27; font-size:12px;">${d.rt_status}</span>`;
-            iBtn.textContent = `⚠️ BB 위 복귀 — 매수 보류 (재확인 필요)`;
+            iBtn.textContent = `⚠️ 갭 상승 — 매수 보류`;
             iBtn.style.background = "#EF9F27"; iBtn.style.color = "white";
         } else {
             document.getElementById('i-cutoffText').textContent = `⏳ 신호 기다리는 중 | ${d.inv_tpsl}`;
@@ -1124,12 +1145,9 @@ function renderChart(chartData) {
     const ctx = document.getElementById('priceChart');
     if (priceChart) priceChart.destroy();
     
-    const d = globalData[activeCurrency];
-    let wrTarget = -90; 
-    if (d && d.inv_strategy) {
-        const match = d.inv_strategy.match(/WR≤(-?\d+)/);
-        if (match) wrTarget = parseFloat(match[1]);
-    }
+    // 신호 지표 임계값/라벨은 API가 직접 제공 (RSI/WR 통화별 대응)
+    let wrTarget = (chartData.ind_threshold !== undefined && chartData.ind_threshold !== null) ? chartData.ind_threshold : -90;
+    const indLabel = chartData.ind_label || 'WR';
 
     const labels = chartData.data.map(d => d.date.slice(5));
     const closes = chartData.data.map(d => d.close);
@@ -1143,6 +1161,10 @@ function renderChart(chartData) {
     const lastWr = wrs[wrs.length - 1];
     const currentWr = (lastWr === null || lastWr === undefined) ? null : lastWr;
     document.getElementById('current-rsi-display').textContent = currentWr === null ? `(목표: ${wrTarget})` : `(${currentWr.toFixed(1)} / 목표: ${wrTarget})`;
+    const legendIndEl = document.getElementById('chart-ind-label');
+    if (legendIndEl) legendIndEl.textContent = indLabel;
+    const titleIndEl = document.getElementById('chart-title-ind');
+    if (titleIndEl) titleIndEl.textContent = indLabel;
 
     const isDark = appMode === 'investor';
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
@@ -1157,7 +1179,7 @@ function renderChart(chartData) {
                 { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: 'WR 기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
+                { label: '기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
                 { label: 'WR', data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
             ]
         },
@@ -1260,11 +1282,11 @@ function updateCalc() {
     const fee = 0;  // 토스 수수료 0%
     
     const strategies = {
-        'JPY': { tp: 0.012, sl: 0.015 },
-        'EUR': { tp: 0.010, sl: 0.015 },
-        'THB': { tp: 0.010, sl: 0.010 },
-        'AUD': { tp: 0.010, sl: 0.015 },
-        'USD': { tp: 0.010, sl: 0.015 },
+        'USD': { tp: 0.008, sl: 0.015, to: 20 },
+        'JPY': { tp: 0.008, sl: 0.015, to: 15 },
+        'AUD': { tp: 0.012, sl: 0.008, to: 15 },
+        'THB': { tp: 0.010, sl: 0.010, to: 20 },
+        'EUR': { tp: 0.010, sl: 0.015, to: 15 },
     };
     const strat = strategies[activeCurrency];
     if (!strat) return;
@@ -1275,7 +1297,8 @@ function updateCalc() {
     const tpProfit = amount * ((tpPrice/buyPrice) * (1-fee)*(1-fee) - 1);
     const slLoss = amount * ((slPrice/buyPrice) * (1-fee)*(1-fee) - 1);
     
-    const timeout = new Date(); timeout.setDate(timeout.getDate() + 20);
+    const toDays = strat.to || 20;
+    const timeout = new Date(); timeout.setDate(timeout.getDate() + toDays);
     const timeoutStr = `${timeout.getFullYear()}.${String(timeout.getMonth()+1).padStart(2,'0')}.${String(timeout.getDate()).padStart(2,'0')}`;
     
     document.getElementById('calc-buy').textContent = price.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -1284,7 +1307,7 @@ function updateCalc() {
     document.getElementById('calc-tp-profit').textContent = '+' + Math.round(tpProfit).toLocaleString() + '원';
     document.getElementById('calc-sl-loss').textContent = Math.round(slLoss).toLocaleString() + '원';
     document.getElementById('calc-timeout').textContent = timeoutStr;
-    document.getElementById('calc-note').textContent = `TP ${(tp_pct*100).toFixed(1)}% / SL ${(sl_pct*100).toFixed(1)}% / 수수료 0% (토스) / 타임아웃 20일`;
+    document.getElementById('calc-note').textContent = `TP ${(tp_pct*100).toFixed(1)}% / SL ${(sl_pct*100).toFixed(1)}% / 타임아웃 ${toDays}일 (※토스 환율은 시장가 대비 스프레드 있음)`;
 }
 
 function getTradeKey() { return `trades_${activeCurrency || 'ALL'}`; }

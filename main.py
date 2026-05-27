@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -69,12 +68,36 @@ GRADE_CUTS = {
     'USD': (26, 40, 56, 76),
 }
 
+# ═══════════════════════════════════════
+# 검증된 투자 전략 (walk-forward / 그리드서치 / OOS 검증 기반)
+#   sig: 신호 지표 (RSI 또는 WR)  |  period: 지표 기간
+#   th: 신호 임계값  |  bb_p/bb_s: 볼린저밴드 기간/시그마
+#   tp/sl: 익절/손절 %  |  to: 타임아웃(거래일)
+#   gap: 상승갭 컷 기준 % (하락갭은 컷 안 함 — 비대칭)
+#   vix: VIX 필터 상한 (None=미적용)  |  grade: 강건성 등급
+#   investable: 투자신호 제공 여부 (EUR은 검증 결과 부적합)
+# ═══════════════════════════════════════
 INVESTOR_STRATEGIES = {
-    'JPY': {'wr': -95, 'bb_p': 15, 'bb_s': 1.5, 'tp': 1.2, 'sl': 1.5, 'label': 'WR≤-95 + BB(15, 1.5σ)'},
-    'EUR': {'wr': -90, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-90 + BB(10, 1.5σ)'},
-    'THB': {'wr': -95, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.0, 'label': 'WR≤-95 + BB(10, 1.5σ)'},
-    'AUD': {'wr': -90, 'bb_p': 10, 'bb_s': 1.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-90 + BB(10, 1.5σ)'},
-    'USD': {'wr': -80, 'bb_p': 20, 'bb_s': 2.5, 'tp': 1.0, 'sl': 1.5, 'label': 'WR≤-80 + BB(20, 2.5σ)'},
+    'USD': {'sig': 'RSI', 'period': 7,  'th': 35,  'bb_p': 13, 'bb_s': 1.5,
+            'tp': 0.8, 'sl': 1.5, 'to': 20, 'gap': 0.5, 'vix': 25,
+            'grade': '★★★', 'investable': True,
+            'label': 'RSI(7)≤35 + BB(13, 1.5σ)'},
+    'JPY': {'sig': 'WR',  'period': 21, 'th': -95, 'bb_p': 20, 'bb_s': 1.5,
+            'tp': 0.8, 'sl': 1.5, 'to': 15, 'gap': 0.5, 'vix': 25,
+            'grade': '★★', 'investable': True,
+            'label': 'WR(21)≤-95 + BB(20, 1.5σ)'},
+    'AUD': {'sig': 'WR',  'period': 14, 'th': -80, 'bb_p': 13, 'bb_s': 1.5,
+            'tp': 1.2, 'sl': 0.8, 'to': 15, 'gap': 0.5, 'vix': None,
+            'grade': '★★', 'investable': True,
+            'label': 'WR(14)≤-80 + BB(13, 1.5σ)'},
+    'THB': {'sig': 'RSI', 'period': 7,  'th': 45,  'bb_p': 13, 'bb_s': 1.5,
+            'tp': 1.0, 'sl': 1.0, 'to': 20, 'gap': 0.5, 'vix': None,
+            'grade': '★', 'investable': True,
+            'label': 'RSI(7)≤45 + BB(13, 1.5σ)'},
+    'EUR': {'sig': 'WR',  'period': 14, 'th': -80, 'bb_p': 13, 'bb_s': 1.5,
+            'tp': 1.0, 'sl': 1.5, 'to': 15, 'gap': 0.5, 'vix': None,
+            'grade': '—', 'investable': False,
+            'label': '검증 결과 평균회귀 부적합'},
 }
 
 def fetch_from_yfinance():
@@ -240,61 +263,110 @@ def calc_thermo(df, currency):
     
     return total, grade, s
 
-def calc_inv_signal(df, currency, realtime_price=0):
-    """v7 투자자 시그널 계산 + 실시간 BB 재확인"""
+def _calc_rsi(close, period):
+    delta = close.diff()
+    gain = delta.where(delta > 0, 0).rolling(period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(period).mean()
+    rs = gain / (loss + 1e-10)
+    return (100 - (100 / (1 + rs)))
+
+def calc_inv_signal(df, currency, realtime_price=0, vix_val=0):
+    """검증된 투자 시그널 — 통화별 RSI/WR + 갭필터(비대칭) + VIX 필터"""
     strat = INVESTOR_STRATEGIES[currency]
-    curr_price = float(df['Close'].iloc[-1])  # 전일 종가
-    adj_price = curr_price * (100 if currency == "JPY" else 1)
-    curr_wr10 = float(calc_williams_r(df['High'], df['Low'], df['Close'], 10).iloc[-1])
-    
+    is_jpy = (currency == "JPY")
+    px100 = (100 if is_jpy else 1)
+
+    curr_price = float(df['Close'].iloc[-1])   # 전일 종가(신호 기준가)
+    adj_price = curr_price * px100
+
+    # ── EUR: 검증 결과 투자 부적합 → 신호 미제공 ──
+    if not strat.get('investable', True):
+        msg = "⚠️ 검증 결과 평균회귀 전략 부적합 — 투자 신호를 제공하지 않습니다."
+        info = [{"name": "검증 결과", "target": "—",
+                 "current": "IS Sharpe 음수 / walk-forward 43%", "pass": False}]
+        tpsl = "이 통화는 투자 신호 대상이 아닙니다 (환율 정보·온도계는 이용 가능)"
+        return False, strat['label'], tpsl, info, 0.0, 0.0, 0.0, msg, False
+
+    # ── 통화별 신호 지표 계산 ──
+    if strat['sig'] == 'RSI':
+        ind_series = _calc_rsi(df['Close'], strat['period'])
+        ind_val = float(ind_series.iloc[-1])
+        pass_sig = bool(ind_val <= strat['th'])
+        sig_name = f"RSI({strat['period']}) 전일종가"
+        sig_target = f"≤ {strat['th']}"
+        sig_cur = f"{ind_val:.1f}"
+    else:  # WR (원본 스케일 -100~0)
+        ind_series = calc_williams_r(df['High'], df['Low'], df['Close'], strat['period'])
+        ind_val = float(ind_series.iloc[-1])
+        pass_sig = bool(ind_val <= strat['th'])
+        sig_name = f"WR({strat['period']}) 전일종가"
+        sig_target = f"≤ {strat['th']}"
+        sig_cur = f"{ind_val:.1f}"
+
+    # ── 볼린저밴드 하단 ──
     bb_ma = float(df['Close'].rolling(strat['bb_p']).mean().iloc[-1])
     bb_std = float(df['Close'].rolling(strat['bb_p']).std().iloc[-1])
     bb_lower = bb_ma - strat['bb_s'] * bb_std
-    bb_lower_display = bb_lower * (100 if currency == "JPY" else 1)
-    
-    pass_wr = bool(curr_wr10 <= strat['wr'])
+    bb_lower_display = bb_lower * px100
     pass_bb = bool(curr_price <= bb_lower)
-    inv_signal = pass_wr and pass_bb  # 전일 종가 기준 시그널
-    
-    # 실시간 BB 재확인
+
+    # ── VIX 필터 (USD/JPY) ──
+    pass_vix = True
+    vix_cond = None
+    if strat['vix'] is not None:
+        pass_vix = bool(vix_val <= strat['vix']) if vix_val > 0 else True
+        vix_cond = {"name": f"VIX ≤ {strat['vix']} (위기 회피)",
+                    "target": f"≤ {strat['vix']}",
+                    "current": f"{vix_val:.1f}" if vix_val > 0 else "N/A",
+                    "pass": pass_vix}
+
+    inv_signal = pass_sig and pass_bb and pass_vix  # 전일 종가 기준 시그널
+
+    # ── 갭필터 (비대칭): 상승 +gap% 컷 / 하락은 통과 ──
     rt_price = realtime_price if realtime_price > 0 else curr_price
-    rt_adj = rt_price * (100 if currency == "JPY" else 1)
-    rt_below_bb = bool(rt_price <= bb_lower)
-    
-    if inv_signal and not rt_below_bb:
-        # 어제 시그널 떴지만 오늘 BB 위로 복귀 → 보류
-        rt_status = "⚠️ BB 위 복귀 — 매수 보류"
+    rt_adj = rt_price * px100
+    gap_pct = (rt_price - curr_price) / curr_price * 100 if curr_price else 0
+    gap_up_cut = strat['gap']
+
+    if inv_signal and gap_pct >= gap_up_cut:
+        rt_status = f"⚠️ 갭 상승 {gap_pct:+.2f}% — 매수 보류 (이미 +{gap_up_cut}% 넘게 오름)"
         rt_valid = False
-    elif inv_signal and rt_below_bb:
-        # 어제 시그널 + 오늘도 BB 아래 → 유효!
-        rt_status = "✅ 실시간 확인 — 매수 유효!"
+    elif inv_signal and gap_pct < 0:
+        rt_status = f"✅ 매수 가능 (갭 {gap_pct:+.2f}% — 더 좋은 가격)"
+        rt_valid = True
+    elif inv_signal:
+        rt_status = f"✅ 매수 가능 (갭 {gap_pct:+.2f}% — +{gap_up_cut}% 이내)"
         rt_valid = True
     else:
         rt_status = ""
         rt_valid = False
-    
+
+    # 매수가(실시간) 기준 익절/손절가
     tp_price = round(rt_adj * (1 + strat['tp']/100), 2)
     sl_price = round(rt_adj * (1 - strat['sl']/100), 2)
-    
+
     inv_conds = [
-        {"name": "WR(10) 전일종가", "target": f"≤ {strat['wr']}", "current": f"{curr_wr10:.1f}", "pass": pass_wr},
-        {"name": f"BB 하단({strat['bb_p']}, {strat['bb_s']}σ)", "target": f"≤ {bb_lower_display:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb},
+        {"name": sig_name, "target": sig_target, "current": sig_cur, "pass": pass_sig},
+        {"name": f"BB 하단({strat['bb_p']}, {strat['bb_s']}σ)",
+         "target": f"≤ {bb_lower_display:.2f}", "current": f"{adj_price:.2f}", "pass": pass_bb},
     ]
-    
-    # 실시간 가격 조건 추가 (시그널 뜬 경우만)
+    if vix_cond is not None:
+        inv_conds.append(vix_cond)
+
+    # 갭 확인 항목 (시그널 뜬 경우만)
     if inv_signal:
         inv_conds.append({
-            "name": "📡 실시간 BB 재확인",
-            "target": f"≤ {bb_lower_display:.2f}",
-            "current": f"{rt_adj:.2f}",
-            "pass": rt_below_bb,
+            "name": "📡 갭 확인 (상승 +0.5% 컷 / 하락 OK)",
+            "target": f"< +{gap_up_cut}%",
+            "current": f"{gap_pct:+.2f}%",
+            "pass": rt_valid,
         })
-    
-    inv_tpsl = f"익절 {strat['tp']}% / 손절 {strat['sl']}% / 타임아웃 20일"
+
+    inv_tpsl = f"익절 {strat['tp']}% / 손절 {strat['sl']}% / 타임아웃 {strat['to']}일 [{strat['grade']}]"
     if inv_signal and rt_valid:
         inv_tpsl += f" | 💰 익절가: {tp_price:.2f} | 🛑 손절가: {sl_price:.2f}"
-    
-    return inv_signal, strat['label'], inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid
+
+    return inv_signal, strat['label'], inv_tpsl, inv_conds, ind_val, tp_price, sl_price, rt_status, rt_valid
 
 @app.get("/api/score")
 def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
@@ -317,9 +389,10 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                     threshold = formula[str(d)]
                     break
 
-        # 투자자 시그널
+        # 투자자 시그널 (VIX 필터용 값 먼저 추출)
         rt_price = data[currency].get('realtime', 0)
-        inv_signal, inv_strategy, inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price)
+        _vix_for_signal = macro.get('VIX', {}).get('val', 0)
+        inv_signal, inv_strategy, inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price, _vix_for_signal)
 
         # ═══════════════════════════════════════
         # 거시경고 (기존 구조 그대로)
@@ -406,16 +479,17 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
             # 투자자 모드: 백테스트 통계만 표시
             # ═══════════════════════════════════════
             if mode == "investor":
-                # 통화별 백테스트 결과 (CAGR 포함)
+                # 통화별 OOS 검증 결과 (walk-forward, 갭필터 적용 기준)
+                #  ※ 개별 통화 OOS CAGR — 합산/look-ahead 착시 배제한 보수적 값
                 investor_stats = {
-                    'USD': {'win': 86.4, 'cagr': 5.22, 'trades': 3, 'avg_hold': 4.0},
-                    'JPY': {'win': 81.8, 'cagr': 9.28, 'trades': 7, 'avg_hold': 4.3},
-                    'EUR': {'win': 81.6, 'cagr': 12.05, 'trades': 10, 'avg_hold': 4.0},
-                    'AUD': {'win': 85.1, 'cagr': 12.77, 'trades': 9, 'avg_hold': 3.5},
-                    'THB': {'win': 87.5, 'cagr': 10.35, 'trades': 7, 'avg_hold': 2.8},
+                    'USD': {'win': 85.7, 'cagr': 3.79, 'sharpe': 0.43, 'mdd': 4.72, 'grade': '★★★', 'ok': True},
+                    'JPY': {'win': 73.8, 'cagr': 3.05, 'sharpe': 0.17, 'mdd': 4.33, 'grade': '★★',  'ok': True},
+                    'AUD': {'win': 66.7, 'cagr': 3.97, 'sharpe': 0.43, 'mdd': 2.81, 'grade': '★★',  'ok': True},
+                    'THB': {'win': 58.5, 'cagr': 2.85, 'sharpe': 0.10, 'mdd': 5.33, 'grade': '★',   'ok': True},
+                    'EUR': {'win': 0,    'cagr': 0,    'sharpe': 0,    'mdd': 0,    'grade': '—',    'ok': False},
                 }
                 
-                stats = investor_stats.get(currency, {'win': 0, 'cagr': 0, 'trades': 0, 'avg_hold': 0})
+                stats = investor_stats.get(currency, {'win': 0, 'cagr': 0, 'sharpe': 0, 'mdd': 0, 'grade': '—', 'ok': False})
                 
                 stat_msg = f"<div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
                 stat_msg += f"🌍 <strong>시장 경보 Level {warn_total}</strong><br>"
@@ -427,14 +501,24 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
                     stat_msg += f"<span style='color:#1D9E75; font-size:12px;'>🟢 거시 환경 안정</span>"
                 stat_msg += f"</div>"
                 
-                stat_msg += f"<br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
-                stat_msg += f"<span style='font-size:13px; font-weight:700;'>📊 검증 결과 (20년 백테스트)</span><br>"
-                stat_msg += f"<div style='font-size:12px; margin-top:6px; line-height:1.8;'>"
-                stat_msg += f"• 승률: <strong>{stats['win']:.1f}%</strong><br>"
-                stat_msg += f"• CAGR: <strong style='color:#1D9E75'>+{stats['cagr']:.2f}%</strong> <span style='font-size:10px; color:var(--text-sub)'>(연평균 수익률, 100만원 기준)</span><br>"
-                stat_msg += f"• 연 평균 거래: <strong>{stats['trades']}회</strong><br>"
-                stat_msg += f"• 평균 보유: <strong>{stats['avg_hold']:.1f}일</strong>"
-                stat_msg += f"</div></div>"
+                if not stats['ok']:
+                    # EUR: 부적합 — 통계 대신 안내
+                    stat_msg += f"<br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid #E2954B40;'>"
+                    stat_msg += f"<span style='font-size:13px; font-weight:700; color:#E2954B'>⚠️ 투자 신호 미제공</span><br>"
+                    stat_msg += f"<div style='font-size:12px; margin-top:6px; line-height:1.7; color:var(--text-main)'>"
+                    stat_msg += f"유로화(EUR)는 5가지 검증법으로 분석한 결과,<br>"
+                    stat_msg += f"평균회귀 전략의 강건한 수익이 확인되지 않았습니다.<br>"
+                    stat_msg += f"<span style='color:var(--text-sub); font-size:11px;'>(IS Sharpe 음수 · walk-forward 통과율 43% · 손절 도달률 과다)</span><br>"
+                    stat_msg += f"환율 정보와 온도계는 정상 이용 가능합니다."
+                    stat_msg += f"</div></div>"
+                else:
+                    stat_msg += f"<br><div style='padding:12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border-color);'>"
+                    stat_msg += f"<span style='font-size:13px; font-weight:700;'>📊 검증 결과 (20년 백테스트 · OOS) {stats['grade']}</span><br>"
+                    stat_msg += f"<div style='font-size:12px; margin-top:6px; line-height:1.8;'>"
+                    stat_msg += f"• 승률: <strong>{stats['win']:.1f}%</strong><br>"
+                    stat_msg += f"• 연수익(CAGR): <strong style='color:#1D9E75'>+{stats['cagr']:.2f}%</strong> <span style='font-size:10px; color:var(--text-sub)'>(검증구간, 무위험수익률 상회)</span><br>"
+                    stat_msg += f"• 샤프지수: <strong>{stats['sharpe']:.2f}</strong> · 최대낙폭: <strong>{stats['mdd']:.2f}%</strong>"
+                    stat_msg += f"</div></div>"
                 
             # ═══════════════════════════════════════
             # 여행자 모드: 온도계 기반 가이드 (v8 — 추세예측 제거, 절감률 강조)
@@ -512,7 +596,8 @@ def get_all_signals():
             
             total, grade, s = calc_thermo(df, currency)
             rt_price = data[currency].get('realtime', 0)
-            inv_signal, strategy, _, _, wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price)
+            _vix_for_signal = macro.get('VIX', {}).get('val', 0)
+            inv_signal, strategy, _, _, wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price, _vix_for_signal)
             
             signals.append({
                 "currency": currency,
@@ -544,11 +629,17 @@ def get_chart(currency: str = "USD", days: int = 90):
         
         df = pd.DataFrame({'Close': close, 'High': high, 'Low': low})
         
-        # WR10 (차트 하단 표시용)
-        df['WR10'] = calc_williams_r(df['High'], df['Low'], df['Close'], 10)
+        strat = INVESTOR_STRATEGIES[currency]
+        
+        # 차트 하단 지표 = 그 통화의 실제 신호 지표 (RSI 또는 WR + 해당 기간)
+        if strat['sig'] == 'RSI':
+            df['SIGIND'] = _calc_rsi(df['Close'], strat['period'])
+        else:
+            df['SIGIND'] = calc_williams_r(df['High'], df['Low'], df['Close'], strat['period'])
+        ind_label = f"{strat['sig']}({strat['period']})"
+        ind_threshold = strat['th']
         
         # BB (투자자 전략에 맞는 BB)
-        strat = INVESTOR_STRATEGIES[currency]
         bb_period = strat['bb_p']
         bb_sigma = strat['bb_s']
         
@@ -570,13 +661,15 @@ def get_chart(currency: str = "USD", days: int = 90):
                 "ma": round(float(row['MA']) * mult, 2),
                 "bb_upper": round(float(row['BB_Upper']) * mult, 2),
                 "bb_lower": round(float(row['BB_Lower']) * mult, 2),
-                "rsi": round(float(row['WR10']), 1) if not pd.isna(row['WR10']) else None
+                "rsi": round(float(row['SIGIND']), 1) if not pd.isna(row['SIGIND']) else None
             })
         
         return {
             "currency": currency,
             "bb_period": bb_period,
             "bb_sigma": bb_sigma,
+            "ind_label": ind_label,
+            "ind_threshold": ind_threshold,
             "data": chart_data
         }
     except Exception as e:
