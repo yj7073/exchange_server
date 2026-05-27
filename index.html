@@ -456,13 +456,43 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
             <div class="toggle-icon">▼</div>
         </div>
         <div id="calc-content-wrapper" style="margin-top: 15px;">
+            <!-- 환전 금액 -->
             <div class="calc-input-row">
               <label>환전 금액:</label>
               <input type="text" inputmode="numeric" class="calc-input" id="calc-amount" value="5,000,000" oninput="formatMoneyInput(this); updateCalc()">
               <span style="font-size:12px; font-weight:700;">원</span>
             </div>
+
+            <!-- 매수가 (토스 기준, 직접 입력 가능) -->
+            <div class="calc-input-row">
+              <label>매수가 (토스 기준):</label>
+              <input type="number" step="0.01" class="calc-input" id="calc-buyprice" placeholder="0.00" oninput="updateCalc()">
+              <button type="button" id="calc-reset-price" onclick="resetBuyPrice()" style="padding:6px 10px; border:1px solid var(--border-color); border-radius:6px; background:var(--btn-bg); color:var(--btn-text); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;">시장가</button>
+            </div>
+            <div id="calc-spread-info" style="font-size:11px; color:var(--text-sub); margin:-4px 0 10px 0; padding-left:4px;">시장가 - (-)</div>
+
+            <!-- 거래 날짜 -->
+            <div class="calc-input-row">
+              <label>거래 날짜:</label>
+              <input type="date" class="calc-input" id="calc-date" style="text-align:left;">
+            </div>
+
+            <!-- 매수/매도 + 메모 -->
+            <div class="calc-input-row">
+              <label>구분:</label>
+              <select id="calc-type" onchange="updateCalc()" style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:8px; background:var(--card-bg); color:var(--text-main); font-size:13px; font-weight:700;">
+                <option value="buy">매수 (원→외화)</option>
+                <option value="sell">매도 (외화→원)</option>
+              </select>
+            </div>
+            <div class="calc-input-row">
+              <label>메모:</label>
+              <input type="text" class="calc-input" id="calc-memo" placeholder="(선택)" style="text-align:left; font-family:'Pretendard',sans-serif; font-weight:500;">
+            </div>
+
+            <!-- 자동 계산 결과 -->
             <div class="calc-grid" id="calc-grid">
-              <div class="calc-item"><div class="calc-label">현재 매수가</div><div class="calc-val neutral" id="calc-buy">-</div></div>
+              <div class="calc-item"><div class="calc-label">시장가 (참고)</div><div class="calc-val neutral" id="calc-market">-</div></div>
               <div class="calc-item"><div class="calc-label">타임아웃</div><div class="calc-val neutral" id="calc-timeout">-</div></div>
               <div class="calc-item"><div class="calc-label">🟢 익절가 (TP)</div><div class="calc-val profit" id="calc-tp">-</div></div>
               <div class="calc-item"><div class="calc-label">🔴 손절가 (SL)</div><div class="calc-val loss" id="calc-sl">-</div></div>
@@ -470,6 +500,11 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
               <div class="calc-item"><div class="calc-label">🔴 손절 손실</div><div class="calc-val loss" id="calc-sl-loss">-</div></div>
             </div>
             <div class="calc-timeout" id="calc-note">시그널 발생 시 자동으로 계산됩니다</div>
+
+            <!-- 저장 버튼 -->
+            <div style="margin-top:12px;">
+              <button type="button" id="calc-save-btn" onclick="saveTradeFromCalc()" style="width:100%; padding:12px; border:none; border-radius:10px; background:#1D9E75; color:white; font-size:14px; font-weight:800; cursor:pointer; font-family:'Pretendard',sans-serif;">💾 거래 기록에 저장</button>
+            </div>
         </div>
       </div>
 
@@ -486,33 +521,11 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 
       <div class="trade-log-box" id="tradelog-panel" style="display:none;">
         <div class="collapsible-header trade-log-header" onclick="togglePanel('tradelog-content-wrapper', this)" style="margin-bottom:0;">
-            <span style="font-size:14px; font-weight:800;">📝 거래 기록</span>
+            <span style="font-size:14px; font-weight:800;">📋 거래 목록</span>
             <div class="toggle-icon">▼</div>
         </div>
         <div id="tradelog-content-wrapper" style="margin-top: 15px;">
-            <div style="text-align: right; margin-bottom: 12px;">
-                <button class="trade-add-btn" onclick="toggleTradeForm()">+ 기록 추가</button>
-            </div>
-            <div class="trade-form" id="trade-form">
-              <div class="trade-form-row">
-                <input type="date" id="tf-date" placeholder="날짜">
-                <input type="number" id="tf-rate" placeholder="환율" step="0.01">
-              </div>
-              <div class="trade-form-row">
-                <input type="text" inputmode="numeric" id="tf-amount" placeholder="금액(원)" value="1,000,000" oninput="formatMoneyInput(this)">
-                <select id="tf-type" style="flex:1; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-color); color:var(--text-main); font-size:12px;">
-                  <option value="buy">매수 (원→외화)</option>
-                  <option value="sell">매도 (외화→원)</option>
-                </select>
-              </div>
-              <div class="trade-form-row">
-                <input type="text" id="tf-memo" placeholder="메모 (선택)" style="flex:1;">
-              </div>
-              <div class="trade-form-btns">
-                <button class="trade-cancel-btn" onclick="toggleTradeForm()">취소</button>
-                <button class="trade-save-btn" onclick="saveTrade()">저장</button>
-              </div>
-            </div>
+            <div style="font-size:11px; color:var(--text-sub); margin-bottom:10px; text-align:center;">위의 계산기에서 매수가 입력 후 "💾 거래 기록에 저장"으로 추가하세요</div>
             <div class="trade-list" id="trade-list"></div>
         </div>
       </div>
@@ -911,7 +924,14 @@ function openDetail(currencyCode) {
         const calcPanel = document.getElementById('calc-panel');
         if (calcPanel) {
             calcPanel.style.display = (appMode === 'investor') ? 'block' : 'none';
-            if (appMode === 'investor') updateCalc();
+            if (appMode === 'investor') {
+                // 통화 바뀔 때 계산기 입력값 초기화 (옛 입력 잔류 방지)
+                document.getElementById('calc-buyprice').value = '';
+                document.getElementById('calc-memo').value = '';
+                document.getElementById('calc-date').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('calc-type').value = 'buy';
+                updateCalc();
+            }
         }
     }, 400);
 }
@@ -1284,9 +1304,21 @@ function updateCalc() {
     if (!activeCurrency || !globalData[activeCurrency]) return;
     const d = globalData[activeCurrency];
     const amount = parseInt(document.getElementById('calc-amount').value.replace(/,/g, '')) || 5000000;
-    const price = d.price;
-    const fee = 0;  // 토스 수수료 0%
-    
+    const marketPrice = d.price;  // 시장가 (참고용, 야후)
+
+    // 매수가 (사용자 입력, 기본값=시장가)
+    const buyEl = document.getElementById('calc-buyprice');
+    const userBuy = parseFloat(buyEl.value);
+    const buyPrice = (isNaN(userBuy) || userBuy <= 0) ? marketPrice : userBuy;
+
+    // 거래 날짜 (비어있으면 오늘로)
+    const dateEl = document.getElementById('calc-date');
+    if (!dateEl.value) dateEl.value = new Date().toISOString().slice(0,10);
+
+    // 매수/매도 구분
+    const type = document.getElementById('calc-type').value;
+    const isBuy = (type === 'buy');
+
     const strategies = {
         'USD': { tp: 0.008, sl: 0.015, to: 20 },
         'JPY': { tp: 0.008, sl: 0.015, to: 15 },
@@ -1298,49 +1330,100 @@ function updateCalc() {
     if (!strat) return;
     const tp_pct = strat.tp;
     const sl_pct = strat.sl;
-    
-    const buyPrice = price; const tpPrice = price * (1 + tp_pct); const slPrice = price * (1 - sl_pct);
-    const tpProfit = amount * ((tpPrice/buyPrice) * (1-fee)*(1-fee) - 1);
-    const slLoss = amount * ((slPrice/buyPrice) * (1-fee)*(1-fee) - 1);
-    
     const toDays = strat.to || 20;
+
+    // 시장가 표시
+    document.getElementById('calc-market').textContent = marketPrice.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+    // 시장가 대비 스프레드 표시 (사용자 입력했을 때만)
+    const spreadEl = document.getElementById('calc-spread-info');
+    if (!isNaN(userBuy) && userBuy > 0 && marketPrice > 0) {
+        const diffPct = (userBuy - marketPrice) / marketPrice * 100;
+        const sign = diffPct >= 0 ? '+' : '';
+        const color = diffPct > 0 ? '#E2954B' : diffPct < 0 ? '#1D9E75' : 'var(--text-sub)';
+        spreadEl.innerHTML = `시장가 ${marketPrice.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})} 대비 <span style="color:${color}; font-weight:700;">${sign}${diffPct.toFixed(3)}%</span>`;
+    } else {
+        spreadEl.innerHTML = `시장가 ${marketPrice.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})} (직접 입력 시 차이 표시)`;
+    }
+
+    // 타임아웃 날짜
     const timeout = new Date(); timeout.setDate(timeout.getDate() + toDays);
     const timeoutStr = `${timeout.getFullYear()}.${String(timeout.getMonth()+1).padStart(2,'0')}.${String(timeout.getDate()).padStart(2,'0')}`;
-    
-    document.getElementById('calc-buy').textContent = price.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('calc-tp').textContent = tpPrice.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('calc-sl').textContent = slPrice.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
-    document.getElementById('calc-tp-profit').textContent = '+' + Math.round(tpProfit).toLocaleString() + '원';
-    document.getElementById('calc-sl-loss').textContent = Math.round(slLoss).toLocaleString() + '원';
-    document.getElementById('calc-timeout').textContent = timeoutStr;
-    document.getElementById('calc-note').textContent = `TP ${(tp_pct*100).toFixed(1)}% / SL ${(sl_pct*100).toFixed(1)}% / 타임아웃 ${toDays}일 (※토스 환율은 시장가 대비 스프레드 있음)`;
+
+    if (isBuy) {
+        // 매수: TP/SL 자동 계산
+        const tpPrice = buyPrice * (1 + tp_pct);
+        const slPrice = buyPrice * (1 - sl_pct);
+        const tpProfit = amount * (tpPrice / buyPrice - 1);
+        const slLoss = amount * (slPrice / buyPrice - 1);
+
+        document.getElementById('calc-tp').textContent = tpPrice.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('calc-sl').textContent = slPrice.toLocaleString('ko-KR', {minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('calc-tp-profit').textContent = '+' + Math.round(tpProfit).toLocaleString() + '원';
+        document.getElementById('calc-sl-loss').textContent = Math.round(slLoss).toLocaleString() + '원';
+        document.getElementById('calc-timeout').textContent = timeoutStr;
+        document.getElementById('calc-note').textContent = `TP ${(tp_pct*100).toFixed(1)}% / SL ${(sl_pct*100).toFixed(1)}% / 타임아웃 ${toDays}일 (※토스 환율은 시장가 대비 스프레드 있음)`;
+    } else {
+        // 매도: TP/SL 계산 안 함
+        document.getElementById('calc-tp').textContent = '—';
+        document.getElementById('calc-sl').textContent = '—';
+        document.getElementById('calc-tp-profit').textContent = '—';
+        document.getElementById('calc-sl-loss').textContent = '—';
+        document.getElementById('calc-timeout').textContent = '—';
+        document.getElementById('calc-note').textContent = '※ 매도 거래는 TP/SL 자동 계산이 적용되지 않습니다 (단순 기록만)';
+    }
+}
+
+// 매수가를 시장가로 리셋 (사용자 입력 지움 → 자동으로 시장가 사용)
+function resetBuyPrice() {
+    document.getElementById('calc-buyprice').value = '';
+    updateCalc();
+}
+
+// 계산기 입력값을 거래기록에 저장
+function saveTradeFromCalc() {
+    if (!activeCurrency || !globalData[activeCurrency]) { alert('통화를 먼저 선택해주세요'); return; }
+    const d = globalData[activeCurrency];
+    const marketPrice = d.price;
+
+    const amountStr = document.getElementById('calc-amount').value.replace(/,/g, '');
+    const amount = parseInt(amountStr);
+    if (!amount || amount <= 0) { alert('환전 금액을 확인해주세요'); return; }
+
+    const userBuy = parseFloat(document.getElementById('calc-buyprice').value);
+    const rate = (isNaN(userBuy) || userBuy <= 0) ? marketPrice : userBuy;
+    if (!rate || rate <= 0) { alert('매수가가 유효하지 않습니다'); return; }
+
+    let date = document.getElementById('calc-date').value;
+    if (!date) date = new Date().toISOString().slice(0, 10);
+
+    const type = document.getElementById('calc-type').value;
+    const memo = document.getElementById('calc-memo').value.trim();
+
+    // 기존 형식과 100% 동일하게 저장 (호환성 보장)
+    const trades = getTrades();
+    trades.unshift({ date, rate, amount, type, memo, currency: activeCurrency, id: Date.now() });
+    saveTrades(trades);
+    renderTrades();
+
+    // 저장 후 안내 + 메모는 초기화 (다음 거래 입력 편하게)
+    document.getElementById('calc-memo').value = '';
+    const btn = document.getElementById('calc-save-btn');
+    const origText = btn.textContent;
+    btn.textContent = '✅ 저장 완료!';
+    btn.style.background = '#1a73e8';
+    setTimeout(() => { btn.textContent = origText; btn.style.background = '#1D9E75'; }, 1500);
 }
 
 function getTradeKey() { return `trades_${activeCurrency || 'ALL'}`; }
 function getTrades() { return JSON.parse(localStorage.getItem(getTradeKey()) || '[]'); }
 function saveTrades(trades) { localStorage.setItem(getTradeKey(), JSON.stringify(trades)); }
 
-function toggleTradeForm() {
-    const form = document.getElementById('trade-form'); form.classList.toggle('show');
-    if (form.classList.contains('show')) {
-        document.getElementById('tf-date').value = new Date().toISOString().slice(0,10);
-        if (globalData[activeCurrency]) document.getElementById('tf-rate').value = globalData[activeCurrency].price;
-    }
-}
-
-function saveTrade() {
-    const date = document.getElementById('tf-date').value, rate = parseFloat(document.getElementById('tf-rate').value);
-    const amount = parseInt(document.getElementById('tf-amount').value.replace(/,/g, '')), type = document.getElementById('tf-type').value, memo = document.getElementById('tf-memo').value;
-    if (!date || !rate || !amount) { alert('날짜, 환율, 금액을 입력해주세요'); return; }
-    const trades = getTrades(); trades.unshift({ date, rate, amount, type, memo, currency: activeCurrency, id: Date.now() });
-    saveTrades(trades); toggleTradeForm(); renderTrades();
-}
-
 function deleteTrade(id) { let trades = getTrades(); trades = trades.filter(t => t.id !== id); saveTrades(trades); renderTrades(); }
 
 function renderTrades() {
     const trades = getTrades(); const list = document.getElementById('trade-list');
-    if (trades.length === 0) { list.innerHTML = '<div class="trade-empty">거래 기록이 없습니다<br><span style="font-size:11px;">상단 "+ 기록 추가" 버튼으로 추가해보세요</span></div>'; return; }
+    if (trades.length === 0) { list.innerHTML = '<div class="trade-empty">거래 기록이 없습니다<br><span style="font-size:11px;">위의 계산기에서 매수가 입력 후 "💾 거래 기록에 저장"으로 추가하세요</span></div>'; return; }
     const currentPrice = globalData[activeCurrency] ? globalData[activeCurrency].price : 0;
     list.innerHTML = trades.map(t => {
         let pnl = '', pnlColor = 'var(--text-sub)';
@@ -1359,4 +1442,4 @@ function renderTrades() {
 initialize();
 </script>
 </body>
-</html>
+</html>s
