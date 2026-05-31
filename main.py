@@ -322,7 +322,7 @@ def calc_inv_signal(df, currency, realtime_price=0, vix_value=None):
     if inv_signal and rt_valid:
         inv_tpsl += f" | 💰 익절가: {tp_price:.2f} | 🛑 손절가: {sl_price:.2f}"
     
-    return inv_signal, strat['label'], inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid
+    return inv_signal, strat['label'], inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid, curr_ind, ind_label
 
 @app.get("/api/score")
 def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
@@ -348,7 +348,7 @@ def get_score(currency: str = "USD", d_day: int = 14, mode: str = "traveler"):
         # 투자자 시그널
         rt_price = data[currency].get('realtime', 0)
         vix_val = macro.get('VIX', {}).get('val') if macro else None
-        inv_signal, inv_strategy, inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price, vix_val)
+        inv_signal, inv_strategy, inv_tpsl, inv_conds, curr_wr10, tp_price, sl_price, rt_status, rt_valid, curr_ind, ind_label = calc_inv_signal(df, currency, rt_price, vix_val)
 
         # ═══════════════════════════════════════
         # 거시경고 (기존 구조 그대로)
@@ -542,7 +542,7 @@ def get_all_signals():
             total, grade, s = calc_thermo(df, currency)
             rt_price = data[currency].get('realtime', 0)
             vix_val = macro.get('VIX', {}).get('val') if macro else None
-            inv_signal, strategy, _, _, wr10, tp_price, sl_price, rt_status, rt_valid = calc_inv_signal(df, currency, rt_price, vix_val)
+            inv_signal, strategy, _, _, wr10, tp_price, sl_price, rt_status, rt_valid, curr_ind, ind_label = calc_inv_signal(df, currency, rt_price, vix_val)
             
             signals.append({
                 "currency": currency,
@@ -550,6 +550,8 @@ def get_all_signals():
                 "thermo": round(total, 1),
                 "grade": grade,
                 "wr10": round(wr10, 1),
+                "inv_ind": round(curr_ind, 1),
+                "ind_label": ind_label,
                 "inv_signal": inv_signal,
                 "rt_valid": rt_valid,
                 "rt_status": rt_status,
@@ -565,7 +567,7 @@ def get_all_signals():
 
 @app.get("/api/chart")
 def get_chart(currency: str = "USD", days: int = 90):
-    """일별 차트 + 볼린저밴드 + 통화별 신호 지표"""
+    """일별 차트 + 볼린저밴드 + 통화별 신호 지표 + 과거 시그널 마커"""
     try:
         data, macro = get_base_data()
         close = data[currency]['Close']
@@ -597,6 +599,10 @@ def get_chart(currency: str = "USD", days: int = 90):
         df['BB_Upper'] = ma + bb_sigma * std
         df['BB_Lower'] = ma - bb_sigma * std
         
+        # 과거 시그널 마커 (지표 조건 + BB 조건 동시 통과)
+        # VIX 필터는 시계열 데이터가 별도 필요해서 차트 마커에는 생략 (실시간 시그널엔 적용)
+        df['SIGNAL'] = (df['IND'] <= strat['th']) & (df['Close'] <= df['BB_Lower'])
+        
         df = df.tail(days)
         df.dropna(inplace=True)
         
@@ -609,7 +615,8 @@ def get_chart(currency: str = "USD", days: int = 90):
                 "ma": round(float(row['MA']) * mult, 2),
                 "bb_upper": round(float(row['BB_Upper']) * mult, 2),
                 "bb_lower": round(float(row['BB_Lower']) * mult, 2),
-                "rsi": round(float(row['IND']), 1) if not pd.isna(row['IND']) else None
+                "rsi": round(float(row['IND']), 1) if not pd.isna(row['IND']) else None,
+                "signal": bool(row['SIGNAL']) if not pd.isna(row['SIGNAL']) else False,
             })
         
         return {

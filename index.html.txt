@@ -445,7 +445,8 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1a73e8;"></div>종가</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#EF9F27;"></div>이동평균</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(226,75,74,0.3);"></div>BB 밴드</div>
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div><span id="chart-ind-label">지표</span> <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
+              <div class="chart-legend-item"><div id="chart-ind-dot" class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div><span id="chart-ind-label">지표</span> <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1D9E75; transform:rotate(180deg); width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:8px solid #1D9E75; border-radius:0;"></div>매수 시그널</div>
             </div>
         </div>
       </div>
@@ -524,16 +525,7 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         </div>
       </div>
 
-      <div class="macro-box" id="macro-panel" style="display:none;">
-        <div class="collapsible-header macro-header" onclick="togglePanel('macro-content-wrapper', this)" style="margin-bottom:0;">
-            <span id="macro-header-text" style="font-weight:700;font-size:14px;">🌍 통화별 위험 신호</span>
-            <div class="toggle-icon">▼</div>
-        </div>
-        <div id="macro-content-wrapper" style="margin-top: 10px;">
-            <div class="macro-grid" id="macro-grid"></div>
-            <div id="macro-disclaimer" style="margin-top: 10px;"></div>
-        </div>
-      </div>
+      <div class="macro-box" id="macro-panel" style="display:none;"></div>
 
       <div class="action-section" id="action-panel">
         <div id="traveler-action">
@@ -771,7 +763,7 @@ function renderSignalBanner(signals) {
         };
         const validSignals = signals.filter(s =>
             s && indInfo[s.currency] &&
-            s.wr10 !== null && s.wr10 !== undefined && !isNaN(s.wr10)
+            s.inv_ind !== null && s.inv_ind !== undefined && !isNaN(s.inv_ind)
         );
         let closestText = '-';
         if (validSignals.length > 0) {
@@ -779,13 +771,14 @@ function renderSignalBanner(signals) {
             const proximity = (s) => {
                 const info = indInfo[s.currency];
                 // RSI/WR 모두 '값 ≤ 임계값'에서 신호. (값 - 임계값)이 작을수록 근접
-                return s.wr10 - info.th;
+                return s.inv_ind - info.th;
             };
             const closest = validSignals.reduce((best, s) =>
                 (proximity(s) < proximity(best)) ? s : best, validSignals[0]);
             if (closest && closest.currency) {
                 const info = indInfo[closest.currency];
-                closestText = `${closest.currency} ${info.sig} ${closest.wr10} (목표 ≤${info.th})`;
+                const indStr = closest.ind_label || info.sig;
+                closestText = `${closest.currency} ${indStr} ${closest.inv_ind} (목표 ≤${info.th})`;
             }
         }
         banner.innerHTML = `<div class="signal-banner-title">📊 현재 매수 시그널 없음</div><div class="signal-banner-detail">가장 근접: ${closestText}</div>`;
@@ -857,7 +850,6 @@ function setMode(mode) {
     document.getElementById('dday-panel').style.display = mode === 'traveler' ? 'block' : 'none';
     
     document.getElementById('investor-board').style.display = mode === 'investor' ? 'block' : 'none';
-    document.getElementById('macro-panel').style.display = mode === 'investor' ? 'block' : 'none';
     document.getElementById('chart-panel').style.display = mode === 'investor' ? 'block' : 'none';
     
     document.getElementById('traveler-action').style.display = mode === 'traveler' ? 'block' : 'none';
@@ -904,7 +896,7 @@ function openDetail(currencyCode) {
     // 과거 점수 추세 기능 미사용 (제거됨)
     
     // 모든 아코디언 패널 처음엔 접힌 상태로
-    const collapsibleIds = ['sub-scores-container', 'chart-content-wrapper', 'calc-content-wrapper', 'macro-content-wrapper'];
+    const collapsibleIds = ['sub-scores-container', 'chart-content-wrapper', 'calc-content-wrapper'];
     collapsibleIds.forEach(id => {
         const content = document.getElementById(id);
         if (content) {
@@ -978,8 +970,10 @@ function updateDetailView(currencyCode) {
             const statusColor = cond.pass ? '#1D9E75' : '#E24B4A';
             // 조건 이름에 따라 도움말 키 결정
             let helpKey = '';
-            if (cond.name.includes('WR')) helpKey = 'WR';
+            if (cond.name.includes('RSI')) helpKey = 'RSI';
+            else if (cond.name.includes('WR')) helpKey = 'WR';
             else if (cond.name.includes('BB')) helpKey = 'BB';
+            else if (cond.name.includes('VIX')) helpKey = 'VIX';
             const helpBtn = helpKey ? `<button class="help-icon" onclick="event.stopPropagation();showHelp('${helpKey}')" title="설명 보기">i</button>` : '';
             return `<div class="inv-check-item ${statusClass}"><div style="font-weight:700; display:flex; align-items:center;">${cond.name}${helpBtn}</div><div class="inv-val-box"><div class="inv-target">목표: ${cond.target}</div><div class="inv-curr" style="color:${statusColor}">${cond.current}</div></div></div>`;
         }).join('');
@@ -1100,35 +1094,7 @@ function updateDetailView(currencyCode) {
         }
     }
 
-    if(d.macro_items && d.macro_items.length > 0) {
-        const warnEmoji = d.macro_count === 0 ? '🟢' : d.macro_count <= 2 ? '🟡' : '🔴';
-        const totalMacros = d.macro_items.length;
-        document.getElementById('macro-header-text').innerHTML = `🌍 맞춤 경고 | ${warnEmoji} ${d.macro_count}/${totalMacros}개`;
-
-        document.getElementById('macro-grid').innerHTML = d.macro_items.map(ind => `
-            <div class="macro-item" style="border-left: 3px solid ${ind.w ? '#E24B4A' : '#1D9E75'}; display: flex; flex-direction: column; gap: 4px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>${ind.w ? '⚠️' : '✅'} ${ind.n}${ind.h ? ` <span class="help-icon" onclick="event.stopPropagation();showHelp('${ind.h}')" style="cursor:pointer;">i</span>` : ''}</span>
-                    <span style="color: ${ind.w ? '#E24B4A' : '#1D9E75'}; font-weight:700; font-family:'Space Mono', monospace;">
-                        ${ind.v}
-                    </span>
-                </div>
-                <div style="font-size: 10px; color: var(--text-sub); text-align: left; margin-left: 20px;">
-                    ${ind.c}
-                </div>
-            </div>
-        `).join('');
-
-        if (currencyCode === 'EUR') {
-            document.getElementById('macro-disclaimer').innerHTML = `<div style="font-size: 11px; color: var(--text-sub); text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">ℹ️ EUR은 대부분 거시지표의 영향이 약합니다.<br>KOSPI만 강력한 경고 지표입니다.</div>`;
-        } else {
-            document.getElementById('macro-disclaimer').innerHTML = "";
-        }
-    } else { 
-        document.getElementById('macro-header-text').innerHTML = `🌍 위험 신호`;
-        document.getElementById('macro-grid').innerHTML = ""; 
-        document.getElementById('macro-disclaimer').innerHTML = "";
-    }
+    // 거시 경고 패널 제거됨 — VIX는 매수 시그널에 통합, 다른 거시 지표는 검증 결과 예측력 약해 제외
 }
 
 function closeDetail() {
@@ -1184,6 +1150,9 @@ function renderChart(chartData) {
     
     const wrs = chartData.data.map(d => (d.rsi === null || d.rsi === undefined) ? null : d.rsi);
     const targetWrs = chartData.data.map(() => wrTarget);
+    
+    // 매수 시그널 마커 데이터 (시그널 발생일에 종가 위치에 표시)
+    const signalMarks = chartData.data.map(d => d.signal ? d.close : null);
 
     const lastWr = wrs[wrs.length - 1];
     const currentWr = (lastWr === null || lastWr === undefined) ? null : lastWr;
@@ -1197,6 +1166,14 @@ function renderChart(chartData) {
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
     const textColor = isDark ? '#a0a5b1' : '#888888';
     
+    // 통화별 지표 색깔 — RSI(USD): 보라, WR(나머지): 초록
+    const indColor = isRSI ? 'rgba(123, 97, 255, 0.95)' : 'rgba(29,158,117,0.95)';
+    const indTargetColor = isRSI ? 'rgba(123, 97, 255, 0.55)' : 'rgba(29,158,117,0.75)';
+    
+    // legend dot 색깔 동기화
+    const legendDot = document.getElementById('chart-ind-dot');
+    if (legendDot) legendDot.style.background = indColor;
+    
     priceChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -1206,8 +1183,9 @@ function renderChart(chartData) {
                 { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: '기준선', data: targetWrs, borderColor: 'rgba(29,158,117,0.75)', borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
-                { label: indLabel, data: wrs, borderColor: 'rgba(29,158,117,0.95)', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
+                { label: '매수 시그널', data: signalMarks, borderColor: 'transparent', backgroundColor: '#1D9E75', pointRadius: 6, pointStyle: 'triangle', pointBorderColor: '#fff', pointBorderWidth: 1.5, showLine: false, yAxisID: 'y' },
+                { label: '기준선', data: targetWrs, borderColor: indTargetColor, borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
+                { label: indLabel, data: wrs, borderColor: indColor, borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
             ]
         },
         options: {
@@ -1224,7 +1202,7 @@ function renderChart(chartData) {
             scales: { 
                 x: { ticks: { color: textColor, font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: gridColor } }, 
                 y: { type: 'linear', display: true, position: 'left', ticks: { color: textColor, font: { size: 9, family: "'Space Mono', monospace" } }, grid: { color: gridColor } },
-                y1: { type: 'linear', display: true, position: 'right', min: y1_min, max: y1_max, ticks: { color: 'rgba(29,158,117,0.95)', font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
+                y1: { type: 'linear', display: true, position: 'right', min: y1_min, max: y1_max, ticks: { color: indColor, font: { size: 9, family: "'Space Mono', monospace" } }, grid: { drawOnChartArea: false } }
             },
             interaction: { intersect: false, mode: 'index' }
         }
@@ -1520,27 +1498,98 @@ function renderTrades() {
     // 진행 중 거래
     activeSection.innerHTML = activeTrades.map(t => {
         let pnl = '', pnlColor = 'var(--text-sub)';
+        let alertBadge = '';
+        let cardBg = '';
+        let borderColor = '#1a73e8';  // 기본: 파랑 (진행)
+        let badgeText = '진행';
+        let badgeBg = 'rgba(26,115,232,0.15)';
+        let badgeColor = '#1a73e8';
+        let currentInfo = '';
+        let dayInfo = '';
+        let tpReached = false, slReached = false, timeoutNear = false;
+        
         if (t.type === 'buy' && currentPrice > 0) {
             const diff = ((currentPrice - t.rate) / t.rate * 100);
             pnl = `${diff > 0 ? '+' : ''}${diff.toFixed(2)}%`;
             pnlColor = diff > 0 ? '#1D9E75' : diff < 0 ? '#E24B4A' : 'var(--text-sub)';
-        } else if (t.type === 'sell') { pnl = '매도 기록'; pnlColor = '#1a73e8'; }
+            
+            // 자동 청산 감지 — TP/SL/만료
+            const tpPrice = t.rate * (1 + (t.tp_pct || 0.01));
+            const slPrice = t.rate * (1 - (t.sl_pct || 0.01));
+            
+            // 보유 일수 계산
+            const buyDate = new Date(t.date);
+            const today = new Date();
+            const holdDays = Math.floor((today - buyDate) / (1000 * 60 * 60 * 24));
+            
+            // 통화별 타임아웃 (저장된 거래는 tp_pct 있으면 추정 가능)
+            const toStrats = { 'USD': 20, 'JPY': 15, 'AUD': 20, 'THB': 15, 'EUR': 15 };
+            const toDays = toStrats[t.currency] || 20;
+            
+            tpReached = currentPrice >= tpPrice;
+            slReached = currentPrice <= slPrice;
+            timeoutNear = holdDays >= toDays - 2 && holdDays < toDays;
+            const timedOut = holdDays >= toDays;
+            
+            if (tpReached) {
+                alertBadge = '<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(29,158,117,0.20); color:#0F6E56; margin-left:6px; font-weight:700;">🎯 익절가 도달!</span>';
+                cardBg = 'background: rgba(29,158,117,0.08);';
+                borderColor = '#1D9E75';
+                badgeText = '익절 가능';
+                badgeBg = 'rgba(29,158,117,0.20)';
+                badgeColor = '#0F6E56';
+            } else if (slReached) {
+                alertBadge = '<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(226,75,74,0.20); color:#A32D2D; margin-left:6px; font-weight:700;">⚠️ 손절가 도달</span>';
+                cardBg = 'background: rgba(226,75,74,0.06);';
+                borderColor = '#E24B4A';
+                badgeText = '손절 권장';
+                badgeBg = 'rgba(226,75,74,0.20)';
+                badgeColor = '#A32D2D';
+            } else if (timedOut) {
+                alertBadge = '<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(136,136,136,0.20); color:#444; margin-left:6px; font-weight:700;">⏰ 만료</span>';
+                cardBg = 'background: rgba(136,136,136,0.05);';
+                borderColor = '#888';
+                badgeText = '만료';
+                badgeBg = 'rgba(136,136,136,0.20)';
+                badgeColor = '#444';
+            } else if (timeoutNear) {
+                alertBadge = `<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(239,159,39,0.20); color:#854F0B; margin-left:6px; font-weight:700;">⏰ 만료 임박 (D+${holdDays})</span>`;
+            }
+            
+            currentInfo = `매수가 ${t.rate.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})} → 현재 ${currentPrice.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+            dayInfo = ` · D+${holdDays} / ${toDays}일`;
+        } else if (t.type === 'sell') { 
+            pnl = '매도 기록'; 
+            pnlColor = '#1a73e8';
+            currentInfo = `${t.rate.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원`;
+        }
         
-        // 진행 중 매수는 청산 버튼 추가
+        // 진행 중 매수는 청산 버튼 추가 (자동 감지 상태에 따라 강조 색깔)
+        const tpBtnStyle = tpReached 
+            ? 'background:#1D9E75; color:white; border:1px solid #1D9E75;'
+            : 'background:transparent; color:#1D9E75; border:1px solid #1D9E75;';
+        const slBtnStyle = slReached
+            ? 'background:#E24B4A; color:white; border:1px solid #E24B4A;'
+            : 'background:transparent; color:#E24B4A; border:1px solid #E24B4A;';
+        
         const closeButtons = (t.type === 'buy') ? `
             <div style="margin-top:6px; display:flex; gap:4px;">
-                <button onclick="closeTrade(${t.id}, 'tp')" style="flex:1; padding:4px 6px; border:1px solid #1D9E75; background:transparent; color:#1D9E75; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">익절</button>
-                <button onclick="closeTrade(${t.id}, 'sl')" style="flex:1; padding:4px 6px; border:1px solid #E24B4A; background:transparent; color:#E24B4A; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">손절</button>
+                <button onclick="closeTrade(${t.id}, 'tp')" style="flex:1; padding:4px 6px; ${tpBtnStyle} border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">익절</button>
+                <button onclick="closeTrade(${t.id}, 'sl')" style="flex:1; padding:4px 6px; ${slBtnStyle} border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">손절</button>
                 <button onclick="closeTrade(${t.id}, 'timeout')" style="flex:1; padding:4px 6px; border:1px solid #888; background:transparent; color:#888; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">만료</button>
             </div>` : '';
         
-        const badge = t.type === 'buy' ? '<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(26,115,232,0.15); color:#1a73e8; margin-left:6px; font-weight:700;">진행</span>' : '';
+        const badge = t.type === 'buy' 
+            ? `<span style="font-size:10px; padding:2px 6px; border-radius:4px; background:${badgeBg}; color:${badgeColor}; margin-left:6px; font-weight:700;">${badgeText}</span>${alertBadge}` 
+            : '';
         
-        return `<div class="trade-entry" style="border-left:3px solid #1a73e8;">
+        const memoStr = t.memo ? ' · ' + t.memo : '';
+        
+        return `<div class="trade-entry" style="border-left:3px solid ${borderColor}; ${cardBg}">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
               <div class="trade-entry-left" style="flex:1;">
                 <div class="trade-entry-date">${t.date} ${t.type === 'buy' ? '📥매수' : '📤매도'}${badge}</div>
-                <div class="trade-entry-info">${t.rate.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원 · ${(t.amount/10000).toFixed(0)}만원${t.memo ? ' · '+t.memo : ''}</div>
+                <div class="trade-entry-info">${currentInfo} · ${(t.amount/10000).toFixed(0)}만원${dayInfo}${memoStr}</div>
               </div>
               <div class="trade-entry-right" style="display:flex; align-items:center;">
                 <div class="trade-entry-pnl" style="color:${pnlColor};">${pnl}</div>
