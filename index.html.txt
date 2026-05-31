@@ -446,7 +446,6 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#EF9F27;"></div>이동평균</div>
               <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(226,75,74,0.3);"></div>BB 밴드</div>
               <div class="chart-legend-item"><div id="chart-ind-dot" class="chart-legend-dot" style="background:rgba(29,158,117,0.95);"></div><span id="chart-ind-label">지표</span> <span id="current-rsi-display" style="font-weight:700; color:var(--text-main);"></span></div>
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#1D9E75; transform:rotate(180deg); width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:8px solid #1D9E75; border-radius:0;"></div>매수 시그널</div>
             </div>
         </div>
       </div>
@@ -1150,9 +1149,6 @@ function renderChart(chartData) {
     
     const wrs = chartData.data.map(d => (d.rsi === null || d.rsi === undefined) ? null : d.rsi);
     const targetWrs = chartData.data.map(() => wrTarget);
-    
-    // 매수 시그널 마커 데이터 (시그널 발생일에 종가 위치에 표시)
-    const signalMarks = chartData.data.map(d => d.signal ? d.close : null);
 
     const lastWr = wrs[wrs.length - 1];
     const currentWr = (lastWr === null || lastWr === undefined) ? null : lastWr;
@@ -1183,7 +1179,6 @@ function renderChart(chartData) {
                 { label: 'BB 하단', data: lowers, borderColor: 'rgba(226,75,74,0.70)', borderWidth: 1.25, borderDash: [2,2], pointRadius: 0, fill: '-1', backgroundColor: 'rgba(226,75,74,0.05)', yAxisID: 'y' },
                 { label: '이동평균', data: mas, borderColor: '#EF9F27', borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y' },
                 { label: '종가', data: closes, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y' },
-                { label: '매수 시그널', data: signalMarks, borderColor: 'transparent', backgroundColor: '#1D9E75', pointRadius: 6, pointStyle: 'triangle', pointBorderColor: '#fff', pointBorderWidth: 1.5, showLine: false, yAxisID: 'y' },
                 { label: '기준선', data: targetWrs, borderColor: indTargetColor, borderWidth: 1.25, borderDash: [3,3], pointRadius: 0, fill: false, yAxisID: 'y1' },
                 { label: indLabel, data: wrs, borderColor: indColor, borderWidth: 1.5, pointRadius: 0, fill: false, yAxisID: 'y1', spanGaps: true }
             ]

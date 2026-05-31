@@ -599,10 +599,6 @@ def get_chart(currency: str = "USD", days: int = 90):
         df['BB_Upper'] = ma + bb_sigma * std
         df['BB_Lower'] = ma - bb_sigma * std
         
-        # 과거 시그널 마커 (지표 조건 + BB 조건 동시 통과)
-        # VIX 필터는 시계열 데이터가 별도 필요해서 차트 마커에는 생략 (실시간 시그널엔 적용)
-        df['SIGNAL'] = (df['IND'] <= strat['th']) & (df['Close'] <= df['BB_Lower'])
-        
         df = df.tail(days)
         df.dropna(inplace=True)
         
@@ -616,7 +612,6 @@ def get_chart(currency: str = "USD", days: int = 90):
                 "bb_upper": round(float(row['BB_Upper']) * mult, 2),
                 "bb_lower": round(float(row['BB_Lower']) * mult, 2),
                 "rsi": round(float(row['IND']), 1) if not pd.isna(row['IND']) else None,
-                "signal": bool(row['SIGNAL']) if not pd.isna(row['SIGNAL']) else False,
             })
         
         return {
