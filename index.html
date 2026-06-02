@@ -344,44 +344,21 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         align-items: flex-start;
     }
     .app-container {
-        max-width: 1080px;
+        max-width: 760px;
     }
-    /* 헤더는 가로로 넓게 */
-    #list-view .header,
-    #detail-view .header {
-        max-width: 1080px;
-    }
-    /* 통화 카드 리스트 — PC에선 2열 */
+    /* 통화 카드 리스트 — PC에선 2열 (이건 모드전환 영향 없어 안전) */
     .currency-list {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
-    /* 시그널 배너는 전체 폭 */
     #signal-banner { grid-column: 1 / -1; }
-
-    /* 상세 화면(detail) — 카드 영역만 2열 그리드로 */
-    #detail-view .detail-card > #investor-action-area,
-    #detail-view .detail-card {
-        /* 컨테이너는 그대로, 내부 패널만 배치 */
-    }
-    /* 투자자/여행자 패널들을 2열로 흐르게 (masonry 느낌) */
-    .pc-grid-zone {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        align-items: start;
-    }
-    .pc-grid-zone > .pc-full {
-        grid-column: 1 / -1;
-    }
-    /* 차트는 PC에서 더 크게 */
-    .chart-canvas-wrapper { height: 300px; }
+    /* 차트는 PC에서 조금 더 크게 */
+    .chart-canvas-wrapper { height: 280px; }
 }
 
-/* 아주 넓은 화면 */
 @media (min-width: 1280px) {
-    .app-container { max-width: 1200px; }
+    .app-container { max-width: 820px; }
 }
 </style>
 </head>
@@ -448,8 +425,8 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
       </div>
 
       <!-- PC에서 2열로 배치되는 영역 (모바일은 그대로 세로 1열) -->
-      <div class="pc-grid-zone">
-      <div class="inv-board pc-full" id="investor-board" style="display:none;">
+      <div>
+      <div class="inv-board" id="investor-board" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
             <div style="font-size: 13px; font-weight: 800;">⚡ 매수 시그널</div>
             <div id="inv-status-badge" style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px;"></div>
@@ -458,18 +435,18 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <div id="inv-backtest-line" style="margin-top: 10px; padding: 8px 12px; background: rgba(26,115,232,0.08); border-radius: 6px; font-size: 11px; color: var(--text-sub); text-align: center;"></div>
       </div>
 
-      <div id="dday-panel" class="slider-container pc-full">
+      <div id="dday-panel" class="slider-container">
         <div class="slider-header"><span>✈️ 출국까지 남은 일수</span><span style="color:#1a73e8" id="dDayLabel">D-14</span></div>
         <input type="range" id="dDaySlider" min="1" max="30" value="14" oninput="changeDDay()">
       </div>
       
-      <div class="msg-box pc-full" id="msg-box-traveler">
+      <div class="msg-box" id="msg-box-traveler">
         <strong style="color:var(--text-main)">환전 가이드</strong><br/>
         <div id="d-aiMsg" style="color:var(--text-sub); margin-top: 6px; font-size: 13px; line-height: 1.5;">데이터 로딩 중...</div>
         <div id="stats-container" class="stats-grid" style="display:none;"></div>
       </div>
 
-      <div class="sub-panel pc-full" id="quant-sub-panel">
+      <div class="sub-panel" id="quant-sub-panel">
           <div class="collapsible-header" onclick="togglePanel('sub-scores-container', this)">
               <div style="font-size: 13px; font-weight: 800;">📊 세부 지표 분석</div>
               <div class="toggle-icon">▼</div>
