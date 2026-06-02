@@ -333,6 +333,56 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 .trade-entry-pnl { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 800; }
 .trade-entry-del { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 14px; margin-left: 8px; }
 .trade-empty { text-align: center; padding: 20px; color: var(--text-sub); font-size: 12px; }
+
+/* ============================================ */
+/* PC 전용 레이아웃 (900px 이상에서만 적용)        */
+/* 모바일(폰)은 절대 영향 없음 — min-width 조건    */
+/* ============================================ */
+@media (min-width: 900px) {
+    body {
+        padding: 2rem;
+        align-items: flex-start;
+    }
+    .app-container {
+        max-width: 1080px;
+    }
+    /* 헤더는 가로로 넓게 */
+    #list-view .header,
+    #detail-view .header {
+        max-width: 1080px;
+    }
+    /* 통화 카드 리스트 — PC에선 2열 */
+    .currency-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    /* 시그널 배너는 전체 폭 */
+    #signal-banner { grid-column: 1 / -1; }
+
+    /* 상세 화면(detail) — 카드 영역만 2열 그리드로 */
+    #detail-view .detail-card > #investor-action-area,
+    #detail-view .detail-card {
+        /* 컨테이너는 그대로, 내부 패널만 배치 */
+    }
+    /* 투자자/여행자 패널들을 2열로 흐르게 (masonry 느낌) */
+    .pc-grid-zone {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+    .pc-grid-zone > .pc-full {
+        grid-column: 1 / -1;
+    }
+    /* 차트는 PC에서 더 크게 */
+    .chart-canvas-wrapper { height: 300px; }
+}
+
+/* 아주 넓은 화면 */
+@media (min-width: 1280px) {
+    .app-container { max-width: 1200px; }
+}
 </style>
 </head>
 <body class="traveler" id="bodyTheme">
@@ -371,21 +421,22 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
             <path d="M 116.52 34.76 A 120 120 0 0 1 165.04 30.95" fill="none" stroke="#666666" stroke-width="22"/>
             <path d="M 172.49 32.13 A 120 120 0 0 1 217.45 50.75" fill="none" stroke="#EF9F27" stroke-width="22"/>
             <path d="M 223.55 55.18 A 120 120 0 0 1 270.0 150.0" fill="none" stroke="#E24B4A" stroke-width="22"/>
-            <!-- 등급 라벨 (각 호 중앙) -->
-            <text x="61.9" y="114.4" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="800">A</text>
-            <text x="98.3" y="70.3" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="800">B</text>
-            <text x="143.4" y="55.2" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="800">C</text>
-            <text x="185.6" y="61.9" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="800">D</text>
-            <text x="235.4" y="108.4" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="800">F</text>
             <!-- 경계 숫자 (JS로 통화별 채움) -->
             <text id="cut-ab" x="49.4" y="55.5" text-anchor="middle" fill="var(--text-sub)" font-size="9"></text>
             <text id="cut-bc" x="103.3" y="20.2" text-anchor="middle" fill="var(--text-sub)" font-size="9"></text>
             <text id="cut-cd" x="167.3" y="16.0" text-anchor="middle" fill="var(--text-sub)" font-size="9"></text>
             <text id="cut-df" x="227.6" y="35.9" text-anchor="middle" fill="var(--text-sub)" font-size="9"></text>
+            <!-- 바늘 (라벨보다 먼저 그려서 라벨이 위에 보이게) -->
             <g id="needleG" style="transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
               <line x1="150" y1="150" x2="150" y2="40" stroke="var(--text-main)" stroke-width="4" stroke-linecap="round"/>
               <circle cx="150" cy="150" r="8" fill="var(--text-main)"/>
             </g>
+            <!-- 등급 라벨 (각 호 중앙, 바늘 위에) -->
+            <text x="35.9" y="112.9" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="800" style="paint-order:stroke; stroke:rgba(0,0,0,0.25); stroke-width:2px;">A</text>
+            <text x="79.5" y="52.9" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="800" style="paint-order:stroke; stroke:rgba(0,0,0,0.25); stroke-width:2px;">B</text>
+            <text x="150.0" y="30.0" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="800" style="paint-order:stroke; stroke:rgba(0,0,0,0.25); stroke-width:2px;">C</text>
+            <text x="220.5" y="52.9" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="800" style="paint-order:stroke; stroke:rgba(0,0,0,0.25); stroke-width:2px;">D</text>
+            <text x="264.1" y="112.9" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="800" style="paint-order:stroke; stroke:rgba(0,0,0,0.25); stroke-width:2px;">F</text>
           </svg>
           <div class="gauge-label">
             <div class="gauge-score" id="d-score">--</div>
@@ -396,7 +447,9 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <!-- 비교 점수 제거됨 (과거 점수 추세 기능 미사용) -->
       </div>
 
-      <div class="inv-board" id="investor-board" style="display:none;">
+      <!-- PC에서 2열로 배치되는 영역 (모바일은 그대로 세로 1열) -->
+      <div class="pc-grid-zone">
+      <div class="inv-board pc-full" id="investor-board" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
             <div style="font-size: 13px; font-weight: 800;">⚡ 매수 시그널</div>
             <div id="inv-status-badge" style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px;"></div>
@@ -405,18 +458,18 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
         <div id="inv-backtest-line" style="margin-top: 10px; padding: 8px 12px; background: rgba(26,115,232,0.08); border-radius: 6px; font-size: 11px; color: var(--text-sub); text-align: center;"></div>
       </div>
 
-      <div id="dday-panel" class="slider-container">
+      <div id="dday-panel" class="slider-container pc-full">
         <div class="slider-header"><span>✈️ 출국까지 남은 일수</span><span style="color:#1a73e8" id="dDayLabel">D-14</span></div>
         <input type="range" id="dDaySlider" min="1" max="30" value="14" oninput="changeDDay()">
       </div>
       
-      <div class="msg-box" id="msg-box-traveler">
+      <div class="msg-box pc-full" id="msg-box-traveler">
         <strong style="color:var(--text-main)">환전 가이드</strong><br/>
         <div id="d-aiMsg" style="color:var(--text-sub); margin-top: 6px; font-size: 13px; line-height: 1.5;">데이터 로딩 중...</div>
         <div id="stats-container" class="stats-grid" style="display:none;"></div>
       </div>
 
-      <div class="sub-panel" id="quant-sub-panel">
+      <div class="sub-panel pc-full" id="quant-sub-panel">
           <div class="collapsible-header" onclick="togglePanel('sub-scores-container', this)">
               <div style="font-size: 13px; font-weight: 800;">📊 세부 지표 분석</div>
               <div class="toggle-icon">▼</div>
@@ -525,6 +578,8 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
       </div>
 
       <div class="macro-box" id="macro-panel" style="display:none;"></div>
+      </div>
+      <!-- pc-grid-zone 끝 -->
 
       <div class="action-section" id="action-panel">
         <div id="traveler-action">
@@ -557,14 +612,14 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 <script>
 const metaData = { USD: { flag: '🇺🇸', name: '달러 / 원', pair: 'USD/KRW' }, JPY: { flag: '🇯🇵', name: '엔 / 원', pair: 'JPY/KRW (100엔)' }, EUR: { flag: '🇪🇺', name: '유로 / 원', pair: 'EUR/KRW' }, AUD: { flag: '🇦🇺', name: '호주달러 / 원', pair: 'AUD/KRW' }, THB: { flag: '🇹🇭', name: '바트 / 원', pair: 'THB/KRW' }};
 const order = ['USD', 'JPY', 'EUR', 'AUD', 'THB'];
-const subMap = {"WR10": "WR (10일)", "WR7": "WR (7일)", "WR14": "WR (14일)", "WR20": "WR (20일)", "MOM3": "3일 모멘텀", "SYNC": "다통화 동조성", "DISP10": "10일 이격도", "DISP20": "20일 이격도", "STOCH": "스토캐스틱"};
+const subMap = {"WR10": "WR (10일)", "WR7": "WR (7일)", "WR14": "WR (14일)", "WR20": "WR (20일)", "RSI7": "RSI (7일)", "RSI14": "RSI (14일)", "MOM3": "3일 모멘텀", "SYNC": "다통화 동조성", "DISP10": "10일 이격도", "DISP20": "20일 이격도", "STOCH": "스토캐스틱"};
 
 // 지표 설명 데이터
 const indicatorHelp = {
     'RSI': {
         title: 'RSI (상대강도지수)',
         desc: '<p><strong>최근 가격 흐름에서 지금이 과매도(너무 많이 팔림) 상태인지 보는 지표예요.</strong> 낮을수록 평소보다 싸게 눌린 상태예요.</p>',
-        scale: '<p>📊 <strong>0~100</strong>으로 표시돼요<br>→ <strong>30~45 이하</strong>: 과매도 (매수 구간)<br>→ <strong>50 부근</strong>: 중립<br>→ <strong>70 이상</strong>: 과매수 (비쌈)<br><br>※ 통화별로 신호 기준선이 달라요 (USD ≤35 · THB ≤45)</p>'
+        scale: '<p>📊 <strong>0~100</strong>으로 표시돼요<br>→ <strong>30~40 이하</strong>: 과매도 (매수 구간)<br>→ <strong>50 부근</strong>: 중립<br>→ <strong>70 이상</strong>: 과매수 (비쌈)<br><br>※ 통화마다 기준선이 달라요 (예: 달러는 ≤35)</p>'
     },
     'WR': {
         title: 'WR (Williams %R)',
@@ -1039,9 +1094,10 @@ function updateDetailView(currencyCode) {
                 color = val <= 40 ? "#1D9E75" : (val <= 60 ? "#888888" : "#E24B4A");
             }
 
-            // 도움말 키 결정 (WR10/WR7/WR14/WR20 → WR, DISP10/DISP20 → DISP)
+            // 도움말 키 결정 (WR10/WR7/WR14/WR20 → WR, RSI7/RSI14 → RSI, DISP10/DISP20 → DISP)
             let helpKey = '';
             if (key.startsWith('WR')) helpKey = 'WR';
+            else if (key.startsWith('RSI')) helpKey = 'RSI';
             else if (key.startsWith('DISP')) helpKey = 'DISP';
             else if (key === 'MOM3') helpKey = 'MOM3';
             else if (key === 'SYNC') helpKey = 'SYNC';
