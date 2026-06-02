@@ -28,6 +28,11 @@ _data_store = {
     'ready': False,  # 첫 데이터 로드 완료 여부
 }
 _lock = threading.Lock()
+
+# 계산 결과 캐시 — 같은 데이터(같은 last_update)에 대해 통화별 1회만 계산.
+# 사람이 동시에 몰려도 통화당 계산은 1분에 한 번만 수행됨.
+_calc_cache = {}        # { currency: df }
+_calc_cache_stamp = 0   # 캐시가 만들어진 시점의 last_update
 DATA_DIR = './outputs'
 
 try:
@@ -138,6 +143,29 @@ def fetch_from_yfinance():
     return raw_data, macro_res
 
 
+def _warm_calc_cache():
+    """데이터 갱신 직후 5개 통화 지표를 미리 계산해 캐시에 채움.
+    사용자 요청 시점엔 계산 없이 캐시만 읽으므로 동시 접속에 강함."""
+    global _calc_cache, _calc_cache_stamp
+    try:
+        with _lock:
+            data = dict(_data_store.get('data', {}))
+            stamp = _data_store.get('last_update', 0)
+        if not data:
+            return
+        warmed = {}
+        for c in ["USD", "JPY", "EUR", "AUD", "THB"]:
+            if c in data:
+                warmed[c] = _calc_all_indicators_raw(data, c)
+        with _lock:
+            # 워밍 도중 데이터가 또 안 바뀌었을 때만 반영
+            if stamp == _data_store.get('last_update', 0):
+                _calc_cache = warmed
+                _calc_cache_stamp = stamp
+        print(f"🔥 캐시 워밍 완료: {len(warmed)}개 통화")
+    except Exception as e:
+        print(f"⚠️ 캐시 워밍 실패: {e}")
+
 def background_updater():
     """
     1분마다 백그라운드에서 yfinance 데이터 갱신.
@@ -151,6 +179,7 @@ def background_updater():
                 _data_store['data'] = new_data
                 _data_store['macro'] = new_macro
                 _data_store['last_update'] = time.time()
+            _warm_calc_cache()  # 갱신 직후 지표 미리 계산 (사용자 요청 부담 제거)
             print(f"✅ 백그라운드 갱신 완료: {time.strftime('%H:%M:%S')}")
         except Exception as e:
             # 실패해도 이전 데이터 유지, 앱 계속 실행
@@ -185,6 +214,25 @@ def calc_williams_r(high, low, close, period):
     return ((highest - close) / (highest - lowest)) * -100
 
 def calc_all_indicators(data, currency):
+    """v7 지표 전부 계산 — 결과를 캐시해 동시 요청 시 재계산 방지"""
+    global _calc_cache, _calc_cache_stamp
+    stamp = _data_store.get('last_update', 0)
+    with _lock:
+        # 데이터가 갱신되면(타임스탬프 변경) 캐시 전체 무효화
+        if stamp != _calc_cache_stamp:
+            _calc_cache = {}
+            _calc_cache_stamp = stamp
+        if currency in _calc_cache:
+            return _calc_cache[currency]
+    # 캐시에 없으면 계산 (락 밖에서 — 무거운 연산 동안 다른 통화 요청 막지 않음)
+    df = _calc_all_indicators_raw(data, currency)
+    with _lock:
+        # 계산 중 데이터가 또 안 바뀌었으면 캐시에 저장
+        if stamp == _data_store.get('last_update', 0):
+            _calc_cache[currency] = df
+    return df
+
+def _calc_all_indicators_raw(data, currency):
     """v7 지표 전부 계산 — score API와 signals API 공용"""
     close = data[currency]['Close']
     high = data[currency]['High']
