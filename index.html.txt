@@ -1218,13 +1218,15 @@ function externalTooltip(ctx, chartData) {
 
     // 지표 라벨 (통화별 RSI(7) / WR(21) 등)
     const indKey = chartData.ind_label || '지표';
+    // 선 색과 동일하게 — RSI(USD)는 보라, WR(나머지)는 초록
+    const tipIndColor = indKey.startsWith('RSI') ? 'rgba(123, 97, 255, 0.95)' : 'rgba(29,158,117,0.95)';
 
     const order = ['종가', '이동평균', 'BB', indKey];
     const color = {
         '종가':     '#1a73e8',
         '이동평균': '#EF9F27',
         'BB':       'rgba(226,75,74,0.85)',
-        [indKey]:   'rgba(29,158,117,0.95)',
+        [indKey]:   tipIndColor,
     };
     const rows = {
         '종가':     fmtNum(d.close),
