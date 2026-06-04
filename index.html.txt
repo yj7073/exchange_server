@@ -881,6 +881,8 @@ function togglePanel(contentId, headerElement) {
 
 function openDetail(currencyCode) {
     activeCurrency = currencyCode;
+    // 시스템(휴대폰) 뒤로가기 시 앱이 꺼지지 않고 리스트로 돌아가도록 히스토리 추가
+    history.pushState({ view: 'detail', code: currencyCode }, '');
     document.getElementById('list-view').style.transform = "translateX(-20%)"; document.getElementById('list-view').style.opacity = "0";
     setTimeout(() => { document.getElementById('list-view').style.display = 'none'; }, 300);
     const detailView = document.getElementById('detail-view'); detailView.style.display = 'block';
@@ -1091,11 +1093,28 @@ function updateDetailView(currencyCode) {
     // 거시 경고 패널 제거됨 — VIX는 매수 시그널에 통합, 다른 거시 지표는 검증 결과 예측력 약해 제외
 }
 
+// 앱 내 '뒤로가기' 버튼 → 히스토리를 한 단계 되돌림 (popstate가 실제 닫기 처리)
 function closeDetail() {
+    const detailView = document.getElementById('detail-view');
+    if (detailView.classList.contains('active')) {
+        history.back();
+    } else {
+        _doCloseDetail();
+    }
+}
+// 실제로 상세 화면을 닫고 리스트로 돌아가는 동작
+function _doCloseDetail() {
     activeCurrency = null; document.getElementById('detail-view').classList.remove('active');
     const listView = document.getElementById('list-view'); listView.style.display = 'block';
     setTimeout(() => { document.getElementById('detail-view').style.display = 'none'; listView.style.opacity = "1"; listView.style.transform = "translateX(0)"; }, 300);
 }
+// 시스템(휴대폰) 뒤로가기 또는 history.back() → 상세가 열려있으면 앱 종료 대신 리스트로
+window.addEventListener('popstate', function() {
+    const detailView = document.getElementById('detail-view');
+    if (detailView && detailView.classList.contains('active')) {
+        _doCloseDetail();
+    }
+});
 let ddayTimer; function changeDDay() { const val = document.getElementById('dDaySlider').value; currentDDay = val; document.getElementById('dDayLabel').textContent = "D-" + val; clearTimeout(ddayTimer); ddayTimer = setTimeout(fetchAllData, 500); }
 function updateTime() { const now = new Date(); const d = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')]; const t = [String(now.getHours()).padStart(2, '0'), String(now.getMinutes()).padStart(2, '0'), String(now.getSeconds()).padStart(2, '0')]; document.getElementById('lastUpdate').textContent = `실시간 · ${d.join('.')}. ${t.join(':')}`; }
 
