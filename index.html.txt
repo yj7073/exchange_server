@@ -697,10 +697,18 @@ function showAllHelp() {
         if (data.tip) html += `<div class="tip">${data.tip}</div>`;
     });
     document.getElementById('help-content').innerHTML = html;
+    // 모달도 히스토리 레이어로 추가 → 뒤로가기 시 모달부터 닫힘
+    history.pushState({ view: 'modal' }, '');
     document.getElementById('help-modal').classList.add('active');
 }
 
 function closeHelp() {
+    const modal = document.getElementById('help-modal');
+    if (modal.classList.contains('active')) {
+        history.back();   // 실제 닫기는 popstate가 처리
+    }
+}
+function _doCloseHelp() {
     document.getElementById('help-modal').classList.remove('active');
 }
 
@@ -1108,18 +1116,16 @@ function _doCloseDetail() {
     const listView = document.getElementById('list-view'); listView.style.display = 'block';
     setTimeout(() => { document.getElementById('detail-view').style.display = 'none'; listView.style.opacity = "1"; listView.style.transform = "translateX(0)"; }, 300);
 }
-// 시스템(휴대폰) 뒤로가기 또는 history.back() → 모달>상세 순으로 닫고, 앱 종료 방지
+// 시스템(휴대폰) 뒤로가기 → 모달 > 상세 순으로 한 겹씩 닫기 (앱 종료 방지)
 window.addEventListener('popstate', function() {
     const modal = document.getElementById('help-modal');
     if (modal && modal.classList.contains('active')) {
-        // 도움말 팝업이 열려있으면 팝업만 닫고, 상세는 유지
-        closeHelp();
-        history.pushState({ view: 'detail', code: activeCurrency }, '');
+        _doCloseHelp();   // 모달 한 겹 닫기
         return;
     }
     const detailView = document.getElementById('detail-view');
     if (detailView && detailView.classList.contains('active')) {
-        _doCloseDetail();
+        _doCloseDetail(); // 상세 한 겹 닫기
     }
 });
 let ddayTimer; function changeDDay() { const val = document.getElementById('dDaySlider').value; currentDDay = val; document.getElementById('dDayLabel').textContent = "D-" + val; clearTimeout(ddayTimer); ddayTimer = setTimeout(fetchAllData, 500); }
