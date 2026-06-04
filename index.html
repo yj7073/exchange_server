@@ -1108,8 +1108,15 @@ function _doCloseDetail() {
     const listView = document.getElementById('list-view'); listView.style.display = 'block';
     setTimeout(() => { document.getElementById('detail-view').style.display = 'none'; listView.style.opacity = "1"; listView.style.transform = "translateX(0)"; }, 300);
 }
-// 시스템(휴대폰) 뒤로가기 또는 history.back() → 상세가 열려있으면 앱 종료 대신 리스트로
+// 시스템(휴대폰) 뒤로가기 또는 history.back() → 모달>상세 순으로 닫고, 앱 종료 방지
 window.addEventListener('popstate', function() {
+    const modal = document.getElementById('help-modal');
+    if (modal && modal.classList.contains('active')) {
+        // 도움말 팝업이 열려있으면 팝업만 닫고, 상세는 유지
+        closeHelp();
+        history.pushState({ view: 'detail', code: activeCurrency }, '');
+        return;
+    }
     const detailView = document.getElementById('detail-view');
     if (detailView && detailView.classList.contains('active')) {
         _doCloseDetail();
