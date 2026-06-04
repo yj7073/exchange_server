@@ -682,6 +682,8 @@ function showHelp(key) {
     let html = data.desc + data.scale;
     if (data.tip) html += `<div class="tip">${data.tip}</div>`;
     document.getElementById('help-content').innerHTML = html;
+    // 모달도 히스토리 레이어로 추가 → 뒤로가기 시 모달부터 닫힘
+    history.pushState({ view: 'modal' }, '');
     document.getElementById('help-modal').classList.add('active');
 }
 
