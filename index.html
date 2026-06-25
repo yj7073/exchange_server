@@ -333,6 +333,76 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 .trade-entry-pnl { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 800; }
 .trade-entry-del { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 14px; margin-left: 8px; }
 .trade-empty { text-align: center; padding: 20px; color: var(--text-sub); font-size: 12px; }
+
+/* ===== PC 와이드 레이아웃 (1024px 이상에서만, 모바일은 전혀 영향 없음) ===== */
+#pc-rail { display: none; }
+@media (min-width: 1024px) {
+  body { align-items: center; padding: 40px; }
+  /* 2단: 좌측 레일 + 우측 앱 */
+  .app-container {
+    max-width: 1160px; width: 100%;
+    display: grid; grid-template-columns: 1fr 460px; gap: 64px;
+    align-items: center;
+    overflow: visible;            /* 기존 overflow:hidden 무효화 */
+  }
+  /* 좌측 레일 표시 */
+  #pc-rail { display: block; position: sticky; top: 40px; max-width: 440px; }
+  #pc-rail .pc-brand { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 20px; color: var(--text-main); }
+  #pc-rail .pc-head { font-size: 34px; font-weight: 800; line-height: 1.28; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--text-main); }
+  #pc-rail .pc-head .accent { color: #1456B8; }
+  #pc-rail .pc-lede { font-size: 14px; line-height: 1.75; color: var(--text-sub); font-weight: 500; margin-bottom: 26px; max-width: 380px; }
+  #pc-rail .pc-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sub); margin-bottom: 12px; }
+  #pc-rail .pc-legend { display: flex; gap: 6px; margin-bottom: 26px; }
+  #pc-rail .pc-lg { flex: 1; text-align: center; }
+  #pc-rail .pc-lg .bar { height: 7px; border-radius: 4px; margin-bottom: 6px; }
+  #pc-rail .pc-lg .t { font-size: 9px; font-weight: 700; color: var(--text-sub); }
+  #pc-rail .pc-qr { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 13px; background: var(--card-bg); border: 1px solid var(--border-color); }
+  #pc-rail .pc-qr .qbox { width: 56px; height: 56px; border-radius: 8px; background: #1456B8; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; flex-shrink: 0; }
+  #pc-rail .pc-qr .qt { font-size: 12px; font-weight: 700; color: var(--text-main); }
+  #pc-rail .pc-qr .qs { font-size: 11px; color: var(--text-sub); margin-top: 3px; }
+
+  /* 추천 통화 카드 (레퍼런스) */
+  #pc-rail .pc-rec { align-items: center; gap: 12px; padding: 13px 15px; border-radius: 13px; background: linear-gradient(100deg, rgba(21,168,107,0.12), rgba(21,168,107,0.05)); border: 1px solid rgba(21,168,107,0.25); margin-bottom: 24px; cursor: pointer; transition: transform .12s; }
+  #pc-rail .pc-rec:hover { transform: translateY(-1px); }
+  #pc-rail .pc-rec.show { display: flex !important; }
+  #pc-rail .pc-rec .ribadge { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 11px; background: #15A86B; color: #fff; flex-shrink: 0; }
+  #pc-rail .pc-rec .ribadge .g { font-size: 17px; font-weight: 800; line-height: 1; }
+  #pc-rail .pc-rec .ribadge .s { font-size: 9px; font-weight: 700; font-family: 'Space Mono', monospace; margin-top: 2px; opacity: .9; }
+  #pc-rail .pc-rec .rtxt .k { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #0d6b46; margin-bottom: 3px; }
+  #pc-rail .pc-rec .rtxt .v { font-size: 14px; font-weight: 700; line-height: 1.3; color: #14342a; }
+  #pc-rail .pc-rec .rtxt .v b { color: #0d8a59; }
+  /* 시세 리스트 캡션 힌트 */
+  #pc-rail .pc-cap-hint { margin-left: auto; font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none; color: #b4b4ac; }
+  /* 클릭 가능한 시세 리스트 (레퍼런스) */
+  #pc-rail .pc-ticker { display: flex; flex-direction: column; gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+  #pc-rail .pc-tk { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; background: var(--card-bg); cursor: pointer; transition: background .12s; border-left: 3px solid transparent; }
+  #pc-rail .pc-tk:hover { filter: brightness(0.98); }
+  #pc-rail .pc-tk.sel { border-left-color: #1456B8; }
+  #pc-rail .pc-tk .l { display: flex; align-items: center; gap: 9px; }
+  #pc-rail .pc-tk .fl { font-size: 17px; }
+  #pc-rail .pc-tk .cd { font-size: 12px; font-weight: 700; }
+  #pc-rail .pc-tk .gchip { font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; }
+  #pc-rail .pc-tk .px { font-size: 13px; font-weight: 700; font-family: 'Space Mono', monospace; }
+
+  /* 우측 앱: 카드 형태 + 그림자 */
+  #list-view, #detail-view { grid-column: 2; grid-row: 1; }
+  #list-view {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 26px; padding: 24px 22px;
+    box-shadow: 0 24px 70px -22px rgba(20,40,80,0.22), 0 2px 8px rgba(0,0,0,0.04);
+  }
+  /* 핵심: PC에서 detail-view를 일반 흐름(in-flow)으로 → 검은화면 버그 제거 */
+  #detail-view {
+    position: relative; top: auto; left: auto; width: 100%; height: auto;
+    transform: none !important; opacity: 1; pointer-events: auto;
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 26px; padding: 16px 22px 24px;
+    box-shadow: 0 24px 70px -22px rgba(20,40,80,0.22), 0 2px 8px rgba(0,0,0,0.04);
+    display: none;
+  }
+  /* PC: 상세가 열리면(JS가 display:block) 리스트 숨기고 상세만 카드로 */
+  #detail-view.active { display: block !important; transform: none !important; }
+}
 </style>
 </head>
 <body class="traveler" id="bodyTheme">
@@ -340,6 +410,23 @@ input[type="range"] { width: 100%; accent-color: #1a73e8; }
 <div id="loading">로딩 중...</div>
 
 <div class="app-container">
+  <div id="pc-rail">
+    <div class="pc-brand">🧭 환율 네비게이터</div>
+    <div class="pc-head">지금 환전,<br><span class="accent">살 때일까 기다릴 때일까?</span></div>
+    <div class="pc-lede">20년 환율 데이터로 검증한 환전 적기 지수. 출국일까지 D-Day를 맞춰 가장 유리한 타이밍을 알려드려요.</div>
+    <div id="pc-rec" class="pc-rec" style="display:none;"></div>
+    <div class="pc-cap">실시간 시세 <span class="pc-cap-hint">클릭해서 보기 →</span></div>
+    <div id="pc-ticker" class="pc-ticker"></div>
+    <div class="pc-cap" style="margin-top:22px;">환전 적기 등급</div>
+    <div class="pc-legend">
+      <div class="pc-lg"><div class="bar" style="background:#15A86B"></div><div class="t">A 매우유리</div></div>
+      <div class="pc-lg"><div class="bar" style="background:#5FC79A"></div><div class="t">B 유리</div></div>
+      <div class="pc-lg"><div class="bar" style="background:#A8ABA3"></div><div class="t">C 보통</div></div>
+      <div class="pc-lg"><div class="bar" style="background:#EBA13C"></div><div class="t">D 불리</div></div>
+      <div class="pc-lg"><div class="bar" style="background:#E05650"></div><div class="t">F 매우불리</div></div>
+    </div>
+  </div>
+
   <div id="list-view">
     <div class="header">
       <div>
@@ -841,6 +928,37 @@ function renderMasterList() {
         const info = getGradeInfo(d.grade);
         return `<div class="currency-card" onclick="openDetail('${k}')"><div class="card-left"><div class="flag-box">${meta.flag}</div><div><div class="cur-name">${meta.name}</div><div class="cur-pair">${meta.pair}</div></div></div><div class="card-right"><div class="cur-price">${d.price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div><div class="cur-grade c-${d.grade}">${d.rsi} · ${info.text}</div></div></div>`;
     }).join('');
+    renderPcRail();  // PC 좌측 레일도 같은 데이터로 채움 (모바일엔 영향 없음)
+}
+
+// PC 좌측 레일 — 추천 통화 카드 + 실시간 시세 리스트 (기존 데이터 재사용)
+function renderPcRail() {
+    const ticker = document.getElementById('pc-ticker');
+    const rec = document.getElementById('pc-rec');
+    if (!ticker) return;
+    const gradeChipBg = { A:'rgba(21,168,107,0.14)', B:'rgba(61,169,128,0.14)', C:'rgba(138,138,130,0.16)', D:'rgba(217,142,43,0.15)', F:'rgba(224,86,80,0.14)' };
+    const gradeChipCol = { A:'#0B7A4B', B:'#1E8A5E', C:'#5F6259', D:'#B06A12', F:'#CC322F' };
+    // 시세 리스트
+    ticker.innerHTML = order.map(k => {
+        const d = globalData[k], meta = metaData[k]; if(!d) return '';
+        const sel = (k === activeCurrency) ? ' sel' : '';
+        return `<div class="pc-tk${sel}" onclick="openDetail('${k}')">
+            <div class="l"><span class="fl">${meta.flag}</span><span class="cd">${k}</span>
+              <span class="gchip" style="background:${gradeChipBg[d.grade]};color:${gradeChipCol[d.grade]}">${d.grade}</span></div>
+            <div class="px">${d.price.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        </div>`;
+    }).join('');
+    // 추천 통화 — 점수 가장 낮은(가장 유리한) 통화
+    let best = null;
+    order.forEach(k => { const d = globalData[k]; if(d && (!best || d.rsi < best.rsi)) best = {k, ...d}; });
+    if (best && rec) {
+        const meta = metaData[best.k]; const info = getGradeInfo(best.grade);
+        rec.className = 'pc-rec show';
+        rec.onclick = () => openDetail(best.k);
+        rec.innerHTML = `<div class="ribadge"><div class="g">${best.grade}</div><div class="s">${best.rsi}</div></div>
+            <div class="rtxt"><div class="k">오늘의 추천 통화</div>
+            <div class="v">${meta.flag} <b>${meta.name.replace(' / 원','')}(${best.k})</b> — ${info.guide}</div></div>`;
+    }
 }
 
 function setMode(mode) {
